@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue';
 import { Head } from '@inertiajs/vue3';
-import type { ResumeData } from '../types/resume';
-import { resumeData } from '../data/resumeData';
+import type { ResumeData } from '@/types/resume';
+import { resumeData } from '@/data/resumeData';
 import Navbar from '../components/Navbar.vue';
 import HeroSection from '../components/HeroSection.vue';
 import AboutSection from '../components/AboutSection.vue';
@@ -26,7 +26,7 @@ const data = computed<ResumeData>(() => ({
     ...props.customData,
 }));
 
-// Dark Mode State
+// Theme State
 const isDark = ref(false);
 
 const toggleTheme = () => {
@@ -49,7 +49,7 @@ const showToast = (message: string) => {
     if (toastTimer) clearTimeout(toastTimer);
     toastTimer = setTimeout(() => {
         toastMessage.value = null;
-    }, 3000);
+    }, 2500);
 };
 
 // Resume modal state
@@ -73,72 +73,74 @@ onMounted(() => {
 
 <template>
     <div
-        class="relative min-h-screen bg-neutral-50 text-neutral-900 transition-colors duration-300 selection:bg-violet-600 selection:text-white dark:bg-neutral-950 dark:text-neutral-100"
+        class="min-h-screen bg-[#fafafa] text-neutral-900 transition-colors duration-200 selection:bg-neutral-900 selection:text-white dark:bg-[#0c0d0e] dark:text-neutral-100 dark:selection:bg-white dark:selection:text-neutral-950"
     >
         <Head :title="`${data.name} — ${data.title}`">
-            <meta name="description" :content="data.tagline" />
-            <link rel="preconnect" href="https://fonts.bunny.net" />
+            <meta name="description" :content="data.summary" />
         </Head>
 
-        <!-- Toast Alert Notification -->
+        <!-- Toast Notification -->
         <transition
-            enter-active-class="transition duration-300 ease-out"
-            enter-from-class="transform translate-y-4 opacity-0"
+            enter-active-class="transition duration-200 ease-out"
+            enter-from-class="transform translate-y-2 opacity-0"
             enter-to-class="transform translate-y-0 opacity-100"
-            leave-active-class="transition duration-200 ease-in"
+            leave-active-class="transition duration-150 ease-in"
             leave-from-class="transform translate-y-0 opacity-100"
-            leave-to-class="transform translate-y-4 opacity-0"
+            leave-to-class="transform translate-y-2 opacity-0"
         >
             <div
                 v-if="toastMessage"
-                class="fixed right-6 bottom-6 z-50 flex items-center gap-2.5 rounded-xl border border-neutral-700 bg-neutral-900 px-4 py-3 text-xs font-medium text-white shadow-xl sm:text-sm dark:border-neutral-200 dark:bg-white dark:text-neutral-950"
+                class="fixed right-5 bottom-5 z-50 flex items-center gap-2 rounded-lg bg-neutral-900 px-3.5 py-2.5 text-xs font-medium text-white shadow-lg dark:bg-white dark:text-neutral-950"
             >
                 <Icon
                     name="check"
-                    className="w-4 h-4 text-emerald-400 dark:text-emerald-600"
+                    className="w-3.5 h-3.5 text-emerald-400 dark:text-emerald-600"
                 />
                 <span>{{ toastMessage }}</span>
             </div>
         </transition>
 
-        <!-- Navigation Bar -->
+        <!-- Navbar -->
         <Navbar
             :name="data.name"
             :isDark="isDark"
+            :cvPdfUrl="data.cvPdfUrl"
             @toggle-theme="toggleTheme"
             @open-resume="isResumeModalOpen = true"
         />
 
-        <!-- Main Landing Content -->
-        <main class="relative">
-            <!-- Hero with fancy animations -->
-            <HeroSection :data="data" @open-resume="isResumeModalOpen = true" />
-
-            <!-- About / Personal Information -->
-            <AboutSection
+        <!-- Main Content -->
+        <main>
+            <!-- Hero -->
+            <HeroSection
                 :data="data"
-                @copy-email="showToast(`Email copied: ${$event}`)"
+                :isDark="isDark"
+                @open-resume="isResumeModalOpen = true"
+                @copy-email="showToast(`Copied: ${$event}`)"
             />
 
-            <!-- Experience -->
+            <!-- About & Direct Channels -->
+            <AboutSection
+                :data="data"
+                @copy-email="showToast(`Copied: ${$event}`)"
+            />
+
+            <!-- Work Experience -->
             <ExperienceSection :experience="data.experience" />
 
-            <!-- Skills -->
+            <!-- Skills (Simplified) -->
             <SkillsSection :categories="data.skillCategories" />
 
             <!-- Education -->
-            <EducationSection
-                :education="data.education"
-                :certifications="data.certifications"
-            />
+            <EducationSection :education="data.education" />
 
-            <!-- Personal Projects -->
+            <!-- Projects & Architecture -->
             <ProjectsSection :projects="data.projects" />
 
             <!-- Contact & Footer -->
             <ContactSection
                 :data="data"
-                @copy-email="showToast(`Email copied: ${$event}`)"
+                @copy-email="showToast(`Copied: ${$event}`)"
                 @open-resume="isResumeModalOpen = true"
             />
         </main>

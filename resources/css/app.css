@@ -5,89 +5,134 @@
 
 @theme inline {
     --font-sans:
-        Instrument Sans, ui-sans-serif, system-ui, sans-serif,
-        'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
-        'Noto Color Emoji';
+        Instrument Sans, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+        Helvetica, Arial, sans-serif;
 }
 
-/* Custom Animations & Keyframes */
+/* Smooth Scrolling */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Subtle engineering grid background */
+.hero-grid {
+    background-size: 32px 32px;
+    background-image:
+        linear-gradient(to right, rgba(0, 0, 0, 0.04) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(0, 0, 0, 0.04) 1px, transparent 1px);
+    mask-image: radial-gradient(
+        ellipse 75% 65% at 50% 35%,
+        black 40%,
+        transparent 100%
+    );
+    -webkit-mask-image: radial-gradient(
+        ellipse 75% 65% at 50% 35%,
+        black 40%,
+        transparent 100%
+    );
+}
+
+.dark .hero-grid {
+    background-image:
+        linear-gradient(
+            to right,
+            rgba(255, 255, 255, 0.05) 1px,
+            transparent 1px
+        ),
+        linear-gradient(
+            to bottom,
+            rgba(255, 255, 255, 0.05) 1px,
+            transparent 1px
+        );
+}
+
+/* Delicate floating keyframes (Hardware accelerated) */
 @keyframes floatSlow {
     0%,
     100% {
-        transform: translateY(0px) rotate(0deg);
+        transform: translate3d(0, 0, 0);
     }
     50% {
-        transform: translateY(-12px) rotate(1deg);
+        transform: translate3d(0, -8px, 0);
     }
 }
 
 @keyframes floatReverse {
     0%,
     100% {
-        transform: translateY(0px) rotate(0deg);
+        transform: translate3d(0, 0, 0);
     }
     50% {
-        transform: translateY(10px) rotate(-1deg);
+        transform: translate3d(0, 8px, 0);
     }
 }
 
-@keyframes pulseGlow {
+@keyframes pulseGlowSoft {
     0%,
     100% {
-        opacity: 0.35;
-        transform: scale(1);
+        opacity: 0.45;
+        transform: scale3d(1, 1, 1);
     }
     50% {
-        opacity: 0.65;
-        transform: scale(1.08);
+        opacity: 0.75;
+        transform: scale3d(1.05, 1.05, 1);
     }
 }
 
-@keyframes shimmer {
+@keyframes shimmerGlow {
     0% {
-        transform: translateX(-100%);
+        background-position: -200% 0;
     }
     100% {
-        transform: translateX(100%);
+        background-position: 200% 0;
     }
 }
 
 .animate-float-slow {
-    animation: floatSlow 6s ease-in-out infinite;
+    animation: floatSlow 5s ease-in-out infinite;
+    will-change: transform;
 }
 
 .animate-float-reverse {
-    animation: floatReverse 7s ease-in-out infinite;
+    animation: floatReverse 6s ease-in-out infinite;
+    will-change: transform;
 }
 
 .animate-pulse-glow {
-    animation: pulseGlow 8s ease-in-out infinite;
+    animation: pulseGlowSoft 6s ease-in-out infinite;
+    will-change: transform, opacity;
 }
 
-.animate-shimmer {
-    animation: shimmer 2.5s infinite;
+/* Subtle beam drift */
+@keyframes beamDrift {
+    0% {
+        transform: translate3d(0, -80%, 0);
+        opacity: 0;
+    }
+    30% {
+        opacity: 0.6;
+    }
+    70% {
+        opacity: 0.6;
+    }
+    100% {
+        transform: translate3d(0, 220%, 0);
+        opacity: 0;
+    }
 }
 
-/* Dot grid background pattern */
-.bg-grid-pattern {
-    background-image: radial-gradient(
-        rgba(100, 116, 139, 0.16) 1px,
-        transparent 1px
-    );
-    background-size: 24px 24px;
+.animate-beam {
+    animation: beamDrift 9s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+    will-change: transform, opacity;
 }
 
-.dark .bg-grid-pattern {
-    background-image: radial-gradient(
-        rgba(255, 255, 255, 0.08) 1px,
-        transparent 1px
-    );
-    background-size: 24px 24px;
-}
-
-/* Smooth Scrolling */
-html {
-    scroll-behavior: smooth;
+@media (prefers-reduced-motion: reduce) {
+    .animate-float-slow,
+    .animate-float-reverse,
+    .animate-pulse-glow,
+    .animate-beam {
+        animation: none;
+    }
 }
 
 /* Print Styles */

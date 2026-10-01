@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import type { ResumeData } from '../types/resume';
+import type { ResumeData } from '@/types/resume';
 import Icon from './Icon.vue';
 
 const props = defineProps<{
@@ -26,7 +26,7 @@ const copyEmail = () => {
     emit('copy-email', props.data.contact.email);
     setTimeout(() => {
         copied.value = false;
-    }, 2500);
+    }, 2000);
 };
 
 const handleSend = () => {
@@ -35,257 +35,169 @@ const handleSend = () => {
     setTimeout(() => {
         form.value = { name: '', email: '', message: '' };
         messageSent.value = false;
-    }, 4500);
+    }, 4000);
 };
 </script>
 
 <template>
-    <section
-        id="contact"
-        class="relative border-t border-neutral-200/60 py-20 dark:border-neutral-800/60"
-    >
-        <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-            <!-- Callout Banner -->
+    <section id="contact" class="relative py-16 sm:py-20">
+        <div class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
+            <!-- Section Header -->
             <div
-                class="relative mb-16 overflow-hidden rounded-3xl bg-gradient-to-br from-violet-600 via-indigo-700 to-neutral-900 p-8 text-white shadow-xl sm:p-12"
+                class="mb-4 flex items-center gap-2 text-xs font-semibold tracking-wider text-neutral-500 uppercase dark:text-neutral-400"
             >
+                <span>06</span>
+                <span>/</span>
+                <span>Connect</span>
+            </div>
+
+            <div class="mb-10">
+                <h2
+                    class="text-2xl font-extrabold tracking-tight text-neutral-950 sm:text-4xl dark:text-white"
+                >
+                    Message Me on Email or LinkedIn
+                </h2>
+                <p
+                    class="mt-2 max-w-2xl text-sm leading-relaxed text-neutral-600 sm:text-base dark:text-neutral-400"
+                >
+                    Whether you have an open Backend PHP / Laravel position, an
+                    engineering project, or would like to connect
+                    professionally, feel free to reach out through your
+                    preferred channel.
+                </p>
+            </div>
+
+            <!-- Primary Direct Connect Cards (LinkedIn & Email) -->
+            <div class="mb-10 grid grid-cols-1 gap-5 sm:grid-cols-2">
+                <!-- LinkedIn Card -->
                 <div
-                    class="pointer-events-none absolute -right-10 -bottom-10 h-80 w-80 rounded-full bg-cyan-400/20 blur-3xl"
-                />
-
-                <div class="relative z-10 max-w-2xl">
-                    <span
-                        class="mb-4 inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-xs font-semibold backdrop-blur-md"
-                    >
-                        <span class="h-2 w-2 rounded-full bg-emerald-400" />
-                        Let's collaborate
-                    </span>
-                    <h2
-                        class="mb-4 text-3xl font-extrabold tracking-tight sm:text-4xl"
-                    >
-                        Have an ambitious project or exciting opportunity in
-                        mind?
-                    </h2>
-                    <p
-                        class="mb-8 text-sm leading-relaxed text-neutral-200 sm:text-base"
-                    >
-                        I am currently open to senior engineering roles,
-                        technical advisory, and high-impact freelance
-                        consulting. Let's discuss how we can work together.
-                    </p>
-
-                    <div class="flex flex-wrap items-center gap-3">
-                        <a
-                            :href="`mailto:${data.contact.email}?subject=Hello%20Alex%20-%20Project%20Inquiry`"
-                            class="inline-flex items-center gap-2 rounded-full bg-white px-6 py-3 text-xs font-semibold text-neutral-950 shadow-sm transition-colors hover:bg-neutral-100 sm:text-sm"
+                    class="group flex flex-col justify-between rounded-2xl border border-sky-200/80 bg-linear-to-br from-sky-500/10 via-sky-500/5 to-transparent p-6 shadow-xs transition-all hover:border-sky-400 dark:border-sky-900/60 dark:from-sky-950/30 dark:via-neutral-900 dark:to-neutral-900 dark:hover:border-sky-700"
+                >
+                    <div>
+                        <div
+                            class="mb-4 flex items-center justify-between gap-2"
                         >
+                            <div
+                                class="flex h-10 w-10 items-center justify-center rounded-xl bg-sky-100 text-sky-600 shadow-xs dark:bg-sky-900/50 dark:text-sky-300"
+                            >
+                                <Icon name="linkedin" className="w-5 h-5" />
+                            </div>
+                            <span
+                                class="rounded-full bg-sky-100 px-2 py-0.5 text-[10px] font-semibold tracking-wider text-sky-800 uppercase dark:bg-sky-900/60 dark:text-sky-200"
+                            >
+                                Fast Response
+                            </span>
+                        </div>
+
+                        <h3
+                            class="text-lg font-bold text-neutral-950 transition-colors group-hover:text-sky-600 dark:text-white dark:group-hover:text-sky-400"
+                        >
+                            LinkedIn
+                        </h3>
+                        <p
+                            class="mt-1 text-xs text-neutral-600 dark:text-neutral-400"
+                        >
+                            Best for direct recruitment inquiries, networking,
+                            and message discussions.
+                        </p>
+                        <div
+                            class="mt-3 font-mono text-xs text-neutral-800 dark:text-neutral-200"
+                        >
+                            linkedin.com/in/paulikot
+                        </div>
+                    </div>
+
+                    <div
+                        class="mt-6 border-t border-sky-200/50 pt-4 dark:border-sky-900/40"
+                    >
+                        <a
+                            :href="data.contact.linkedin"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-sky-600 px-4 py-2.5 text-xs font-semibold text-white shadow-xs transition-colors hover:bg-sky-700 sm:text-sm"
+                        >
+                            <span>Message on LinkedIn</span>
                             <Icon
-                                name="mail"
-                                className="w-4 h-4 text-violet-600"
+                                name="external-link"
+                                className="w-3.5 h-3.5"
                             />
-                            <span>Send an Email</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Email Card -->
+                <div
+                    class="group flex flex-col justify-between rounded-2xl border border-emerald-200/80 bg-linear-to-br from-emerald-500/10 via-emerald-500/5 to-transparent p-6 shadow-xs transition-all hover:border-emerald-400 dark:border-emerald-900/60 dark:from-emerald-950/30 dark:via-neutral-900 dark:to-neutral-900 dark:hover:border-emerald-700"
+                >
+                    <div>
+                        <div
+                            class="mb-4 flex items-center justify-between gap-2"
+                        >
+                            <div
+                                class="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-100 text-emerald-600 shadow-xs dark:bg-emerald-900/50 dark:text-emerald-300"
+                            >
+                                <Icon name="mail" className="w-5 h-5" />
+                            </div>
+                            <span
+                                class="rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-semibold tracking-wider text-emerald-800 uppercase dark:bg-emerald-900/60 dark:text-emerald-200"
+                            >
+                                Direct Inbox
+                            </span>
+                        </div>
+
+                        <h3
+                            class="text-lg font-bold text-neutral-950 transition-colors group-hover:text-emerald-600 dark:text-white dark:group-hover:text-emerald-400"
+                        >
+                            Email
+                        </h3>
+                        <p
+                            class="mt-1 text-xs text-neutral-600 dark:text-neutral-400"
+                        >
+                            Send project briefs, job descriptions, or schedule
+                            technical interviews.
+                        </p>
+                        <div
+                            class="mt-3 font-mono text-xs text-neutral-800 select-all dark:text-neutral-200"
+                        >
+                            {{ data.contact.email }}
+                        </div>
+                    </div>
+
+                    <div
+                        class="mt-6 flex items-center gap-2 border-t border-emerald-200/50 pt-4 dark:border-emerald-900/40"
+                    >
+                        <a
+                            :href="`mailto:${data.contact.email}?subject=Hello%20Paulina%20-%20Backend%20Role%20Inquiry`"
+                            class="inline-flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-emerald-600 px-3 py-2.5 text-xs font-semibold text-white shadow-xs transition-colors hover:bg-emerald-700 sm:text-sm"
+                        >
+                            <Icon name="mail" className="w-3.5 h-3.5" />
+                            <span>Send Email</span>
                         </a>
 
                         <button
                             type="button"
                             @click="copyEmail"
-                            class="inline-flex cursor-pointer items-center gap-2 rounded-full bg-white/10 px-5 py-3 text-xs font-semibold text-white backdrop-blur-md transition-colors hover:bg-white/20 sm:text-sm"
+                            class="dark:hover:bg-neutral-750 inline-flex shrink-0 cursor-pointer items-center justify-center gap-1 rounded-xl border border-neutral-300 bg-white px-3 py-2.5 text-xs font-medium text-neutral-800 transition-colors hover:bg-neutral-50 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-200"
+                            title="Copy email address"
                         >
                             <Icon
                                 :name="copied ? 'check' : 'copy'"
-                                className="w-4 h-4"
+                                className="w-3.5 h-3.5"
                             />
-                            <span>{{
-                                copied
-                                    ? 'Copied to Clipboard!'
-                                    : 'Copy Email Address'
-                            }}</span>
+                            <span>{{ copied ? 'Copied' : 'Copy' }}</span>
                         </button>
                     </div>
                 </div>
             </div>
 
-            <!-- Two-column: Quick Message Form & Socials -->
-            <div class="grid grid-cols-1 items-start gap-10 lg:grid-cols-12">
-                <!-- Left: Quick Contact Form -->
-                <div
-                    class="rounded-2xl border border-neutral-200/80 bg-white p-6 shadow-xs sm:p-8 lg:col-span-7 dark:border-neutral-800/80 dark:bg-neutral-900"
-                >
-                    <h3
-                        class="mb-1 text-lg font-bold text-neutral-900 dark:text-white"
-                    >
-                        Send a Direct Message
-                    </h3>
-                    <p
-                        class="mb-6 text-xs text-neutral-500 dark:text-neutral-400"
-                    >
-                        Leave a message here and I'll get back to you within 24
-                        hours.
-                    </p>
 
-                    <div
-                        v-if="messageSent"
-                        class="flex items-center gap-3 rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-xs text-emerald-800 sm:text-sm dark:border-emerald-800 dark:bg-emerald-950/40 dark:text-emerald-300"
-                    >
-                        <Icon
-                            name="check"
-                            className="w-5 h-5 text-emerald-500 shrink-0"
-                        />
-                        <span
-                            >Thank you! Your message has been received. I will
-                            reply soon.</span
-                        >
-                    </div>
 
-                    <form v-else @submit.prevent="handleSend" class="space-y-4">
-                        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                            <div>
-                                <label
-                                    class="mb-1.5 block text-xs font-semibold text-neutral-700 dark:text-neutral-300"
-                                >
-                                    Your Name
-                                </label>
-                                <input
-                                    v-model="form.name"
-                                    type="text"
-                                    required
-                                    placeholder="Sarah Jenkins"
-                                    class="w-full rounded-xl border border-neutral-200 bg-neutral-50 px-3.5 py-2 text-xs text-neutral-900 focus:ring-2 focus:ring-violet-500 focus:outline-hidden sm:text-sm dark:border-neutral-700 dark:bg-neutral-800 dark:text-white"
-                                />
-                            </div>
-                            <div>
-                                <label
-                                    class="mb-1.5 block text-xs font-semibold text-neutral-700 dark:text-neutral-300"
-                                >
-                                    Your Email
-                                </label>
-                                <input
-                                    v-model="form.email"
-                                    type="email"
-                                    required
-                                    placeholder="sarah@example.com"
-                                    class="w-full rounded-xl border border-neutral-200 bg-neutral-50 px-3.5 py-2 text-xs text-neutral-900 focus:ring-2 focus:ring-violet-500 focus:outline-hidden sm:text-sm dark:border-neutral-700 dark:bg-neutral-800 dark:text-white"
-                                />
-                            </div>
-                        </div>
-
-                        <div>
-                            <label
-                                class="mb-1.5 block text-xs font-semibold text-neutral-700 dark:text-neutral-300"
-                            >
-                                Message
-                            </label>
-                            <textarea
-                                v-model="form.message"
-                                rows="4"
-                                required
-                                placeholder="Hi Alex, I'd like to talk about an engineering role / upcoming web project..."
-                                class="w-full resize-y rounded-xl border border-neutral-200 bg-neutral-50 px-3.5 py-2 text-xs text-neutral-900 focus:ring-2 focus:ring-violet-500 focus:outline-hidden sm:text-sm dark:border-neutral-700 dark:bg-neutral-800 dark:text-white"
-                            />
-                        </div>
-
-                        <button
-                            type="submit"
-                            class="inline-flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl bg-violet-600 px-6 py-2.5 text-xs font-semibold text-white transition-colors hover:bg-violet-700 sm:w-auto sm:text-sm"
-                        >
-                            <span>Send Message</span>
-                            <Icon name="arrow-right" className="w-3.5 h-3.5" />
-                        </button>
-                    </form>
-                </div>
-
-                <!-- Right: Information & Social Directory -->
-                <div class="space-y-6 lg:col-span-5">
-                    <div
-                        class="rounded-2xl border border-neutral-200/80 bg-white p-6 shadow-xs dark:border-neutral-800/80 dark:bg-neutral-900"
-                    >
-                        <h4
-                            class="mb-3 text-xs font-semibold tracking-wider text-neutral-400 uppercase dark:text-neutral-500"
-                        >
-                            Connect Across Platforms
-                        </h4>
-                        <div class="space-y-2">
-                            <a
-                                v-for="social in data.socials"
-                                :key="social.name"
-                                :href="social.url"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                class="group flex items-center justify-between rounded-xl p-3 transition-colors hover:bg-neutral-50 dark:hover:bg-neutral-800"
-                            >
-                                <div class="flex items-center gap-3">
-                                    <div
-                                        class="flex h-8 w-8 items-center justify-center rounded-lg bg-neutral-100 text-neutral-700 transition-colors group-hover:bg-violet-100 group-hover:text-violet-600 dark:bg-neutral-800 dark:text-neutral-300 dark:group-hover:bg-violet-950/60"
-                                    >
-                                        <Icon
-                                            :name="social.icon"
-                                            className="w-4 h-4"
-                                        />
-                                    </div>
-                                    <div>
-                                        <div
-                                            class="text-xs font-semibold text-neutral-900 dark:text-white"
-                                        >
-                                            {{ social.name }}
-                                        </div>
-                                        <div
-                                            class="text-[11px] text-neutral-500 dark:text-neutral-400"
-                                        >
-                                            {{ social.label }}
-                                        </div>
-                                    </div>
-                                </div>
-                                <Icon
-                                    name="arrow-right"
-                                    className="w-4 h-4 text-neutral-400 group-hover:translate-x-1 group-hover:text-violet-500 transition-all"
-                                />
-                            </a>
-                        </div>
-                    </div>
-
-                    <!-- Resume CTA Card -->
-                    <div
-                        class="flex items-center justify-between gap-4 rounded-2xl border border-neutral-200/80 bg-neutral-50 p-6 dark:border-neutral-800/80 dark:bg-neutral-900/60"
-                    >
-                        <div>
-                            <div
-                                class="text-xs font-bold text-neutral-900 dark:text-white"
-                            >
-                                Need a printable CV?
-                            </div>
-                            <div
-                                class="mt-0.5 text-[11px] text-neutral-500 dark:text-neutral-400"
-                            >
-                                Download or print the formatted PDF version.
-                            </div>
-                        </div>
-                        <button
-                            type="button"
-                            @click="emit('open-resume')"
-                            class="shrink-0 cursor-pointer rounded-lg bg-neutral-900 px-3.5 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-neutral-800 dark:bg-white dark:text-neutral-950 dark:hover:bg-neutral-100"
-                        >
-                            Open CV
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Footer -->
+            <!-- Clean minimalist footer -->
             <footer
-                class="no-print mt-20 flex flex-col items-center justify-between gap-4 border-t border-neutral-200/60 pt-8 text-xs text-neutral-500 sm:flex-row dark:border-neutral-800/60 dark:text-neutral-400"
+                class="no-print mt-20 flex flex-col items-center justify-between gap-3 border-t border-neutral-200/80 pt-6 text-xs text-neutral-500 sm:flex-row dark:border-neutral-800/80 dark:text-neutral-400"
             >
-                <div class="flex items-center gap-2">
-                    <span
-                        class="font-semibold text-neutral-800 dark:text-neutral-200"
-                        >{{ data.name }}</span
-                    >
-                    <span>© {{ new Date().getFullYear() }}</span>
-                </div>
-                <div class="flex items-center gap-4">
-                    <span>Designed for CV & portfolio showcase</span>
-                    <span>•</span>
-                    <span>Built with Laravel & Vue 3</span>
-                </div>
+                <div>{{ data.name }} • {{ data.title }}</div>
+                <div>{{ new Date().getFullYear() }} • Rzeszów, Poland</div>
             </footer>
         </div>
     </section>

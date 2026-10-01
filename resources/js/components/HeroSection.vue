@@ -1,64 +1,273 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue';
-import type { ResumeData } from '../types/resume';
+import { ref, onMounted, onUnmounted, watch } from 'vue';
+import type { ResumeData } from '@/types/resume';
 import Icon from './Icon.vue';
 
 const props = defineProps<{
     data: ResumeData;
+    isDark?: boolean;
 }>();
 
-const emit = defineEmits<{
+defineEmits<{
+    (e: 'copy-email', email: string): void;
     (e: 'open-resume'): void;
 }>();
 
-// Dynamic role typewriter/rotator
-const currentRoleIndex = ref(0);
-const displayedRole = ref('');
-const isDeleting = ref(false);
-let roleTimer: ReturnType<typeof setTimeout> | null = null;
+// Canvas & Particle animation state
+const canvasRef = ref<HTMLCanvasElement | null>(null);
+const heroSectionRef = ref<HTMLElement | null>(null);
 
-const typeSpeed = 80;
-const deleteSpeed = 40;
-const pauseTime = 2200;
+interface Particle {
+    x: number;
+    y: number;
+    vx: number;
+    vy: number;
+    radius: number;
+    baseAlpha: number;
+    color: string;
+}
 
-const tickRole = () => {
-    const fullRole =
-        props.data.roles[currentRoleIndex.value] || props.data.title;
+let animationFrameId: number | null = null;
+let isVisible = true;
+let width = 0;
+let height = 0;
 
-    if (!isDeleting.value) {
-        displayedRole.value = fullRole.slice(0, displayedRole.value.length + 1);
-        if (displayedRole.value === fullRole) {
-            isDeleting.value = true;
-            roleTimer = setTimeout(tickRole, pauseTime);
-            return;
-        }
-        roleTimer = setTimeout(tickRole, typeSpeed);
-    } else {
-        displayedRole.value = fullRole.slice(0, displayedRole.value.length - 1);
-        if (displayedRole.value === '') {
-            isDeleting.value = false;
-            currentRoleIndex.value =
-                (currentRoleIndex.value + 1) % props.data.roles.length;
-            roleTimer = setTimeout(tickRole, 400);
-            return;
-        }
-        roleTimer = setTimeout(tickRole, deleteSpeed);
+// Mouse tracking with smooth lerp
+const mouse = {
+    x: -1000,
+    y: -1000,
+    targetX: -1000,
+    targetY: -1000,
+    active: false,
+    radius: 160,
+};
+
+let particles: Particle[] = [];
+
+const initParticles = () => {
+    if (!width || !height) return;
+    const isMobile = width < 640;
+    const count = isMobile ? 28 : 55;
+
+    // Palette: emerald, cyan, and subtle gold/neutral
+    const colors = props.isDark
+        ? [
+              'rgba(52, 211, 153, ', // emerald-400
+              'rgba(56, 189, 248, ', // sky-400
+              'rgba(167, 139, 250, ', // violet-400
+              'rgba(244, 244, 245, ', // neutral-100
+          ]
+        : [
+              'rgba(16, 185, 129, ', // emerald-500
+              'rgba(14, 165, 233, ', // sky-500
+              'rgba(124, 58, 237, ', // violet-600
+              'rgba(15, 23, 42, ', // slate-900
+          ];
+
+    particles = [];
+    for (let i = 0; i < count; i++) {
+        particles.push({
+            x: Math.random() * width,
+            y: Math.random() * height,
+            vx: (Math.random() - 0.5) * 0.45,
+            vy: (Math.random() - 0.5) * 0.45,
+            radius: Math.random() * 2 + 1.2,
+            baseAlpha: Math.random() * 0.45 + 0.25,
+            color: colors[Math.floor(Math.random() * colors.length)],
+        });
     }
 };
 
-// Subtle interactive mouse spotlight effect
-const heroRef = ref<HTMLElement | null>(null);
-const mouseX = ref(50);
-const mouseY = ref(50);
+const handleResize = () => {
+    if (!canvasRef.value || !heroSectionRef.value) return;
+    const rect = heroSectionRef.value.getBoundingClientRect();
+    width = rect.width;
+    height = rect.height;
+
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    canvasRef.value.width = width * dpr;
+    canvasRef.value.height = height * dpr;
+    canvasRef.value.style.width = `${width}px`;
+    canvasRef.value.style.height = `${height}px`;
+
+    const ctx = canvasRef.value.getContext('2d');
+    if (ctx) {
+        ctx.scale(dpr, dpr);
+    }
+    initParticles();
+};
 
 const handleMouseMove = (e: MouseEvent) => {
-    if (!heroRef.value) return;
-    const rect = heroRef.value.getBoundingClientRect();
-    const x = ((e.clientX - rect.left) / rect.width) * 100;
-    const y = ((e.clientY - rect.top) / rect.height) * 100;
-    mouseX.value = Math.max(0, Math.min(100, x));
-    mouseY.value = Math.max(0, Math.min(100, y));
+    if (!heroSectionRef.value) return;
+    const rect = heroSectionRef.value.getBoundingClientRect();
+    mouse.targetX = e.clientX - rect.left;
+    mouse.targetY = e.clientY - rect.top;
+    mouse.active = true;
 };
+
+const handleMouseLeave = () => {
+    mouse.active = false;
+    mouse.targetX = -1000;
+    mouse.targetY = -1000;
+};
+
+const handleTouchMove = (e: TouchEvent) => {
+    if (!heroSectionRef.value || e.touches.length === 0) return;
+    const rect = heroSectionRef.value.getBoundingClientRect();
+    mouse.targetX = e.touches[0].clientX - rect.left;
+    mouse.targetY = e.touches[0].clientY - rect.top;
+    mouse.active = true;
+};
+
+const handleTouchEnd = () => {
+    mouse.active = false;
+    mouse.targetX = -1000;
+    mouse.targetY = -1000;
+};
+
+const render = () => {
+    if (!isVisible || !canvasRef.value) {
+        animationFrameId = requestAnimationFrame(render);
+        return;
+    }
+
+    const ctx = canvasRef.value.getContext('2d');
+    if (!ctx) return;
+
+    // Smooth lerp mouse coordinates
+    mouse.x += (mouse.targetX - mouse.x) * 0.12;
+    mouse.y += (mouse.targetY - mouse.y) * 0.12;
+
+    ctx.clearRect(0, 0, width, height);
+
+    // Draw ambient cursor glow spotlight
+    if (mouse.active || mouse.x > 0) {
+        const glowRadius = width < 640 ? 180 : 260;
+        const glowGradient = ctx.createRadialGradient(
+            mouse.x,
+            mouse.y,
+            0,
+            mouse.x,
+            mouse.y,
+            glowRadius,
+        );
+        if (props.isDark) {
+            glowGradient.addColorStop(0, 'rgba(52, 211, 153, 0.18)');
+            glowGradient.addColorStop(0.45, 'rgba(56, 189, 248, 0.08)');
+            glowGradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
+        } else {
+            glowGradient.addColorStop(0, 'rgba(16, 185, 129, 0.14)');
+            glowGradient.addColorStop(0.45, 'rgba(14, 165, 233, 0.07)');
+            glowGradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
+        }
+        ctx.fillStyle = glowGradient;
+        ctx.beginPath();
+        ctx.arc(mouse.x, mouse.y, glowRadius, 0, Math.PI * 2);
+        ctx.fill();
+    }
+
+    // Update & draw particles and connector lines
+    const lineDistance = width < 640 ? 85 : 125;
+
+    for (let i = 0; i < particles.length; i++) {
+        const p = particles[i];
+
+        // Particle position update
+        p.x += p.vx;
+        p.y += p.vy;
+
+        // Wrap around boundaries smoothly
+        if (p.x < 0) p.x = width;
+        if (p.x > width) p.x = 0;
+        if (p.y < 0) p.y = height;
+        if (p.y > height) p.y = 0;
+
+        // Mouse proximity reaction (gentle magnetic push/pull)
+        if (mouse.active) {
+            const dx = mouse.x - p.x;
+            const dy = mouse.y - p.y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+
+            if (dist < mouse.radius && dist > 0) {
+                const force = (mouse.radius - dist) / mouse.radius;
+                p.x -= (dx / dist) * force * 1.4;
+                p.y -= (dy / dist) * force * 1.4;
+            }
+        }
+
+        // Draw particle dot
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+        ctx.fillStyle = `${p.color}${p.baseAlpha})`;
+        ctx.fill();
+
+        // Connect nearby particles
+        for (let j = i + 1; j < particles.length; j++) {
+            const p2 = particles[j];
+            const dx = p.x - p2.x;
+            const dy = p.y - p2.y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+
+            if (dist < lineDistance) {
+                const alpha = (1 - dist / lineDistance) * (props.isDark ? 0.22 : 0.16);
+                ctx.beginPath();
+                ctx.moveTo(p.x, p.y);
+                ctx.lineTo(p2.x, p2.y);
+                ctx.strokeStyle = props.isDark
+                    ? `rgba(148, 163, 184, ${alpha})`
+                    : `rgba(100, 116, 139, ${alpha})`;
+                ctx.lineWidth = 0.8;
+                ctx.stroke();
+            }
+        }
+    }
+
+    animationFrameId = requestAnimationFrame(render);
+};
+
+// Intersection Observer: Pause canvas when hero is out of view (saves 100% battery)
+let observer: IntersectionObserver | null = null;
+
+onMounted(() => {
+    handleResize();
+    window.addEventListener('resize', handleResize, { passive: true });
+
+    if (heroSectionRef.value) {
+        heroSectionRef.value.addEventListener('mousemove', handleMouseMove, { passive: true });
+        heroSectionRef.value.addEventListener('mouseleave', handleMouseLeave, { passive: true });
+        heroSectionRef.value.addEventListener('touchmove', handleTouchMove, { passive: true });
+        heroSectionRef.value.addEventListener('touchend', handleTouchEnd, { passive: true });
+
+        observer = new IntersectionObserver(
+            ([entry]) => {
+                isVisible = entry.isIntersecting;
+            },
+            { threshold: 0.05 },
+        );
+        observer.observe(heroSectionRef.value);
+    }
+
+    animationFrameId = requestAnimationFrame(render);
+});
+
+onUnmounted(() => {
+    if (animationFrameId) cancelAnimationFrame(animationFrameId);
+    window.removeEventListener('resize', handleResize);
+    if (observer && heroSectionRef.value) observer.unobserve(heroSectionRef.value);
+    if (heroSectionRef.value) {
+        heroSectionRef.value.removeEventListener('mousemove', handleMouseMove);
+        heroSectionRef.value.removeEventListener('mouseleave', handleMouseLeave);
+        heroSectionRef.value.removeEventListener('touchmove', handleTouchMove);
+        heroSectionRef.value.removeEventListener('touchend', handleTouchEnd);
+    }
+});
+
+watch(
+    () => props.isDark,
+    () => {
+        initParticles();
+    },
+);
 
 const scrollTo = (selector: string) => {
     const el = document.querySelector(selector);
@@ -66,191 +275,96 @@ const scrollTo = (selector: string) => {
         el.scrollIntoView({ behavior: 'smooth' });
     }
 };
-
-onMounted(() => {
-    tickRole();
-    if (heroRef.value) {
-        heroRef.value.addEventListener('mousemove', handleMouseMove, {
-            passive: true,
-        });
-    }
-});
-
-onUnmounted(() => {
-    if (roleTimer) clearTimeout(roleTimer);
-    if (heroRef.value) {
-        heroRef.value.removeEventListener('mousemove', handleMouseMove);
-    }
-});
 </script>
 
 <template>
     <section
         id="hero"
-        ref="heroRef"
-        class="relative flex min-h-[92vh] flex-col items-center justify-center overflow-hidden pt-24 pb-16"
+        ref="heroSectionRef"
+        class="relative min-h-[calc(100vh-65px)] flex flex-col justify-center items-center text-center px-4 sm:px-6 lg:px-8 overflow-hidden border-b-2 border-neutral-200/80 dark:border-neutral-800/80 cursor-default select-none"
     >
-        <!-- Dynamic Spotlight Gradient Follower -->
-        <div
-            class="pointer-events-none absolute inset-0 opacity-40 transition-opacity duration-1000 dark:opacity-30"
-            :style="{
-                background: `radial-gradient(650px circle at ${mouseX}% ${mouseY}%, rgba(139, 92, 246, 0.18), transparent 70%)`,
-            }"
+        <!-- Interactive Reactive Canvas Background -->
+        <canvas
+            ref="canvasRef"
+            class="absolute inset-0 pointer-events-none z-0"
         />
 
-        <!-- Ambient Animated Glow Orbs -->
+        <!-- Soft Radiant Ambient Aura Behind Text -->
         <div
-            class="animate-pulse-glow pointer-events-none absolute -top-24 -left-24 h-96 w-96 rounded-full bg-violet-500/20 blur-3xl dark:bg-violet-600/15"
-        />
-        <div
-            class="animate-float-reverse pointer-events-none absolute top-1/2 -right-24 h-96 w-96 rounded-full bg-indigo-500/20 blur-3xl dark:bg-indigo-600/15"
-        />
-        <div
-            class="animate-float-slow pointer-events-none absolute -bottom-24 left-1/3 h-80 w-80 rounded-full bg-cyan-500/15 blur-3xl dark:bg-cyan-600/10"
+            class="pointer-events-none absolute inset-0 z-0 bg-radial from-emerald-100/30 via-transparent to-transparent dark:from-emerald-950/20 dark:via-transparent dark:to-transparent"
         />
 
-        <div
-            class="relative z-10 mx-auto max-w-5xl px-4 text-center sm:px-6 lg:px-8"
-        >
-            <!-- Availability Badge -->
-            <div class="mb-6 inline-flex items-center gap-2">
-                <div
-                    class="group inline-flex items-center gap-2 rounded-full border border-neutral-200/80 bg-neutral-100/90 px-3.5 py-1.5 text-xs font-medium shadow-xs backdrop-blur-md transition-all hover:border-violet-300 dark:border-neutral-800/80 dark:bg-neutral-900/90 dark:hover:border-violet-700"
-                >
-                    <span class="relative flex h-2 w-2">
-                        <span
-                            class="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75"
-                        />
-                        <span
-                            class="relative inline-flex h-2 w-2 rounded-full bg-emerald-500"
-                        />
-                    </span>
-                    <span class="text-neutral-700 dark:text-neutral-300">
-                        {{ data.status.text }}
-                    </span>
-                </div>
-            </div>
+        <!-- Hero Content: Simple, Focused, Monumental -->
+        <div class="relative z-10 max-w-3xl mx-auto py-12 sm:py-16">
 
-            <!-- Greeting & Dynamic Role Headline -->
+            <!-- Monumental Name Headline -->
             <h1
-                class="mb-6 text-4xl leading-[1.1] font-extrabold tracking-tight text-neutral-900 sm:text-6xl lg:text-7xl dark:text-white"
+                class="text-5xl sm:text-7xl md:text-8xl font-black tracking-tight text-neutral-950 dark:text-white leading-[1.05]"
             >
-                Crafting digital experiences with
-                <span
-                    class="bg-gradient-to-r from-violet-600 via-indigo-600 to-cyan-500 bg-clip-text text-transparent dark:from-violet-400 dark:via-indigo-300 dark:to-cyan-300"
-                >
-                    precision & scale.
-                </span>
+                {{ data.name }}
             </h1>
 
-            <!-- Animated Typing Role Subheadline -->
-            <div
-                class="mb-6 flex min-h-[2.5rem] items-center justify-center gap-1.5 text-lg font-medium text-neutral-700 sm:text-2xl dark:text-neutral-300"
-            >
-                <span>Hi, I'm</span>
-                <span
-                    class="font-bold text-violet-600 underline decoration-violet-400/40 decoration-wavy underline-offset-4 dark:text-violet-400"
-                >
-                    {{ data.name }}
-                </span>
-                <span class="text-neutral-400 dark:text-neutral-600">—</span>
-                <span
-                    class="inline-flex items-center font-semibold text-neutral-900 dark:text-neutral-100"
-                >
-                    {{ displayedRole }}
-                    <span
-                        class="ml-1 inline-block h-5 w-0.5 animate-pulse bg-violet-600 dark:bg-violet-400"
-                    />
-                </span>
-            </div>
-
-            <!-- Value Proposition Tagline -->
+            <!-- Subtitle -->
             <p
-                class="mx-auto mb-9 max-w-2xl text-base leading-relaxed text-neutral-600 sm:text-lg dark:text-neutral-400"
+                class="text-xl sm:text-2xl md:text-3xl font-semibold tracking-tight text-neutral-800 dark:text-neutral-200 mt-4"
             >
-                {{ data.tagline }}
+                <span class="bg-linear-to-r from-emerald-600 via-teal-600 to-sky-600 dark:from-emerald-400 dark:via-teal-300 dark:to-sky-400 bg-clip-text text-transparent">
+                    {{ data.title }}
+                </span>
             </p>
 
-            <!-- Hero Action Buttons -->
-            <div
-                class="mb-14 flex flex-wrap items-center justify-center gap-3.5"
+            <!-- Refined Concise Value Statement -->
+            <p
+                class="text-sm sm:text-base md:text-lg text-neutral-600 dark:text-neutral-400 mt-4 max-w-xl mx-auto leading-relaxed font-normal"
             >
-                <button
-                    type="button"
-                    @click="scrollTo('#projects')"
-                    class="group relative inline-flex transform cursor-pointer items-center gap-2 rounded-full bg-neutral-900 px-6 py-3 text-sm font-semibold text-white shadow-md shadow-neutral-900/10 transition-all hover:-translate-y-0.5 hover:bg-neutral-800 hover:shadow-lg dark:bg-white dark:text-neutral-950 dark:hover:bg-neutral-100"
-                >
-                    <span>View Projects</span>
-                    <Icon
-                        name="arrow-right"
-                        className="w-4 h-4 transition-transform group-hover:translate-x-1"
-                    />
-                </button>
+                Designing, developing, and scaling robust web applications, high-throughput RESTful APIs, and background processing systems with PHP &amp; Laravel.
+            </p>
 
-                <button
-                    type="button"
-                    @click="emit('open-resume')"
-                    class="inline-flex transform cursor-pointer items-center gap-2 rounded-full border border-neutral-200 bg-white/80 px-6 py-3 text-sm font-semibold text-neutral-900 shadow-xs backdrop-blur-md transition-all hover:-translate-y-0.5 hover:bg-neutral-100 dark:border-neutral-800 dark:bg-neutral-900/80 dark:text-white dark:hover:bg-neutral-800"
+            <!-- Minimalist Action Buttons -->
+            <div class="flex flex-wrap items-center justify-center gap-3 mt-8">
+                <a
+                    :href="data.cvPdfUrl"
+                    download="paulina_kot_php_developer_en.pdf"
+                    class="inline-flex items-center gap-2 px-6 py-3 rounded-full text-xs sm:text-sm font-semibold bg-neutral-950 dark:bg-white text-white dark:text-neutral-950 hover:bg-neutral-800 dark:hover:bg-neutral-100 transition-all shadow-sm hover:shadow-md transform hover:-translate-y-0.5 cursor-pointer"
                 >
-                    <Icon
-                        name="download"
-                        className="w-4 h-4 text-violet-600 dark:text-violet-400"
-                    />
-                    <span>Download CV</span>
-                </button>
+                    <Icon name="download" className="w-4 h-4" />
+                    <span>Download CV (PDF)</span>
+                </a>
 
                 <button
                     type="button"
                     @click="scrollTo('#contact')"
-                    class="inline-flex cursor-pointer items-center gap-2 rounded-full px-5 py-3 text-sm font-medium text-neutral-600 transition-colors hover:bg-neutral-100/60 hover:text-neutral-900 dark:text-neutral-300 dark:hover:bg-neutral-900/60 dark:hover:text-white"
+                    class="inline-flex items-center gap-2 px-6 py-3 rounded-full text-xs sm:text-sm font-semibold bg-white/90 dark:bg-neutral-900/90 text-neutral-800 dark:text-neutral-200 border border-neutral-300 dark:border-neutral-700 hover:border-emerald-500 hover:text-emerald-600 dark:hover:text-emerald-400 transition-all shadow-xs backdrop-blur-md transform hover:-translate-y-0.5 cursor-pointer"
                 >
                     <Icon name="mail" className="w-4 h-4" />
-                    <span>Get in Touch</span>
+                    <span>Message Me</span>
                 </button>
+
+                <a
+                    :href="data.contact.linkedin"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="inline-flex items-center gap-2 px-5 py-3 rounded-full text-xs sm:text-sm font-semibold text-neutral-600 dark:text-neutral-400 hover:text-sky-600 dark:hover:text-sky-400 transition-colors"
+                >
+                    <Icon name="linkedin" className="w-4 h-4 text-sky-600" />
+                    <span>LinkedIn</span>
+                </a>
             </div>
 
-            <!-- Floating / Animated Stats Banner -->
-            <div
-                class="mx-auto grid max-w-4xl grid-cols-2 gap-3 rounded-2xl border border-neutral-200/70 bg-white/70 p-4 shadow-sm backdrop-blur-md sm:gap-4 sm:p-5 md:grid-cols-4 dark:border-neutral-800/70 dark:bg-neutral-900/70"
-            >
-                <div
-                    v-for="(stat, index) in data.quickStats"
-                    :key="index"
-                    class="flex flex-col items-center justify-center rounded-xl p-2.5 transition-colors hover:bg-neutral-50 dark:hover:bg-neutral-800/50"
-                >
-                    <div
-                        class="bg-gradient-to-r from-violet-600 to-indigo-600 bg-clip-text text-2xl font-extrabold tracking-tight text-transparent sm:text-3xl dark:from-violet-400 dark:to-indigo-300"
-                    >
-                        {{ stat.value }}
-                    </div>
-                    <div
-                        class="mt-0.5 text-xs font-semibold text-neutral-800 dark:text-neutral-200"
-                    >
-                        {{ stat.label }}
-                    </div>
-                    <div
-                        class="mt-0.5 hidden text-center text-[11px] text-neutral-500 sm:block dark:text-neutral-400"
-                    >
-                        {{ stat.description }}
-                    </div>
-                </div>
-            </div>
         </div>
 
-        <!-- Scroll Down Cue -->
-        <div class="absolute inset-x-0 bottom-4 z-10 flex justify-center">
+        <!-- Scroll down indicator -->
+        <div class="absolute bottom-4 inset-x-0 flex justify-center z-10 pointer-events-auto">
             <button
                 type="button"
                 @click="scrollTo('#about')"
-                class="group flex cursor-pointer flex-col items-center gap-1 text-neutral-400 transition-colors hover:text-neutral-700 dark:text-neutral-500 dark:hover:text-neutral-300"
+                class="flex flex-col items-center gap-1 text-neutral-400 dark:text-neutral-500 hover:text-neutral-800 dark:hover:text-neutral-200 transition-colors cursor-pointer group"
                 aria-label="Scroll to about section"
             >
-                <span class="text-[11px] font-medium tracking-wider uppercase"
-                    >Explore</span
-                >
+                <span class="text-[10px] font-mono tracking-wider uppercase">Scroll</span>
                 <Icon
                     name="chevron-down"
-                    className="w-4 h-4 animate-bounce group-hover:text-violet-600 dark:group-hover:text-violet-400"
+                    className="w-3.5 h-3.5 animate-bounce group-hover:text-emerald-500 transition-colors"
                 />
             </button>
         </div>

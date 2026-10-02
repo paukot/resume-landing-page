@@ -9,16 +9,15 @@ use Illuminate\Database\Eloquent\Model;
 
 class LocaleTabs
 {
-    public const LOCALES = ['pl' => 'Polski', 'en' => 'English'];
-
-    /** @param Closure(string $locale): array $fields */
     public static function make(Closure $fields): Tabs
     {
+        $locales = config('app.locales');
+
         return Tabs::make('Translations')
             ->tabs(array_map(
                 fn (string $locale, string $name): Tab => Tab::make($name)->schema($fields($locale)),
-                array_keys(self::LOCALES),
-                self::LOCALES,
+                array_keys($locales),
+                $locales,
             ))
             ->columnSpanFull();
     }

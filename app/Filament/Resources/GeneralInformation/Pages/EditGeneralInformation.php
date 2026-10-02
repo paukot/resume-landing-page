@@ -6,6 +6,7 @@ use App\Filament\Fields\LocaleTabs;
 use App\Filament\Resources\GeneralInformation\GeneralInformationResource;
 use App\Models\GeneralInformation;
 use Filament\Resources\Pages\EditRecord;
+use Illuminate\Contracts\Support\Htmlable;
 
 class EditGeneralInformation extends EditRecord
 {
@@ -14,12 +15,10 @@ class EditGeneralInformation extends EditRecord
     public function mount(int|string|null $record = null): void
     {
         $information = GeneralInformation::query()
-            ->firstOrCreate([
-                'name' => 'General Name',
-                'title' => ['pl' => 'Title', 'en' => 'Title'],
-                'summary' => ['pl' => 'Summary', 'en' => 'Summary'],
-                'cv' => ['pl' => '', 'en' => ''],
-        ]);
+            ->firstOrCreate(
+                [],
+                GeneralInformation::factory()->make()->toArray()
+            );
 
         parent::mount($information->getKey());
     }
@@ -30,6 +29,16 @@ class EditGeneralInformation extends EditRecord
     }
 
     protected function getHeaderActions(): array
+    {
+        return [];
+    }
+
+    public function getTitle(): string|Htmlable
+    {
+        return 'General Information';
+    }
+
+    public function getBreadcrumbs(): array
     {
         return [];
     }

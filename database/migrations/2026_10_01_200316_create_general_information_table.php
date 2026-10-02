@@ -1,10 +1,12 @@
 <?php
 
+use App\Models\GeneralInformation;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration {
+return new class extends Migration
+{
     public function up(): void
     {
         Schema::create('general_information', function (Blueprint $table) {
@@ -20,6 +22,8 @@ return new class extends Migration {
             $table->json('cv');
             $table->timestamps();
         });
+
+        GeneralInformation::factory()->create();
     }
 
     public function down(): void

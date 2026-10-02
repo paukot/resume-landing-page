@@ -25,27 +25,34 @@ class GeneralInformationResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'name';
 
+    protected static ?string $modelLabel = 'General Information';
+
+    protected static ?string $pluralModelLabel = 'General Information';
+
     public static function form(Schema $schema): Schema
     {
         return $schema
             ->components([
                 TextInput::make('name')->required(),
-                TextInput::make('phone'),
+                TextInput::make('phone')->required(),
 
                 LocaleTabs::make(fn (string $locale): array => [
                     TextInput::make("title.$locale")->label('Title')->required()->maxLength(255),
                     TextInput::make("summary.$locale")->label('Summary')->required()->maxLength(255),
                     FileUpload::make("cv.$locale")
                         ->label('CV')
-                        ->required()
+                        ->nullable()
+                        ->disk('public')
+                        ->directory('cv')
+                        ->visibility('public')
                         ->preserveFilenames()
                         ->acceptedFileTypes(['application/pdf']),
                 ]),
 
-                TextInput::make('email')->nullable()->email(),
+                TextInput::make('email')->required()->email(),
                 TextInput::make('location')->nullable()->maxLength(255),
-                TextInput::make('linkedin')->nullable()->isUrl()->maxLength(255),
-                TextInput::make('github')->nullable()->isUrl()->maxLength(255),
+                TextInput::make('linkedin')->required()->url()->maxLength(255),
+                TextInput::make('github')->nullable()->url()->maxLength(255),
             ]);
     }
 

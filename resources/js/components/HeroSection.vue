@@ -52,7 +52,6 @@ const initParticles = () => {
     const isMobile = width < 640;
     const count = isMobile ? 28 : 55;
 
-    // Palette: emerald, cyan, and subtle gold/neutral
     const colors = props.isDark
         ? [
               'rgba(52, 211, 153, ', // emerald-400
@@ -323,7 +322,7 @@ const scrollTo = (selector: string) => {
                 {{ data.intro }}
             </p>
 
-            <!-- Minimalist Action Buttons -->
+            <!-- Action Buttons -->
             <div class="flex flex-wrap items-center justify-center gap-3 mt-8">
                 <a
                     :href="data.cvPdfUrl"
@@ -354,6 +353,37 @@ const scrollTo = (selector: string) => {
                     <span>{{ t('linkedin') }}</span>
                 </a>
             </div>
+
+            <!-- Floating / Animated Stats Banner -->
+            <div
+                v-if="data.quickStats?.length"
+                class="mt-8 grid max-w-4xl grid-cols-2 gap-3 rounded-2xl p-4 sm:gap-4 sm:p-5 md:grid-cols-4"
+            >
+                <div
+                    v-for="(stat, index) in data.quickStats"
+                    :key="index"
+                    class="relative flex flex-col items-center justify-center rounded-xl p-2.5
+                        after:absolute after:top-1/4 after:-right-1.5 after:h-1/2 after:w-0.5 after:rounded-full after:bg-neutral-300 sm:after:-right-2 dark:after:bg-neutral-700
+                        max-md:even:after:hidden max-md:last:after:hidden md:last:after:hidden"
+                >
+                    <div
+                        class="bg-linear-to-r from-violet-600 to-indigo-600 bg-clip-text text-2xl font-extrabold tracking-tight text-transparent sm:text-3xl dark:from-violet-400 dark:to-indigo-300"
+                    >
+                        {{ stat.value }}
+                    </div>
+                    <div
+                        class="mt-0.5 text-xs font-semibold text-neutral-800 dark:text-neutral-200"
+                    >
+                        {{ stat.label }}
+                    </div>
+                    <div
+                        class="mt-0.5 hidden text-center text-[11px] text-neutral-500 sm:block dark:text-neutral-400"
+                    >
+                        {{ stat.description }}
+                    </div>
+                </div>
+            </div>
+
 
         </div>
 

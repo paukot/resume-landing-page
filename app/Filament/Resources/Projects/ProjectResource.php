@@ -39,23 +39,44 @@ class ProjectResource extends Resource
         return $schema
             ->columns(2)
             ->components([
-                TextInput::make('title')->required()->maxLength(255),
-                Toggle::make('featured'),
-                TextInput::make('live_url')->label('Live URL')->url()->maxLength(255),
-                TextInput::make('github_url')->label('GitHub URL')->url()->maxLength(255),
+                Toggle::make('featured')->columnSpanFull(),
+                TextInput::make('live_url')
+                    ->label('Live URL')
+                    ->url()
+                    ->maxLength(255),
+                TextInput::make('github_url')
+                    ->label('GitHub URL')
+                    ->url()
+                    ->maxLength(255),
                 LocaleTabs::make(fn (string $locale): array => [
-                    TextInput::make("tagline.$locale")->label('Tagline')->required()->maxLength(255),
-                    TextInput::make("category.$locale")->label('Category')->required()->maxLength(255),
-                    Textarea::make("description.$locale")->label('Description')->required()->rows(4)->columnSpanFull(),
+                    TextInput::make("title.$locale")
+                        ->label('Title')
+                        ->required()
+                        ->maxLength(255)
+                        ->columnSpanFull(),
+                    TextInput::make("tagline.$locale")
+                        ->label('Tagline')
+                        ->required()
+                        ->maxLength(255),
+                    TextInput::make("category.$locale")
+                        ->label('Category')
+                        ->required()
+                        ->maxLength(255),
+                    Textarea::make("description.$locale")
+                        ->label('Description')
+                        ->required()
+                        ->rows(4)
+                        ->columnSpanFull(),
                 ]),
                 Repeater::make('highlights')
                     ->schema([
-                        TextInput::make('pl')->label('Polski')->required(),
-                        TextInput::make('en')->label('English')->required(),
+                        Textarea::make('pl')->label('Polski')->required()->rows(2),
+                        Textarea::make('en')->label('English')->required()->rows(2),
                     ])
                     ->columns(2)
                     ->defaultItems(0)
                     ->reorderable()
+                    ->collapsible()
                     ->addActionLabel('Add highlight')
                     ->columnSpanFull(),
                 TagsInput::make('technologies')->columnSpanFull(),
@@ -66,8 +87,9 @@ class ProjectResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('title')->searchable(),
+                TextColumn::make('title')->searchable()->wrap(),
                 TextColumn::make('category'),
+                TextColumn::make('github_url'),
                 TextColumn::make('technologies')->badge()->limitList(3),
                 IconColumn::make('featured')->boolean(),
             ])

@@ -40,8 +40,14 @@ class QuickStatResource extends Resource
                     ->helperText('Shown as-is, e.g. "3.5+"')
                     ->columnSpanFull(),
                 LocaleTabs::make(fn (string $locale): array => [
-                    TextInput::make("label.$locale")->label('Label')->required()->maxLength(255),
-                    TextInput::make("description.$locale")->label('Description')->required()->maxLength(255),
+                    TextInput::make("label.$locale")
+                        ->label('Label')
+                        ->required()
+                        ->maxLength(255),
+                    TextInput::make("description.$locale")
+                        ->label('Description')
+                        ->required()
+                        ->maxLength(255),
                 ]),
             ]);
     }

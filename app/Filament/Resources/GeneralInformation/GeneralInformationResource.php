@@ -37,22 +37,35 @@ class GeneralInformationResource extends Resource
                 TextInput::make('phone')->required(),
 
                 LocaleTabs::make(fn (string $locale): array => [
-                    TextInput::make("title.$locale")->label('Title')->required()->maxLength(255),
-                    TextInput::make("summary.$locale")->label('Summary')->required()->maxLength(255),
+                    TextInput::make("title.$locale")
+                        ->label('Title')
+                        ->required()
+                        ->maxLength(255),
+                    TextInput::make("summary.$locale")
+                        ->label('Summary')
+                        ->required()
+                        ->maxLength(255),
                     FileUpload::make("cv.$locale")
                         ->label('CV')
                         ->nullable()
                         ->disk('public')
-                        ->directory('cv')
+                        ->directory("cv.$locale")
                         ->visibility('public')
                         ->preserveFilenames()
-                        ->acceptedFileTypes(['application/pdf']),
-                ]),
+                        ->acceptedFileTypes(['application/pdf'])
+                        ->columnSpanFull(),
+                ])->columns(2),
 
                 TextInput::make('email')->required()->email(),
                 TextInput::make('location')->nullable()->maxLength(255),
-                TextInput::make('linkedin')->required()->url()->maxLength(255),
-                TextInput::make('github')->nullable()->url()->maxLength(255),
+                TextInput::make('linkedin')
+                    ->required()
+                    ->url()
+                    ->maxLength(255),
+                TextInput::make('github')
+                    ->nullable()
+                    ->url()
+                    ->maxLength(255),
             ]);
     }
 

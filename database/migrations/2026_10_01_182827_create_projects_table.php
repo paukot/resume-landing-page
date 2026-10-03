@@ -9,7 +9,7 @@ return new class extends Migration {
     {
         Schema::create('projects', function (Blueprint $table) {
             $table->id();
-            $table->string('title');
+            $table->json('title');
             $table->json('tagline');
             $table->json('category');
             $table->json('description');

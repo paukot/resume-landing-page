@@ -8,7 +8,7 @@ use Spatie\Translatable\HasTranslations;
 class Education extends Model
 {
     use HasTranslations;
-    public array $translatable = ['degree', 'field', 'location'];
+    public array $translatable = ['institution', 'institution_url', 'degree', 'field', 'location'];
 
     protected $fillable = ['degree', 'field', 'institution', 'institution_url', 'location', 'period', 'sort_order'];
 

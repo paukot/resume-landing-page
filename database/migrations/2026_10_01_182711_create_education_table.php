@@ -11,8 +11,8 @@ return new class extends Migration {
             $table->id();
             $table->json('degree');
             $table->json('field');
-            $table->string('institution');
-            $table->string('institution_url')->nullable();
+            $table->json('institution');
+            $table->json('institution_url')->nullable();
             $table->json('location');
             $table->string('period');
             $table->unsignedInteger('sort_order')->default(0);

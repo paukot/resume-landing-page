@@ -37,7 +37,7 @@ class LanguageResource extends Resource
                 LocaleTabs::make(fn (string $locale): array => [
                     TextInput::make("name.$locale")->label('Name')->required()->maxLength(255),
                     TextInput::make("level.$locale")->label('Level')->required()->maxLength(255),
-                ]),
+                ])->columns(2),
             ]);
     }
 

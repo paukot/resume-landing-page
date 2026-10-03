@@ -27,20 +27,35 @@ class EducationResource extends Resource
 
     protected static ?int $navigationSort = 3;
 
-
     public static function form(Schema $schema): Schema
     {
         return $schema
             ->columns(2)
             ->components([
-                TextInput::make('institution')->required()->maxLength(255),
-                TextInput::make('institution_url')->label('Institution URL')->url()->maxLength(255),
-                TextInput::make('period')->required()->maxLength(255)->placeholder('2018 – 2022'),
                 LocaleTabs::make(fn (string $locale): array => [
-                    TextInput::make("degree.$locale")->label('Degree')->required()->maxLength(255),
-                    TextInput::make("field.$locale")->label('Field of study')->required()->maxLength(255),
-                    TextInput::make("location.$locale")->label('Location')->required()->maxLength(255),
-                ]),
+                    TextInput::make("institution.$locale")
+                        ->label('Institution')
+                        ->required()
+                        ->maxLength(255),
+                    TextInput::make("institution_url.$locale")
+                        ->label('Institution URL')
+                        ->url()
+                        ->maxLength(255),
+                    TextInput::make("degree.$locale")
+                        ->label('Degree')
+                        ->required()
+                        ->maxLength(255),
+                    TextInput::make("field.$locale")
+                        ->label('Field of study')
+                        ->required()
+                        ->maxLength(255),
+                    TextInput::make("location.$locale")
+                        ->label('Location')
+                        ->required()
+                        ->maxLength(255),
+                ])->columns(2),
+                TextInput::make('period')
+                    ->required()->maxLength(255)->placeholder('2018 – 2022'),
             ]);
     }
 
@@ -48,9 +63,9 @@ class EducationResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('degree'),
-                TextColumn::make('field'),
-                TextColumn::make('institution')->searchable(),
+                TextColumn::make('degree')->wrap(),
+                TextColumn::make('field')->wrap(),
+                TextColumn::make('institution')->wrap()->searchable(),
                 TextColumn::make('period'),
             ])
             ->defaultSort('sort_order')

@@ -9,9 +9,20 @@ class Project extends Model
 {
     use HasTranslations;
 
-    public array $translatable = ['tagline', 'category', 'description'];
+    public array $translatable = ['title', 'tagline', 'category', 'description'];
 
-    protected $fillable = ['title', 'tagline', 'category', 'description', 'highlights', 'technologies', 'live_url', 'github_url', 'featured', 'sort_order'];
+    protected $fillable = [
+        'title',
+        'tagline',
+        'category',
+        'description',
+        'highlights',
+        'technologies',
+        'live_url',
+        'github_url',
+        'featured',
+        'sort_order',
+    ];
 
     protected function casts(): array
     {

@@ -39,23 +39,35 @@ class ExperienceResource extends Resource
         return $schema
             ->columns(2)
             ->components([
+                Toggle::make('is_current')->label('Current position')->columnSpanFull(),
                 TextInput::make('company')->required()->maxLength(255),
-                TextInput::make('company_url')->label('Company URL')->url()->maxLength(255),
-                Toggle::make('is_current')->label('Current position'),
+                TextInput::make('company_url')
+                    ->label('Company URL')
+                    ->url()
+                    ->maxLength(255),
                 LocaleTabs::make(fn (string $locale): array => [
-                    TextInput::make("role.$locale")->label('Role')->required()->maxLength(255),
-                    TextInput::make("location.$locale")->label('Location')->required()->maxLength(255),
+                    TextInput::make("role.$locale")
+                        ->label('Role')
+                        ->required()
+                        ->maxLength(255),
+                    TextInput::make("location.$locale")
+                        ->label('Location')
+                        ->required()
+                        ->maxLength(255),
                     TextInput::make("period.$locale")
                         ->label('Period')
                         ->required()
                         ->maxLength(255)
-                        ->placeholder($locale === 'pl' ? '01.2022 – obecnie' : '01.2022 – Present'),
-                    Textarea::make("description.$locale")->label('Description')->rows(3)->columnSpanFull(),
+                        ->placeholder('01.2022 – Present'),
+                    Textarea::make("description.$locale")
+                        ->label('Description')
+                        ->rows(3)
+                        ->columnSpanFull(),
                 ]),
                 Repeater::make('highlights')
                     ->schema([
-                        TextInput::make('pl')->label('Polski')->required(),
-                        TextInput::make('en')->label('English')->required(),
+                        Textarea::make('pl')->label('Polski')->required()->rows(3),
+                        Textarea::make('en')->label('English')->required()->rows(3),
                     ])
                     ->columns(2)
                     ->defaultItems(0)
@@ -70,8 +82,10 @@ class ExperienceResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('role'),
-                TextColumn::make('company')->searchable(),
+                TextColumn::make('role')->wrap(),
+                TextColumn::make('company')->searchable()->wrap(),
+                TextColumn::make('location')->searchable(),
+                TextColumn::make('period')->searchable(),
                 TextColumn::make('technologies')->badge()->limitList(3),
                 IconColumn::make('is_current')->label('Current')->boolean(),
             ])

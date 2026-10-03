@@ -82,7 +82,7 @@ const handleSend = () => {
                             <div
                                 class="flex h-10 w-10 items-center justify-center rounded-xl bg-sky-100 text-sky-600 shadow-xs dark:bg-sky-900/50 dark:text-sky-300"
                             >
-                                <LinkedinIcon name="linkedin" className="w-5 h-5" />
+                                <LinkedinIcon class="w-5 h-5" />
                             </div>
                             <span
                                 class="rounded-full bg-sky-100 px-2 py-0.5 text-[10px] font-semibold tracking-wider text-sky-800 uppercase dark:bg-sky-900/60 dark:text-sky-200"
@@ -119,7 +119,7 @@ const handleSend = () => {
                         >
                             <span>{{ t('message_on_linkedin') }}</span>
                             <ExternalLink
-                                className="w-3.5 h-3.5"
+                                class="w-3.5 h-3.5"
                             />
                         </a>
                     </div>
@@ -136,7 +136,7 @@ const handleSend = () => {
                             <div
                                 class="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-100 text-emerald-600 shadow-xs dark:bg-emerald-900/50 dark:text-emerald-300"
                             >
-                                <Mail className="w-5 h-5" />
+                                <Mail class="w-5 h-5" />
                             </div>
                             <span
                                 class="rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-semibold tracking-wider text-emerald-800 uppercase dark:bg-emerald-900/60 dark:text-emerald-200"
@@ -169,7 +169,7 @@ const handleSend = () => {
                             :href="`mailto:${data.contact.email}?subject=Hello%20Paulina%20-%20Backend%20Role%20Inquiry`"
                             class="inline-flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-emerald-600 px-3 py-2.5 text-xs font-semibold text-white shadow-xs transition-colors hover:bg-emerald-700 sm:text-sm"
                         >
-                            <Mail className="w-3.5 h-3.5" />
+                            <Mail class="w-3.5 h-3.5" />
                             <span>{{ t('send_email') }}</span>
                         </a>
 

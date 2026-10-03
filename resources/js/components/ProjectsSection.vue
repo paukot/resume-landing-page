@@ -98,7 +98,7 @@ const { t } = useTranslations();
                             rel="noopener noreferrer"
                             class="inline-flex items-center gap-1 text-xs font-medium text-neutral-700 transition-colors hover:text-neutral-950 dark:text-neutral-300 dark:hover:text-white"
                         >
-                            <GithubIcon className="w-3.5 h-3.5" />
+                            <GithubIcon class="w-3.5 h-3.5" />
                             <span>{{ t('code') }}</span>
                         </a>
                     </div>

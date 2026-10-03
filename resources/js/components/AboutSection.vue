@@ -96,7 +96,7 @@ const copyEmail = () => {
                             <div
                                 class="flex items-center gap-2 text-neutral-600 dark:text-neutral-400"
                             >
-                                <Mail className="w-3.5 h-3.5" />
+                                <Mail class="w-3.5 h-3.5" />
                                 <span>{{ t('email') }}</span>
                             </div>
                             <div
@@ -126,7 +126,7 @@ const copyEmail = () => {
                             <div
                                 class="flex items-center gap-2 text-neutral-600 dark:text-neutral-400"
                             >
-                                <Smartphone className="w-3.5 h-3.5" />
+                                <Smartphone class="w-3.5 h-3.5" />
                                 <span>{{ t('phone') }}</span>
                             </div>
                             <a
@@ -144,7 +144,7 @@ const copyEmail = () => {
                             <div
                                 class="flex items-center gap-2 text-neutral-600 dark:text-neutral-400"
                             >
-                                <MapPin className="w-3.5 h-3.5" />
+                                <MapPin class="w-3.5 h-3.5" />
                                 <span>{{ t('location') }}</span>
                             </div>
                             <span
@@ -161,7 +161,7 @@ const copyEmail = () => {
                             <div
                                 class="flex items-center gap-2 text-neutral-600 dark:text-neutral-400"
                             >
-                                <LinkedinIcon className="w-3.5 h-3.5" />
+                                <LinkedinIcon class="w-3.5 h-3.5" />
                                 <span>{{ t('linkedin') }}</span>
                             </div>
                             <a
@@ -173,7 +173,7 @@ const copyEmail = () => {
                                 <span>{{ data.contact.github }}</span>
                                 <GithubIcon
                                     name="external-link"
-                                    className="w-3 h-3 text-neutral-400"
+                                    class="w-3 h-3 text-neutral-400"
                                 />
                             </a>
                         </div>

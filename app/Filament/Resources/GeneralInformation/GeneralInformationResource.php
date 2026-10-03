@@ -7,6 +7,7 @@ use App\Filament\Resources\GeneralInformation\Pages\EditGeneralInformation;
 use App\Models\GeneralInformation;
 use BackedEnum;
 use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\Resource;
@@ -41,10 +42,6 @@ class GeneralInformationResource extends Resource
                         ->label('Title')
                         ->required()
                         ->maxLength(255),
-                    TextInput::make("summary.$locale")
-                        ->label('Summary')
-                        ->required()
-                        ->maxLength(255),
                     FileUpload::make("cv.$locale")
                         ->label('CV')
                         ->nullable()
@@ -52,8 +49,17 @@ class GeneralInformationResource extends Resource
                         ->directory("cv\{$locale}")
                         ->visibility('public')
                         ->preserveFilenames()
-                        ->acceptedFileTypes(['application/pdf'])
-                        ->columnSpanFull(),
+                        ->acceptedFileTypes(['application/pdf']),
+                    Textarea::make("intro.$locale")
+                        ->label('Intro')
+                        ->required()
+                        ->maxLength(255)
+                        ->rows(2),
+                    Textarea::make("summary.$locale")
+                        ->label('Summary')
+                        ->required()
+                        ->maxLength(255)
+                        ->rows(3),
                 ])->columns(2),
 
                 TextInput::make('email')->required()->email(),

@@ -24,19 +24,13 @@ class ResumeResource extends JsonResource
     {
         $locale = session('locale');
 
-        $title = $this->getTranslation('title', $locale);
-        $summary = $this->getTranslation('summary', $locale);
         $cv = $this->getTranslation('cv', $locale);
 
         return [
             'name' => $this->name,
-            'title' => $title,
-            'summary' => $summary,
-//            TODO: check fields status
-            'status' => [
-                'available' => true,
-                'text' => 'Available for opportunities',
-            ],
+            'title' => $this->getTranslation('title', $locale),
+            'summary' => $this->getTranslation('summary', $locale),
+            'intro' => $this->getTranslation('intro', $locale),
             'contact' => [
                 'email' => $this->email,
                 'phone' => $this->phone,

@@ -320,7 +320,7 @@ const scrollTo = (selector: string) => {
             <p
                 class="text-sm sm:text-base md:text-lg text-neutral-600 dark:text-neutral-400 mt-4 max-w-xl mx-auto leading-relaxed font-normal"
             >
-                {{ data.summary }}
+                {{ data.intro }}
             </p>
 
             <!-- Minimalist Action Buttons -->

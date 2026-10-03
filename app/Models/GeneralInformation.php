@@ -10,7 +10,7 @@ class GeneralInformation extends Model
 {
     use HasFactory, HasTranslations;
 
-    public array $translatable = ['title', 'summary', 'cv'];
+    public array $translatable = ['title', 'intro', 'summary', 'cv'];
 
-    protected $fillable = ['name', 'title', 'summary', 'email', 'phone', 'location', 'linkedin', 'github', 'cv'];
+    protected $fillable = ['name', 'title', 'intro', 'summary', 'email', 'phone', 'location', 'linkedin', 'github', 'cv'];
 }

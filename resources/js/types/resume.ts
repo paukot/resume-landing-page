@@ -55,11 +55,8 @@ export interface ProjectItem {
 export interface ResumeData {
     name: string;
     title: string;
+    intro: string;
     summary: string;
-    status: {
-        available: boolean;
-        text: string;
-    };
     contact: {
         email: string;
         phone: string;

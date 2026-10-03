@@ -10,6 +10,19 @@
 
     @fonts
 
+    <script>
+        // Load black theme before vue loads it to ensure
+        // white screen won't flash on browser refresh due to delay
+        (function () {
+            let saved = localStorage.getItem('theme');
+            let prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+            if (saved === 'dark' || (!saved && prefersDark)) {
+                document.documentElement.classList.add('dark');
+            }
+        })();
+    </script>
+
     @vite(['resources/css/app.css', 'resources/js/app.ts', "resources/js/pages/{$page['component']}.vue"])
     <x-inertia::head>
         <title>{{ config('app.name', 'Laravel') }}</title>

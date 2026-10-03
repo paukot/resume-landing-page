@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import type { ResumeData } from '@/types/resume';
-import Icon from './Icon.vue';
+import Icon from './icons/Icon.vue';
 import {useTranslations} from "@/composables/useTranslations";
+import LinkedinIcon from "@/components/icons/LinkedinIcon.vue";
+import {Check, Copy, ExternalLink, Mail} from "lucide-vue-next";
 
 const props = defineProps<{
     data: ResumeData;
@@ -80,7 +82,7 @@ const handleSend = () => {
                             <div
                                 class="flex h-10 w-10 items-center justify-center rounded-xl bg-sky-100 text-sky-600 shadow-xs dark:bg-sky-900/50 dark:text-sky-300"
                             >
-                                <Icon name="linkedin" className="w-5 h-5" />
+                                <LinkedinIcon name="linkedin" className="w-5 h-5" />
                             </div>
                             <span
                                 class="rounded-full bg-sky-100 px-2 py-0.5 text-[10px] font-semibold tracking-wider text-sky-800 uppercase dark:bg-sky-900/60 dark:text-sky-200"
@@ -116,8 +118,7 @@ const handleSend = () => {
                             class="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-sky-600 px-4 py-2.5 text-xs font-semibold text-white shadow-xs transition-colors hover:bg-sky-700 sm:text-sm"
                         >
                             <span>{{ t('message_on_linkedin') }}</span>
-                            <Icon
-                                name="external-link"
+                            <ExternalLink
                                 className="w-3.5 h-3.5"
                             />
                         </a>
@@ -135,7 +136,7 @@ const handleSend = () => {
                             <div
                                 class="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-100 text-emerald-600 shadow-xs dark:bg-emerald-900/50 dark:text-emerald-300"
                             >
-                                <Icon name="mail" className="w-5 h-5" />
+                                <Mail className="w-5 h-5" />
                             </div>
                             <span
                                 class="rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-semibold tracking-wider text-emerald-800 uppercase dark:bg-emerald-900/60 dark:text-emerald-200"
@@ -168,7 +169,7 @@ const handleSend = () => {
                             :href="`mailto:${data.contact.email}?subject=Hello%20Paulina%20-%20Backend%20Role%20Inquiry`"
                             class="inline-flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-emerald-600 px-3 py-2.5 text-xs font-semibold text-white shadow-xs transition-colors hover:bg-emerald-700 sm:text-sm"
                         >
-                            <Icon name="mail" className="w-3.5 h-3.5" />
+                            <Mail className="w-3.5 h-3.5" />
                             <span>{{ t('send_email') }}</span>
                         </a>
 
@@ -178,10 +179,7 @@ const handleSend = () => {
                             class="dark:hover:bg-neutral-750 inline-flex shrink-0 cursor-pointer items-center justify-center gap-1 rounded-xl border border-neutral-300 bg-white px-3 py-2.5 text-xs font-medium text-neutral-800 transition-colors hover:bg-neutral-50 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-200"
                             title="Copy email address"
                         >
-                            <Icon
-                                :name="copied ? 'check' : 'copy'"
-                                className="w-3.5 h-3.5"
-                            />
+                            <component :is="copied ? Check : Copy" class="h-3.5 w-3.5" />
                             <span>{{ copied ? t('copied') : t('copy') }}</span>
                         </button>
                     </div>

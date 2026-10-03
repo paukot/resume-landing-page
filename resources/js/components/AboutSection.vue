@@ -1,8 +1,12 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import type { ResumeData } from '@/types/resume';
-import Icon from './Icon.vue';
+import Icon from './icons/Icon.vue';
 import {useTranslations} from "@/composables/useTranslations";
+import {Mail, Check, Copy, Smartphone, MapPin} from "lucide-vue-next";
+import LinkedinIcon from "@/components/icons/LinkedinIcon.vue";
+import GithubIcon from "@/components/icons/GithubIcon.vue";
+import {Link} from "@inertiajs/vue3";
 
 const props = defineProps<{
     data: ResumeData;
@@ -92,7 +96,7 @@ const copyEmail = () => {
                             <div
                                 class="flex items-center gap-2 text-neutral-600 dark:text-neutral-400"
                             >
-                                <Icon name="mail" className="w-3.5 h-3.5" />
+                                <Mail className="w-3.5 h-3.5" />
                                 <span>{{ t('email') }}</span>
                             </div>
                             <div
@@ -110,10 +114,7 @@ const copyEmail = () => {
                                     class="cursor-pointer rounded p-1 text-neutral-400 transition-colors hover:bg-neutral-200 hover:text-neutral-900 dark:hover:bg-neutral-800 dark:hover:text-white"
                                     title="Copy email"
                                 >
-                                    <Icon
-                                        :name="copied ? 'check' : 'copy'"
-                                        className="w-3.5 h-3.5"
-                                    />
+                                    <component :is="copied ? Check : Copy" class="h-3.5 w-3.5" />
                                 </button>
                             </div>
                         </div>
@@ -125,7 +126,7 @@ const copyEmail = () => {
                             <div
                                 class="flex items-center gap-2 text-neutral-600 dark:text-neutral-400"
                             >
-                                <Icon name="phone" className="w-3.5 h-3.5" />
+                                <Smartphone className="w-3.5 h-3.5" />
                                 <span>{{ t('phone') }}</span>
                             </div>
                             <a
@@ -143,7 +144,7 @@ const copyEmail = () => {
                             <div
                                 class="flex items-center gap-2 text-neutral-600 dark:text-neutral-400"
                             >
-                                <Icon name="map-pin" className="w-3.5 h-3.5" />
+                                <MapPin className="w-3.5 h-3.5" />
                                 <span>{{ t('location') }}</span>
                             </div>
                             <span
@@ -160,7 +161,7 @@ const copyEmail = () => {
                             <div
                                 class="flex items-center gap-2 text-neutral-600 dark:text-neutral-400"
                             >
-                                <Icon name="linkedin" className="w-3.5 h-3.5" />
+                                <LinkedinIcon className="w-3.5 h-3.5" />
                                 <span>{{ t('linkedin') }}</span>
                             </div>
                             <a
@@ -170,7 +171,7 @@ const copyEmail = () => {
                                 class="inline-flex items-center gap-1 font-medium text-neutral-900 hover:underline dark:text-neutral-100"
                             >
                                 <span>{{ data.contact.github }}</span>
-                                <Icon
+                                <GithubIcon
                                     name="external-link"
                                     className="w-3 h-3 text-neutral-400"
                                 />

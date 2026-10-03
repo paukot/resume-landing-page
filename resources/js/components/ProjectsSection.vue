@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { ProjectItem } from '@/types/resume';
-import Icon from './Icon.vue';
 import {useTranslations} from "@/composables/useTranslations";
+import GithubIcon from "@/components/icons/GithubIcon.vue";
 
 defineProps<{
     projects: ProjectItem[];
@@ -98,7 +98,7 @@ const { t } = useTranslations();
                             rel="noopener noreferrer"
                             class="inline-flex items-center gap-1 text-xs font-medium text-neutral-700 transition-colors hover:text-neutral-950 dark:text-neutral-300 dark:hover:text-white"
                         >
-                            <Icon name="github" className="w-3.5 h-3.5" />
+                            <GithubIcon className="w-3.5 h-3.5" />
                             <span>{{ t('code') }}</span>
                         </a>
                     </div>

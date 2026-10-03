@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\SkillCategories;
 
+use App\Enums\SkillIcon;
 use App\Filament\Fields\LocaleTabs;
 use App\Filament\Resources\SkillCategories\Pages\ManageSkillCategories;
 use App\Models\SkillCategory;
@@ -10,6 +11,7 @@ use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Resource;
@@ -17,6 +19,7 @@ use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Support\HtmlString;
 
 class SkillCategoryResource extends Resource
 {
@@ -35,10 +38,15 @@ class SkillCategoryResource extends Resource
         return $schema
             ->columns(2)
             ->components([
-                TextInput::make('icon')
+                Select::make('icon')
+                    ->options(SkillIcon::class)
+                    ->searchable()
                     ->required()
-                    ->maxLength(255)
-                    ->helperText('Icon identifier your Vue component expects'),
+                    ->helperText(new HtmlString(
+                        'Browse icon names on '
+                        .'<a href="https://lucide.dev/icons/" target="_blank" rel="noopener noreferrer" class="underline">lucide.dev/icons</a>. '
+                        .'Only icons from the list above can be selected.'
+                    )),
                 LocaleTabs::make(fn (string $locale): array => [
                     TextInput::make("name.$locale")->label('Name')->required()->maxLength(255),
                 ]),

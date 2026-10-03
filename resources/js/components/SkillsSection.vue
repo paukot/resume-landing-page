@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { SkillCategory } from '@/types/resume';
-import Icon from './Icon.vue';
+import Icon from './icons/Icon.vue';
 import {useTranslations} from "@/composables/useTranslations";
 
 defineProps<{

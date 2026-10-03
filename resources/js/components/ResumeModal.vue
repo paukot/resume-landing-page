@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import type { ResumeData } from '@/types/resume';
-import Icon from './Icon.vue';
+import Icon from './icons/Icon.vue';
 import {useTranslations} from "@/composables/useTranslations";
+import {Download, Printer, X} from "lucide-vue-next";
 
 defineProps<{
     data: ResumeData;
@@ -41,10 +42,11 @@ const handlePrint = () => {
                 <div class="flex items-center gap-2">
                     <a
                         :href="data.cvPdfUrl"
-                        download="paulina_kot_php_developer_en.pdf"
+                        target="_blank"
+                        download
                         class="inline-flex items-center gap-1.5 rounded-md bg-neutral-900 px-3 py-1.5 text-xs font-medium text-white transition-colors hover:bg-neutral-800 dark:bg-white dark:text-neutral-950 dark:hover:bg-neutral-100"
                     >
-                        <Icon name="download" className="w-3.5 h-3.5" />
+                        <Download name="download" className="w-3.5 h-3.5" />
                         <span>{{ t('download_pdf') }}</span>
                     </a>
                     <button
@@ -52,7 +54,7 @@ const handlePrint = () => {
                         @click="handlePrint"
                         class="inline-flex cursor-pointer items-center gap-1.5 rounded-md bg-neutral-200 px-3 py-1.5 text-xs font-medium text-neutral-800 transition-colors hover:bg-neutral-300 dark:bg-neutral-800 dark:text-neutral-200 dark:hover:bg-neutral-700"
                     >
-                        <Icon name="printer" className="w-3.5 h-3.5" />
+                        <Printer className="w-3.5 h-3.5" />
                         <span>Print</span>
                     </button>
                     <button
@@ -61,7 +63,7 @@ const handlePrint = () => {
                         class="cursor-pointer rounded-md p-1.5 text-neutral-400 transition-colors hover:bg-neutral-200/60 hover:text-neutral-700 dark:hover:bg-neutral-800 dark:hover:text-neutral-200"
                         aria-label="Close modal"
                     >
-                        <Icon name="x-mark" className="w-4 h-4" />
+                        <X className="w-4 h-4" />
                     </button>
                 </div>
             </div>

@@ -11,7 +11,7 @@ import EducationSection from '../components/EducationSection.vue';
 import ProjectsSection from '../components/ProjectsSection.vue';
 import ContactSection from '../components/ContactSection.vue';
 import ResumeModal from '../components/ResumeModal.vue';
-import Icon from '../components/Icon.vue';
+import {Check} from "lucide-vue-next";
 
 const props = withDefaults(
     defineProps<{
@@ -88,8 +88,7 @@ onMounted(() => {
                 v-if="toastMessage"
                 class="fixed right-5 bottom-5 z-50 flex items-center gap-2 rounded-lg bg-neutral-900 px-3.5 py-2.5 text-xs font-medium text-white shadow-lg dark:bg-white dark:text-neutral-950"
             >
-                <Icon
-                    name="check"
+                <Check
                     className="w-3.5 h-3.5 text-emerald-400 dark:text-emerald-600"
                 />
                 <span>{{ toastMessage }}</span>

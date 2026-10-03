@@ -1,8 +1,11 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, watch } from 'vue';
 import type { ResumeData } from '@/types/resume';
-import Icon from './Icon.vue';
+import Icon from './icons/Icon.vue';
 import {useTranslations} from "@/composables/useTranslations";
+import LinkedinIcon from "@/components/icons/LinkedinIcon.vue";
+import {ChevronDown, Download, Mail} from "lucide-vue-next";
+
 
 const props = defineProps<{
     data: ResumeData;
@@ -330,7 +333,7 @@ const scrollTo = (selector: string) => {
                     download
                     class="inline-flex items-center gap-2 px-6 py-3 rounded-full text-xs sm:text-sm font-semibold bg-neutral-950 dark:bg-white text-white dark:text-neutral-950 hover:bg-neutral-800 dark:hover:bg-neutral-100 transition-all shadow-sm hover:shadow-md transform hover:-translate-y-0.5 cursor-pointer"
                 >
-                    <Icon name="download" className="w-4 h-4" />
+                    <Download className="w-4 h-4" />
                     <span>{{ t('download_cv') }}</span>
                 </a>
 
@@ -339,7 +342,7 @@ const scrollTo = (selector: string) => {
                     @click="scrollTo('#contact')"
                     class="inline-flex items-center gap-2 px-6 py-3 rounded-full text-xs sm:text-sm font-semibold bg-white/90 dark:bg-neutral-900/90 text-neutral-800 dark:text-neutral-200 border border-neutral-300 dark:border-neutral-700 hover:border-emerald-500 hover:text-emerald-600 dark:hover:text-emerald-400 transition-all shadow-xs backdrop-blur-md transform hover:-translate-y-0.5 cursor-pointer"
                 >
-                    <Icon name="mail" className="w-4 h-4" />
+                    <Mail className="w-4 h-4" />
                     <span>{{ t('message_me') }}</span>
                 </button>
 
@@ -349,7 +352,7 @@ const scrollTo = (selector: string) => {
                     rel="noopener noreferrer"
                     class="inline-flex items-center gap-2 px-5 py-3 rounded-full text-xs sm:text-sm font-semibold text-neutral-600 dark:text-neutral-400 hover:text-sky-600 dark:hover:text-sky-400 transition-colors"
                 >
-                    <Icon name="linkedin" className="w-4 h-4 text-sky-600" />
+                    <LinkedinIcon className="w-4 h-4 text-sky-600" />
                     <span>{{ t('linkedin') }}</span>
                 </a>
             </div>
@@ -396,7 +399,7 @@ const scrollTo = (selector: string) => {
                 aria-label="Scroll to about section"
             >
                 <span class="text-[10px] font-mono tracking-wider uppercase">{{ t('scroll') }}</span>
-                <Icon
+                <ChevronDown
                     name="chevron-down"
                     className="w-3.5 h-3.5 animate-bounce group-hover:text-emerald-500 transition-colors"
                 />

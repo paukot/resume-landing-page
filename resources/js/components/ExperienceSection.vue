@@ -23,7 +23,7 @@ const { t } = useTranslations();
                 <span>{{ t('section.work_experience') }}</span>
             </div>
 
-            <div class="space-y-12">
+            <div class="*:pb-12 *:last:pb-0">
                 <div
                     v-for="job in experience"
                     :key="job.id"

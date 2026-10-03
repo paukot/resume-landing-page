@@ -357,7 +357,7 @@ const scrollTo = (selector: string) => {
             <!-- Floating / Animated Stats Banner -->
             <div
                 v-if="data.quickStats?.length"
-                class="mt-8 grid max-w-4xl grid-cols-2 gap-3 rounded-2xl p-4 sm:gap-4 sm:p-5 md:grid-cols-4"
+                class="mt-8 grid max-w-4xl auto-cols-fr sm:grid-flow-col gap-3 rounded-2xl p-4 sm:gap-4 sm:p-5"
             >
                 <div
                     v-for="(stat, index) in data.quickStats"

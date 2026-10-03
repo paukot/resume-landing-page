@@ -97,11 +97,6 @@ onUnmounted(() => {
                 @click.prevent="scrollTo('#hero')"
                 class="flex items-center gap-2 font-medium text-neutral-900 transition-opacity hover:opacity-80 dark:text-white"
             >
-                <span
-                    class="flex h-7 w-7 items-center justify-center rounded-md bg-neutral-900 text-xs font-semibold tracking-wider text-white dark:bg-white dark:text-neutral-900"
-                >
-                    PK
-                </span>
                 <span class="text-sm font-semibold trackitext-xs ng-tight">
                     {{ name }}
                 </span>

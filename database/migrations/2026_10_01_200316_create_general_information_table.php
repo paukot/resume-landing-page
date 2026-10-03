@@ -13,6 +13,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->json('title');
+            $table->json('intro');
             $table->json('summary');
             $table->string('email')->nullable();
             $table->string('phone')->nullable();

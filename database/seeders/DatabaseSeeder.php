@@ -22,6 +22,11 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        if (app()->isProduction()) {
+            $this->command->warn('Skipping demo data in production.');
+            return;
+        }
+
         User::factory()->create([
             'name' => 'Test User',
             'email' => 'test@example.com',

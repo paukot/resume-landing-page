@@ -13,7 +13,7 @@ class SetLocale
         $allowedLocales = config('app.locales');
         $requestedLocale = $request->query('lang', config('app.locale'));
 
-        if (! in_array($requestedLocale, array_keys($allowedLocales), true)) {
+        if (! array_key_exists($requestedLocale, $allowedLocales)) {
             $requestedLocale = config('app.locale');
         }
 

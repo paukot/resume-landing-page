@@ -80,7 +80,7 @@ const copyEmail = () => {
                         class="space-y-3 rounded-xl border border-neutral-200/80 bg-neutral-50 p-5 text-xs dark:border-neutral-800/80 dark:bg-neutral-900"
                     >
                         <div
-                            class="text-[11px] font-semibold tracking-wider text-neutral-500 text-neutral-900 uppercase dark:text-neutral-400 dark:text-white"
+                            class="text-[11px] font-semibold tracking-wider text-neutral-900 uppercase dark:text-neutral-400 dark:text-white"
                         >
                             {{ t('about.direct_contact_details') }}
                         </div>

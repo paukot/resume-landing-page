@@ -31,7 +31,7 @@ const { t } = useTranslations();
                 >
                     <!-- Timeline Marker -->
                     <div
-                        class="absolute top-1.5 -left-[9px] h-4 w-4 rounded-full border-2 border-neutral-400 bg-white transition-colors group-hover:border-neutral-900 dark:border-neutral-600 dark:bg-neutral-950 dark:group-hover:border-white"
+                        class="absolute top-1.5 -left-2.25 h-4 w-4 rounded-full border-2 border-neutral-400 bg-white transition-colors group-hover:border-neutral-900 dark:border-neutral-600 dark:bg-neutral-950 dark:group-hover:border-white"
                     />
 
                     <!-- Job Header -->

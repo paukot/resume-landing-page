@@ -22,47 +22,47 @@ class ResumeResource extends JsonResource
 {
     public function toArray(Request $request): array
     {
-        $contact = [
-            'email' => (string) $this->email,
-            'phone' => (string) $this->phone,
-            'location' => (string) $this->location,
-            'linkedin' => (string) $this->linkedin,
-        ];
+        $locale = session('locale');
 
-        if (filled($this->github)) {
-            $contact['github'] = $this->github;
-        }
-
-        $cv = $this->cv;
+        $title = $this->getTranslation('title', $locale);
+        $summary = $this->getTranslation('summary', $locale);
+        $cv = $this->getTranslation('cv', $locale);
 
         return [
             'name' => $this->name,
-            'title' => $this->title,
-            'summary' => $this->summary,
+            'title' => $title,
+            'summary' => $summary,
+//            TODO: check fields status
             'status' => [
-                'available' => (bool) $this->is_available,
-                'text' => (string) $this->status_text,
+                'available' => true,
+                'text' => 'Available for opportunities',
             ],
-            'contact' => $contact,
+            'contact' => [
+                'email' => $this->email,
+                'phone' => $this->phone,
+                'location' => $this->location,
+                'linkedin' => $this->linkedin,
+                'github' => $this->github,
+            ],
             'cvPdfUrl' => filled($cv) ? Storage::disk('public')->url($cv) : '',
             'languages' => LanguageResource::collection(
                 Language::query()->orderBy('sort_order')->get()
-            ),
+            )->resolve(),
             'quickStats' => QuickStatResource::collection(
                 QuickStat::query()->orderBy('sort_order')->get()
-            ),
+            )->resolve(),
             'experience' => ExperienceResource::collection(
                 Experience::query()->orderBy('sort_order')->get()
-            ),
+            )->resolve(),
             'education' => EducationResource::collection(
                 Education::query()->orderBy('sort_order')->get()
-            ),
+            )->resolve(),
             'skillCategories' => SkillCategoryResource::collection(
                 SkillCategory::query()->orderBy('sort_order')->get()
-            ),
+            )->resolve(),
             'projects' => ProjectResource::collection(
                 Project::query()->orderBy('sort_order')->get()
-            ),
+            )->resolve(),
         ];
     }
 }

@@ -11,9 +11,11 @@ class SkillCategoryResource extends JsonResource
 {
     public function toArray(Request $request): array
     {
+        $locale = session('locale');
+
         return [
-            'id' => (string) $this->id,
-            'name' => $this->name,
+            'id' => $this->id,
+            'name' => $this->getTranslation('name', $locale),
             'icon' => $this->icon,
             'skills' => $this->skills ?? [],
         ];

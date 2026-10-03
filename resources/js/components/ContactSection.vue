@@ -2,10 +2,13 @@
 import { ref } from 'vue';
 import type { ResumeData } from '@/types/resume';
 import Icon from './Icon.vue';
+import {useTranslations} from "@/composables/useTranslations";
 
 const props = defineProps<{
     data: ResumeData;
 }>();
+
+const { t } = useTranslations();
 
 const emit = defineEmits<{
     (e: 'copy-email', email: string): void;
@@ -48,22 +51,19 @@ const handleSend = () => {
             >
                 <span>06</span>
                 <span>/</span>
-                <span>Connect</span>
+                <span>{{ t('section.connect') }}</span>
             </div>
 
             <div class="mb-10">
                 <h2
                     class="text-2xl font-extrabold tracking-tight text-neutral-950 sm:text-4xl dark:text-white"
                 >
-                    Message Me on Email or LinkedIn
+                    {{ t('contact.message_me_email_or_linkedin') }}
                 </h2>
                 <p
                     class="mt-2 max-w-2xl text-sm leading-relaxed text-neutral-600 sm:text-base dark:text-neutral-400"
                 >
-                    Whether you have an open Backend PHP / Laravel position, an
-                    engineering project, or would like to connect
-                    professionally, feel free to reach out through your
-                    preferred channel.
+                    {{ t('contact.reach_out_description') }}
                 </p>
             </div>
 
@@ -85,25 +85,24 @@ const handleSend = () => {
                             <span
                                 class="rounded-full bg-sky-100 px-2 py-0.5 text-[10px] font-semibold tracking-wider text-sky-800 uppercase dark:bg-sky-900/60 dark:text-sky-200"
                             >
-                                Fast Response
+                                {{ t('fast_response') }}
                             </span>
                         </div>
 
                         <h3
                             class="text-lg font-bold text-neutral-950 transition-colors group-hover:text-sky-600 dark:text-white dark:group-hover:text-sky-400"
                         >
-                            LinkedIn
+                            {{ t('linkedin') }}
                         </h3>
                         <p
                             class="mt-1 text-xs text-neutral-600 dark:text-neutral-400"
                         >
-                            Best for direct recruitment inquiries, networking,
-                            and message discussions.
+                            {{ t('contact.linkedin_details') }}
                         </p>
                         <div
                             class="mt-3 font-mono text-xs text-neutral-800 dark:text-neutral-200"
                         >
-                            linkedin.com/in/paulikot
+                            {{ data.contact.linkedin }}
                         </div>
                     </div>
 
@@ -116,7 +115,7 @@ const handleSend = () => {
                             rel="noopener noreferrer"
                             class="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-sky-600 px-4 py-2.5 text-xs font-semibold text-white shadow-xs transition-colors hover:bg-sky-700 sm:text-sm"
                         >
-                            <span>Message on LinkedIn</span>
+                            <span>{{ t('message_on_linkedin') }}</span>
                             <Icon
                                 name="external-link"
                                 className="w-3.5 h-3.5"
@@ -141,20 +140,19 @@ const handleSend = () => {
                             <span
                                 class="rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-semibold tracking-wider text-emerald-800 uppercase dark:bg-emerald-900/60 dark:text-emerald-200"
                             >
-                                Direct Inbox
+                                {{ t('direct_inbox') }}
                             </span>
                         </div>
 
                         <h3
                             class="text-lg font-bold text-neutral-950 transition-colors group-hover:text-emerald-600 dark:text-white dark:group-hover:text-emerald-400"
                         >
-                            Email
+                            {{ t('email') }}
                         </h3>
                         <p
                             class="mt-1 text-xs text-neutral-600 dark:text-neutral-400"
                         >
-                            Send project briefs, job descriptions, or schedule
-                            technical interviews.
+                            {{ t('contact.email_details') }}
                         </p>
                         <div
                             class="mt-3 font-mono text-xs text-neutral-800 select-all dark:text-neutral-200"
@@ -171,7 +169,7 @@ const handleSend = () => {
                             class="inline-flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-emerald-600 px-3 py-2.5 text-xs font-semibold text-white shadow-xs transition-colors hover:bg-emerald-700 sm:text-sm"
                         >
                             <Icon name="mail" className="w-3.5 h-3.5" />
-                            <span>Send Email</span>
+                            <span>{{ t('send_email') }}</span>
                         </a>
 
                         <button
@@ -184,7 +182,7 @@ const handleSend = () => {
                                 :name="copied ? 'check' : 'copy'"
                                 className="w-3.5 h-3.5"
                             />
-                            <span>{{ copied ? 'Copied' : 'Copy' }}</span>
+                            <span>{{ copied ? t('copied') : t('copy') }}</span>
                         </button>
                     </div>
                 </div>
@@ -197,7 +195,7 @@ const handleSend = () => {
                 class="no-print mt-20 flex flex-col items-center justify-between gap-3 border-t border-neutral-200/80 pt-6 text-xs text-neutral-500 sm:flex-row dark:border-neutral-800/80 dark:text-neutral-400"
             >
                 <div>{{ data.name }} • {{ data.title }}</div>
-                <div>{{ new Date().getFullYear() }} • Rzeszów, Poland</div>
+                <div>{{ new Date().getFullYear() }} • Poland</div>
             </footer>
         </div>
     </section>

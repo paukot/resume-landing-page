@@ -11,13 +11,15 @@ class EducationResource extends JsonResource
 {
     public function toArray(Request $request): array
     {
+        $locale = session('locale');
+
         return [
-            'id' => (string) $this->id,
-            'degree' => $this->degree,
-            'field' => $this->field,
-            'institution' => $this->institution,
-            'institutionUrl' => $this->when(filled($this->institution_url), $this->institution_url),
-            'location' => $this->location,
+            'id' => $this->id,
+            'degree' => $this->getTranslation('degree', $locale),
+            'field' => $this->getTranslation('field', $locale),
+            'institution' => $this->getTranslation('institution', $locale),
+            'institutionUrl' => $this->getTranslation('institution_url', $locale),
+            'location' => $this->getTranslation('location', $locale),
             'period' => $this->period,
         ];
     }

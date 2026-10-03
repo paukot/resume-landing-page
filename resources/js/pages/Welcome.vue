@@ -2,7 +2,6 @@
 import { ref, onMounted, computed } from 'vue';
 import { Head } from '@inertiajs/vue3';
 import type { ResumeData } from '@/types/resume';
-import { resumeData } from '@/data/resumeData';
 import Navbar from '../components/Navbar.vue';
 import HeroSection from '../components/HeroSection.vue';
 import AboutSection from '../components/AboutSection.vue';
@@ -16,15 +15,12 @@ import Icon from '../components/Icon.vue';
 
 const props = withDefaults(
     defineProps<{
-        customData?: Partial<ResumeData>;
+        resume: ResumeData;
     }>(),
     {},
 );
 
-const data = computed<ResumeData>(() => ({
-    ...resumeData,
-    ...props.customData,
-}));
+const data = computed(() => props.resume);
 
 // Theme State
 const isDark = ref(false);

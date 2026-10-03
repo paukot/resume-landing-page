@@ -2,11 +2,14 @@
 import { ref, onMounted, onUnmounted, watch } from 'vue';
 import type { ResumeData } from '@/types/resume';
 import Icon from './Icon.vue';
+import {useTranslations} from "@/composables/useTranslations";
 
 const props = defineProps<{
     data: ResumeData;
     isDark?: boolean;
 }>();
+
+const { t } = useTranslations();
 
 defineEmits<{
     (e: 'copy-email', email: string): void;
@@ -317,18 +320,19 @@ const scrollTo = (selector: string) => {
             <p
                 class="text-sm sm:text-base md:text-lg text-neutral-600 dark:text-neutral-400 mt-4 max-w-xl mx-auto leading-relaxed font-normal"
             >
-                Designing, developing, and scaling robust web applications, high-throughput RESTful APIs, and background processing systems with PHP &amp; Laravel.
+                {{ data.summary }}
             </p>
 
             <!-- Minimalist Action Buttons -->
             <div class="flex flex-wrap items-center justify-center gap-3 mt-8">
                 <a
                     :href="data.cvPdfUrl"
-                    download="paulina_kot_php_developer_en.pdf"
+                    target="_blank"
+                    download
                     class="inline-flex items-center gap-2 px-6 py-3 rounded-full text-xs sm:text-sm font-semibold bg-neutral-950 dark:bg-white text-white dark:text-neutral-950 hover:bg-neutral-800 dark:hover:bg-neutral-100 transition-all shadow-sm hover:shadow-md transform hover:-translate-y-0.5 cursor-pointer"
                 >
                     <Icon name="download" className="w-4 h-4" />
-                    <span>Download CV (PDF)</span>
+                    <span>{{ t('download_cv') }}</span>
                 </a>
 
                 <button
@@ -337,7 +341,7 @@ const scrollTo = (selector: string) => {
                     class="inline-flex items-center gap-2 px-6 py-3 rounded-full text-xs sm:text-sm font-semibold bg-white/90 dark:bg-neutral-900/90 text-neutral-800 dark:text-neutral-200 border border-neutral-300 dark:border-neutral-700 hover:border-emerald-500 hover:text-emerald-600 dark:hover:text-emerald-400 transition-all shadow-xs backdrop-blur-md transform hover:-translate-y-0.5 cursor-pointer"
                 >
                     <Icon name="mail" className="w-4 h-4" />
-                    <span>Message Me</span>
+                    <span>{{ t('message_me') }}</span>
                 </button>
 
                 <a
@@ -347,7 +351,7 @@ const scrollTo = (selector: string) => {
                     class="inline-flex items-center gap-2 px-5 py-3 rounded-full text-xs sm:text-sm font-semibold text-neutral-600 dark:text-neutral-400 hover:text-sky-600 dark:hover:text-sky-400 transition-colors"
                 >
                     <Icon name="linkedin" className="w-4 h-4 text-sky-600" />
-                    <span>LinkedIn</span>
+                    <span>{{ t('linkedin') }}</span>
                 </a>
             </div>
 
@@ -361,7 +365,7 @@ const scrollTo = (selector: string) => {
                 class="flex flex-col items-center gap-1 text-neutral-400 dark:text-neutral-500 hover:text-neutral-800 dark:hover:text-neutral-200 transition-colors cursor-pointer group"
                 aria-label="Scroll to about section"
             >
-                <span class="text-[10px] font-mono tracking-wider uppercase">Scroll</span>
+                <span class="text-[10px] font-mono tracking-wider uppercase">{{ t('scroll') }}</span>
                 <Icon
                     name="chevron-down"
                     className="w-3.5 h-3.5 animate-bounce group-hover:text-emerald-500 transition-colors"

@@ -2,10 +2,13 @@
 import { ref } from 'vue';
 import type { ResumeData } from '@/types/resume';
 import Icon from './Icon.vue';
+import {useTranslations} from "@/composables/useTranslations";
 
 const props = defineProps<{
     data: ResumeData;
 }>();
+
+const { t } = useTranslations();
 
 const emit = defineEmits<{
     (e: 'copy-email', email: string): void;
@@ -34,7 +37,7 @@ const copyEmail = () => {
             >
                 <span>01</span>
                 <span>/</span>
-                <span>About & Contact</span>
+                <span>{{ t('section.about_and_contact') }}</span>
             </div>
 
             <div class="grid grid-cols-1 items-start gap-8 md:grid-cols-12">
@@ -42,20 +45,7 @@ const copyEmail = () => {
                 <div
                     class="space-y-4 text-sm leading-relaxed text-neutral-700 sm:text-base md:col-span-7 dark:text-neutral-300"
                 >
-                    <p>
-                        I am a Backend Developer specializing in modern PHP and
-                        Laravel ecosystem. Over the past 3.5+ years, I have
-                        architected high-traffic RESTful APIs, optimized
-                        database queries for sub-second responses, and built
-                        resilient background queue workers.
-                    </p>
-                    <p>
-                        My focus is on test-driven development (TDD) using
-                        PHPUnit and PEST, reliable third-party integrations
-                        (payment gateways like Adyen, external APIs, and OCR/AI
-                        verification pipelines), and building maintainable
-                        software that scales smoothly.
-                    </p>
+                    {{ data.summary }}
 
                     <!-- Spoken Languages -->
                     <div
@@ -64,7 +54,7 @@ const copyEmail = () => {
                         <div
                             class="mb-2 text-xs font-semibold text-neutral-500 dark:text-neutral-400"
                         >
-                            Languages:
+                            {{ t('languages') }}:
                         </div>
                         <div class="flex flex-wrap gap-2">
                             <span
@@ -92,7 +82,7 @@ const copyEmail = () => {
                         <div
                             class="text-[11px] font-semibold tracking-wider text-neutral-500 text-neutral-900 uppercase dark:text-neutral-400 dark:text-white"
                         >
-                            Direct Contact Details
+                            {{ t('about.direct_contact_details') }}
                         </div>
 
                         <!-- Email -->
@@ -103,7 +93,7 @@ const copyEmail = () => {
                                 class="flex items-center gap-2 text-neutral-600 dark:text-neutral-400"
                             >
                                 <Icon name="mail" className="w-3.5 h-3.5" />
-                                <span>Email</span>
+                                <span>{{ t('email') }}</span>
                             </div>
                             <div
                                 class="flex items-center gap-1.5 font-medium text-neutral-900 dark:text-neutral-100"
@@ -136,7 +126,7 @@ const copyEmail = () => {
                                 class="flex items-center gap-2 text-neutral-600 dark:text-neutral-400"
                             >
                                 <Icon name="phone" className="w-3.5 h-3.5" />
-                                <span>Phone</span>
+                                <span>{{ t('phone') }}</span>
                             </div>
                             <a
                                 :href="`tel:${data.contact.phone}`"
@@ -154,7 +144,7 @@ const copyEmail = () => {
                                 class="flex items-center gap-2 text-neutral-600 dark:text-neutral-400"
                             >
                                 <Icon name="map-pin" className="w-3.5 h-3.5" />
-                                <span>Location</span>
+                                <span>{{ t('location') }}</span>
                             </div>
                             <span
                                 class="font-medium text-neutral-900 dark:text-neutral-100"
@@ -171,7 +161,7 @@ const copyEmail = () => {
                                 class="flex items-center gap-2 text-neutral-600 dark:text-neutral-400"
                             >
                                 <Icon name="linkedin" className="w-3.5 h-3.5" />
-                                <span>LinkedIn</span>
+                                <span>{{ t('linkedin') }}</span>
                             </div>
                             <a
                                 :href="data.contact.linkedin"
@@ -179,7 +169,7 @@ const copyEmail = () => {
                                 rel="noopener noreferrer"
                                 class="inline-flex items-center gap-1 font-medium text-neutral-900 hover:underline dark:text-neutral-100"
                             >
-                                <span>paulikot</span>
+                                <span>{{ data.contact.github }}</span>
                                 <Icon
                                     name="external-link"
                                     className="w-3 h-3 text-neutral-400"

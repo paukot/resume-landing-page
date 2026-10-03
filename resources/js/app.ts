@@ -1,4 +1,5 @@
 import { createInertiaApp } from '@inertiajs/vue3';
+import 'flag-icons/css/flag-icons.min.css';
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 

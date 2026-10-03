@@ -1,11 +1,14 @@
 <script setup lang="ts">
 import type { ResumeData } from '@/types/resume';
 import Icon from './Icon.vue';
+import {useTranslations} from "@/composables/useTranslations";
 
 defineProps<{
     data: ResumeData;
     isOpen: boolean;
 }>();
+
+const { t } = useTranslations();
 
 const emit = defineEmits<{
     (e: 'close'): void;
@@ -42,7 +45,7 @@ const handlePrint = () => {
                         class="inline-flex items-center gap-1.5 rounded-md bg-neutral-900 px-3 py-1.5 text-xs font-medium text-white transition-colors hover:bg-neutral-800 dark:bg-white dark:text-neutral-950 dark:hover:bg-neutral-100"
                     >
                         <Icon name="download" className="w-3.5 h-3.5" />
-                        <span>Download PDF</span>
+                        <span>{{ t('download_pdf') }}</span>
                     </a>
                     <button
                         type="button"
@@ -96,7 +99,7 @@ const handlePrint = () => {
                             target="_blank"
                             class="text-neutral-800 underline"
                         >
-                            linkedin.com/in/paulikot
+                            {{ data.contact.github }}
                         </a>
                     </div>
                 </div>

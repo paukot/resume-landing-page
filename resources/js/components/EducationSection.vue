@@ -1,9 +1,12 @@
 <script setup lang="ts">
 import type { EducationItem } from '@/types/resume';
+import {useTranslations} from "@/composables/useTranslations";
 
 defineProps<{
     education: EducationItem[];
 }>();
+
+const { t } = useTranslations();
 </script>
 
 <template>
@@ -17,7 +20,7 @@ defineProps<{
             >
                 <span>04</span>
                 <span>/</span>
-                <span>Education</span>
+                <span>{{ t('section.education') }}</span>
             </div>
 
             <div class="space-y-4">

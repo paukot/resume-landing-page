@@ -11,9 +11,11 @@ class LanguageResource extends JsonResource
 {
     public function toArray(Request $request): array
     {
+        $locale = session('locale');
+
         return [
-            'name' => $this->name,
-            'level' => $this->level,
+            'name' => $this->getTranslation('name', $locale),
+            'level' => $this->getTranslation('level', $locale),
         ];
     }
 }

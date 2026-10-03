@@ -1,10 +1,13 @@
 <script setup lang="ts">
 import type { ProjectItem } from '@/types/resume';
 import Icon from './Icon.vue';
+import {useTranslations} from "@/composables/useTranslations";
 
 defineProps<{
     projects: ProjectItem[];
 }>();
+
+const { t } = useTranslations();
 </script>
 
 <template>
@@ -18,7 +21,7 @@ defineProps<{
             >
                 <span>05</span>
                 <span>/</span>
-                <span>Selected Projects & Architecture</span>
+                <span>{{ t('section.featured_projects') }}</span>
             </div>
 
             <div class="grid grid-cols-1 gap-5 md:grid-cols-2">
@@ -41,7 +44,7 @@ defineProps<{
                                 v-if="project.featured"
                                 class="rounded-sm bg-neutral-200 px-2 py-0.5 text-[10px] font-semibold tracking-wider text-neutral-700 uppercase dark:bg-neutral-800 dark:text-neutral-300"
                             >
-                                Featured
+                                {{ t('featured') }}
                             </span>
                         </div>
 
@@ -96,7 +99,7 @@ defineProps<{
                             class="inline-flex items-center gap-1 text-xs font-medium text-neutral-700 transition-colors hover:text-neutral-950 dark:text-neutral-300 dark:hover:text-white"
                         >
                             <Icon name="github" className="w-3.5 h-3.5" />
-                            <span>Code</span>
+                            <span>{{ t('code') }}</span>
                         </a>
                     </div>
                 </div>

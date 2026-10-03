@@ -1,9 +1,12 @@
 <script setup lang="ts">
 import type { ExperienceItem } from '@/types/resume';
+import {useTranslations} from "@/composables/useTranslations";
 
 defineProps<{
     experience: ExperienceItem[];
 }>();
+
+const { t } = useTranslations();
 </script>
 
 <template>
@@ -17,7 +20,7 @@ defineProps<{
             >
                 <span>02</span>
                 <span>/</span>
-                <span>Work Experience</span>
+                <span>{{ t('section.work_experience') }}</span>
             </div>
 
             <div class="space-y-12">

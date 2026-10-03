@@ -1,10 +1,13 @@
 <script setup lang="ts">
 import type { SkillCategory } from '@/types/resume';
 import Icon from './Icon.vue';
+import {useTranslations} from "@/composables/useTranslations";
 
 defineProps<{
     categories: SkillCategory[];
 }>();
+
+const { t } = useTranslations();
 </script>
 
 <template>
@@ -18,7 +21,7 @@ defineProps<{
             >
                 <span>03</span>
                 <span>/</span>
-                <span>Skills & Tools</span>
+                <span>{{ t('section.skills_and_tools') }}</span>
             </div>
 
             <!-- Simple, structured 2-column or 4-group grid without fake percentages -->

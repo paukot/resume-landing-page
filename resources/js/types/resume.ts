@@ -5,10 +5,10 @@ export interface QuickStat {
 }
 
 export interface ExperienceItem {
-    id: string;
+    id: number;
     role: string;
     company: string;
-    companyUrl?: string;
+    companyUrl?: string | null;
     location: string;
     period: string;
     isCurrent?: boolean;
@@ -18,17 +18,17 @@ export interface ExperienceItem {
 }
 
 export interface EducationItem {
-    id: string;
+    id: number;
     degree: string;
     field: string;
     institution: string;
-    institutionUrl?: string;
+    institutionUrl?: string | null;
     location: string;
     period: string;
 }
 
 export interface SkillCategory {
-    id: string;
+    id: number;
     name: string;
     icon: string;
     skills: string[];
@@ -40,7 +40,7 @@ export interface LanguageItem {
 }
 
 export interface ProjectItem {
-    id: string;
+    id: number;
     title: string;
     tagline: string;
     category: string;

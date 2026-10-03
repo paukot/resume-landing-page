@@ -11,7 +11,7 @@ class WelcomeController extends Controller
     public function __invoke()
     {
         $information = GeneralInformation::query()->firstOrFail();
-        dd(ResumeResource::make($information)->toPrettyJson());
+
         return Inertia::render('Welcome', [
             'resume' => ResumeResource::make($information)->resolve(),
         ]);

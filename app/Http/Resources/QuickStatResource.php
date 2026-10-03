@@ -11,10 +11,12 @@ class QuickStatResource extends JsonResource
 {
     public function toArray(Request $request): array
     {
+        $locale = session('locale');
+
         return [
-            'value' => $this->value,
-            'label' => $this->label,
-            'description' => $this->description,
+            'value' => (string) $this->value,
+            'label' => $this->getTranslation('label', $locale),
+            'description' => $this->getTranslation('description', $locale),
         ];
     }
 }

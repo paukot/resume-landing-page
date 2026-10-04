@@ -53,12 +53,12 @@ class GeneralInformationResource extends Resource
                     Textarea::make("intro.$locale")
                         ->label('Intro')
                         ->required()
-                        ->maxLength(255)
+                        ->maxLength(512)
                         ->rows(2),
                     Textarea::make("summary.$locale")
                         ->label('Summary')
                         ->required()
-                        ->maxLength(255)
+                        ->maxLength(1200)
                         ->rows(3),
                 ])->columns(2),
 

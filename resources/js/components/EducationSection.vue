@@ -27,7 +27,7 @@ const { t } = useTranslations();
                 <div
                     v-for="edu in education"
                     :key="edu.id"
-                    class="rounded-xl border border-neutral-200/80 bg-neutral-50 p-6 dark:border-neutral-800/80 dark:bg-neutral-900"
+                    class="rounded-xl border border-neutral-200/80 bg-neutral-50 p-6 dark:border-neutral-800/80 dark:bg-neutral-900 shadow-xs shadow-neutral-300 dark:shadow-neutral-700"
                 >
                     <div
                         class="flex flex-col justify-between gap-1 sm:flex-row sm:items-baseline"

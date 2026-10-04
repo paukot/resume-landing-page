@@ -126,13 +126,13 @@ onUnmounted(() => {
                 <!-- Lang switcher -->
                 <Link
                     :href="`/?lang=${switchToLanguage}`"
-                    :title="switchToLanguage === 'en' ? t('polish') : t('english')"
-                    :aria-label="switchToLanguage === 'en' ? t('polish') : t('english')"
+                    :title="switchToLanguage === 'en' ? t('english'): t('polish')"
+                    :aria-label="switchToLanguage === 'en' ? t('english'): t('polish')"
                     preserve-scroll
-                    class="inline-flex items-center p-2"
+                    class="inline-flex items-center p-2 "
 
                 >
-                    <span :class="`fi fi-${switchToLanguage === 'en' ? 'gb' : 'pl'} fis rounded-sm`" />
+                    <span :class="`fi fi-${switchToLanguage === 'en' ? 'gb' : 'pl'} fis rounded-sm shadow-md shadow-neutral-300 dark:shadow-neutral-700`" />
                 </Link>
 
                 <!-- Theme Toggle -->

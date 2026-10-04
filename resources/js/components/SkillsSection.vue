@@ -29,7 +29,7 @@ const { t } = useTranslations();
                 <div
                     v-for="cat in categories"
                     :key="cat.id"
-                    class="rounded-xl border border-neutral-200/80 bg-neutral-50 p-5 dark:border-neutral-800/80 dark:bg-neutral-900"
+                    class="rounded-xl border border-neutral-200/80 bg-neutral-50 p-5 dark:border-neutral-800/80 dark:bg-neutral-900 shadow-xs shadow-neutral-300 dark:shadow-neutral-700"
                 >
                     <div class="mb-3 flex items-center gap-2">
                         <Icon
@@ -47,7 +47,7 @@ const { t } = useTranslations();
                         <span
                             v-for="skill in cat.skills"
                             :key="skill"
-                            class="rounded-md border border-neutral-200/80 bg-white px-2.5 py-1 text-xs font-medium text-neutral-800 transition-colors hover:border-neutral-400 dark:border-neutral-700/80 dark:bg-neutral-800 dark:text-neutral-200 dark:hover:border-neutral-600"
+                            class="rounded-md border border-neutral-200/80 bg-white px-2.5 py-1 text-xs font-medium text-neutral-800 transition-colors hover:border-neutral-400 dark:border-neutral-700/80 dark:bg-neutral-800 dark:text-neutral-200 dark:hover:border-neutral-600 shadow-xs shadow-neutral-300 dark:shadow-neutral-700"
                         >
                             {{ skill }}
                         </span>

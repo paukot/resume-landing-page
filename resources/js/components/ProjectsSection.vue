@@ -28,7 +28,7 @@ const { t } = useTranslations();
                 <div
                     v-for="project in projects"
                     :key="project.id"
-                    class="flex flex-col justify-between rounded-xl border border-neutral-200/80 bg-neutral-50 p-6 transition-colors hover:border-neutral-400 dark:border-neutral-800/80 dark:bg-neutral-900 dark:hover:border-neutral-600"
+                    class="flex flex-col justify-between rounded-xl border border-neutral-200/80 bg-neutral-50 p-6 transition-colors hover:border-neutral-400 dark:border-neutral-800/80 dark:bg-neutral-900 dark:hover:border-neutral-600 shadow-xs shadow-neutral-300 dark:shadow-neutral-700"
                 >
                     <div>
                         <!-- Category & Title -->
@@ -85,7 +85,7 @@ const { t } = useTranslations();
                             <span
                                 v-for="tech in project.technologies.slice(0, 4)"
                                 :key="tech"
-                                class="rounded border border-neutral-200 bg-white px-1.5 py-0.5 font-mono text-[10px] text-neutral-700 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-300"
+                                class="rounded border border-neutral-200 bg-white px-1.5 py-0.5 font-mono text-[10px] text-neutral-700 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-300 shadow-xs shadow-neutral-300 dark:shadow-neutral-700"
                             >
                                 {{ tech }}
                             </span>

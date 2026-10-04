@@ -64,7 +64,7 @@ const copyEmail = () => {
                             <span
                                 v-for="lang in data.languages"
                                 :key="lang.name"
-                                class="inline-flex items-center gap-1.5 rounded-md bg-neutral-100 px-3 py-1 text-xs font-medium text-neutral-800 dark:bg-neutral-800 dark:text-neutral-200"
+                                class="inline-flex items-center gap-1.5 rounded-md bg-neutral-100 shadow-xs shadow-neutral-300 dark:shadow-neutral-700v px-3 py-1 text-xs font-medium text-neutral-800 dark:bg-neutral-800 dark:text-neutral-200"
                             >
                                 <span class="font-semibold"
                                     >{{ lang.name }}:</span
@@ -81,7 +81,7 @@ const copyEmail = () => {
                 <!-- Right: Contact & Quick Info -->
                 <div class="space-y-3 md:col-span-5">
                     <div
-                        class="space-y-3 rounded-xl border border-neutral-200/80 bg-neutral-50 p-5 text-xs dark:border-neutral-800/80 dark:bg-neutral-900"
+                        class="space-y-3 rounded-xl border border-neutral-200/80 bg-neutral-50 p-5 text-xs dark:border-neutral-800/80 dark:bg-neutral-900 shadow-xs shadow-neutral-300 dark:shadow-neutral-700"
                     >
                         <div
                             class="text-[11px] font-semibold tracking-wider text-neutral-900 uppercase dark:text-neutral-400 dark:text-white"

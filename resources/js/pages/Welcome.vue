@@ -138,6 +138,18 @@ onMounted(() => {
                 @copy-email="showToast(`Copied: ${$event}`)"
                 @open-resume="isResumeModalOpen = true"
             />
+
+            <!-- Clean minimalist footer -->
+            <section class="relative p-4 border-t border-neutral-200/80">
+                <div class="mx-auto max-w-4xl">
+                    <footer
+                        class="no-print flex xs:px-2 px-4 items-center justify-between gap-3 text-xs text-neutral-500 sm:flex-rowdark:border-neutral-800/80 dark:text-neutral-400"
+                    >
+                        <div>{{ data.name }} • {{ data.title }}</div>
+                        <div>{{ new Date().getFullYear() }} • Poland</div>
+                    </footer>
+                </div>
+            </section>
         </main>
 
         <!-- Printable Resume Modal -->

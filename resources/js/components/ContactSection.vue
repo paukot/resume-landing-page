@@ -185,16 +185,6 @@ const handleSend = () => {
                     </div>
                 </div>
             </div>
-
-
-
-            <!-- Clean minimalist footer -->
-            <footer
-                class="no-print mt-20 flex flex-col items-center justify-between gap-3 border-t border-neutral-200/80 pt-6 text-xs text-neutral-500 sm:flex-row dark:border-neutral-800/80 dark:text-neutral-400"
-            >
-                <div>{{ data.name }} • {{ data.title }}</div>
-                <div>{{ new Date().getFullYear() }} • Poland</div>
-            </footer>
         </div>
     </section>
 </template>

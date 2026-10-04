@@ -49,8 +49,8 @@ const { t } = useTranslations();
                             >
                                 {{ job.company }}
                                 <span
-                                    class="text-neutral-400 dark:text-neutral-600"
-                                    >•</span
+                                    class="text-neutral-800 dark:text-neutral-300"
+                                    > • </span
                                 >
                                 <span
                                     class="text-xs text-neutral-500 dark:text-neutral-400"
@@ -59,7 +59,7 @@ const { t } = useTranslations();
                             </div>
                         </div>
                         <div
-                            class="mt-1 shrink-0 font-mono text-xs text-neutral-500 sm:mt-0 dark:text-neutral-400"
+                            class="items-center mt-1 shrink-0 font-mono text-neutral-500 sm:mt-0 dark:text-neutral-400"
                         >
                             {{ job.period }}
                         </div>
@@ -93,7 +93,7 @@ const { t } = useTranslations();
                         <span
                             v-for="tech in job.technologies"
                             :key="tech"
-                            class="rounded-md border border-neutral-200/60 bg-neutral-100 px-2 py-0.5 text-[11px] font-medium text-neutral-700 dark:border-neutral-700/60 dark:bg-neutral-800/80 dark:text-neutral-300"
+                            class="rounded-md border shadow-xs shadow-neutral-300 dark:shadow-neutral-700 border-neutral-200/60 bg-neutral-100 px-2 py-0.5 text-[11px] font-medium text-neutral-700 dark:border-neutral-700/60 dark:bg-neutral-800/80 dark:text-neutral-300"
                         >
                             {{ tech }}
                         </span>

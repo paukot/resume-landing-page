@@ -10,7 +10,7 @@ RUN composer install --no-dev --optimize-autoloader --no-interaction
 FROM vendor AS assets
 USER root
 RUN apk add --no-cache nodejs npm
-RUN npm ci && npm run build
+UN npm ci && NODE_OPTIONS=--max-old-space-size=512 npm run build
 
 FROM vendor AS production
 COPY --from=assets --chown=www-data:www-data /var/www/html/public/build ./public/build

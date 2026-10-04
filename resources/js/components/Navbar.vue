@@ -152,7 +152,8 @@ onUnmounted(() => {
                 <!-- CV PDF Button -->
                 <a
                     :href="cvPdfUrl"
-                    download="paulina_kot_php_developer_en.pdf"
+                    target="_blank"
+                    download
                     class="hidden items-center gap-1.5 rounded-lg bg-neutral-900 px-3 py-1.5 text-xs font-medium text-white transition-colors hover:bg-neutral-800 sm:inline-flex dark:bg-white dark:text-neutral-950 dark:hover:bg-neutral-100"
                 >
                     <Download class="w-3.5 h-3.5" />
@@ -201,7 +202,8 @@ onUnmounted(() => {
                 </a>
                 <a
                     :href="cvPdfUrl"
-                    download="paulina_kot_php_developer_en.pdf"
+                    target="_blank"
+                    download
                     class="mt-2 flex items-center justify-center gap-2 rounded-lg bg-neutral-900 py-2 text-xs font-semibold text-white dark:bg-white dark:text-neutral-950"
                 >
                     <Download class="w-4 h-4" />

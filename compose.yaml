@@ -9,14 +9,13 @@ services:
             SERVER_NAME: ${APP_DOMAIN:?Set DOMAIN in .env}
             APP_URL: https://${APP_DOMAIN}
             AUTORUN_ENABLED: "true"
-            PHP_UPLOAD_MAX_FILE_SIZE: "500M"
+            PHP_UPLOAD_MAX_FILE_SIZE: "100M"
             PHP_OPCACHE_ENABLE: "1"
         ports:
             - "80:8080"
             - "443:8443"
             - "443:8443/udp"
         volumes:
-            - ./.env:/var/www/html/.env
             - storage:/var/www/html/storage
         depends_on:
             mysql:

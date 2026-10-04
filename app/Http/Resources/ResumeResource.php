@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Enums\CacheKey;
 use App\Models\Education;
 use App\Models\Experience;
 use App\Models\GeneralInformation;
@@ -40,22 +41,58 @@ class ResumeResource extends JsonResource
             ],
             'cvPdfUrl' => filled($cv) ? Storage::disk('public')->url($cv) : '',
             'languages' => LanguageResource::collection(
-                Language::query()->orderBy('sort_order')->get()
+                Language::hydrate(
+                    (array) cache()->remember(
+                        CacheKey::Languages->value,
+                        now()->addDay(),
+                        fn () => Language::query()->orderBy('sort_order')->get()->map->getAttributes()->all()
+                    )
+                )
             )->resolve(),
             'quickStats' => QuickStatResource::collection(
-                QuickStat::query()->orderBy('sort_order')->get()
+                QuickStat::hydrate(
+                    (array)cache()->remember(
+                        CacheKey::QuickStats->value,
+                        now()->addDay(),
+                        fn() => QuickStat::query()->orderBy('sort_order')->get()->map->getAttributes()->all()
+                    )
+                )
             )->resolve(),
             'experience' => ExperienceResource::collection(
-                Experience::query()->orderBy('sort_order')->get()
+                Experience::hydrate(
+                    (array)cache()->remember(
+                        CacheKey::Experiences->value,
+                        now()->addDay(),
+                        fn() => Experience::query()->orderBy('sort_order')->get()->map->getAttributes()->all()
+                    )
+                )
             )->resolve(),
             'education' => EducationResource::collection(
-                Education::query()->orderBy('sort_order')->get()
+                Education::hydrate(
+                    (array)cache()->remember(
+                        CacheKey::Education->value,
+                        now()->addDay(),
+                        fn() => Education::query()->orderBy('sort_order')->get()->map->getAttributes()->all()
+                    )
+                )
             )->resolve(),
             'skillCategories' => SkillCategoryResource::collection(
-                SkillCategory::query()->orderBy('sort_order')->get()
+                SkillCategory::hydrate(
+                    (array)cache()->remember(
+                        CacheKey::SkillCategories->value,
+                        now()->addDay(),
+                        fn() => SkillCategory::query()->orderBy('sort_order')->get()->map->getAttributes()->all()
+                    )
+                )
             )->resolve(),
             'projects' => ProjectResource::collection(
-                Project::query()->orderBy('sort_order')->get()
+                Project::hydrate(
+                    (array)cache()->remember(
+                        CacheKey::Projects->value,
+                        now()->addDay(),
+                        fn() => Project::query()->orderBy('sort_order')->get()->map->getAttributes()->all()
+                    )
+                )
             )->resolve(),
         ];
     }

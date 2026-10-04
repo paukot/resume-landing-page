@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\CacheKey;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Translatable\HasTranslations;
@@ -33,5 +34,11 @@ class Project extends Model
             'technologies' => 'array',
             'sort_order' => 'integer',
         ];
+    }
+
+    protected static function booted(): void
+    {
+        static::saved(fn () => CacheKey::Projects->forget());
+        static::deleted(fn () => CacheKey::Projects->forget());
     }
 }

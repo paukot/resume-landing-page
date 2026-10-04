@@ -1,7 +1,14 @@
+.git
+.env
+.env.*
+*.sqlite
+
 public/hot
 public/storage
 node_modules
 vendor
-.env
+
 storage/logs
-*.sqlite
+storage/framework/cache/*
+storage/framework/sessions/*
+storage/framework/views/*

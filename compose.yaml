@@ -17,6 +17,44 @@ services:
             - "443:8443/udp"
         volumes:
             - storage:/var/www/html/storage
+        depends_on:
+            mysql:
+                condition: service_healthy
+
+    mysql:
+        image: mysql:8.4
+        restart: unless-stopped
+        mem_limit: 450m
+        environment:
+            MYSQL_DATABASE: ${DB_DATABASE:?Set DB_DATABASE in .env}
+            MYSQL_USER: ${DB_USERNAME:?Set DB_USERNAME in .env}
+            MYSQL_PASSWORD: ${DB_PASSWORD:?Set DB_PASSWORD in .env}
+            MYSQL_RANDOM_ROOT_PASSWORD: "yes"
+        command:
+            - --performance-schema=OFF
+            - --skip-name-resolve
+            - --skip-log-bin
+            - --innodb-buffer-pool-size=128M
+            - --innodb-redo-log-capacity=64M
+            - --innodb-flush-log-at-trx-commit=2
+            - --innodb-flush-method=O_DIRECT
+            - --max-connections=30
+            - --thread-cache-size=8
+            - --table-open-cache=400
+            - --tmp-table-size=16M
+            - --max-heap-table-size=16M
+            - --key-buffer-size=8M
+            - --character-set-server=utf8mb4
+            - --collation-server=utf8mb4_unicode_ci
+        volumes:
+            - mysql-data:/var/lib/mysql
+        healthcheck:
+            test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+            interval: 10s
+            timeout: 5s
+            retries: 10
+            start_period: 30s
 
 volumes:
     storage:
+    mysql-data:

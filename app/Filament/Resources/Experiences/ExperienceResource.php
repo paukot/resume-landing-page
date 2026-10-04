@@ -84,9 +84,9 @@ class ExperienceResource extends Resource
             ->columns([
                 TextColumn::make('role')->wrap(),
                 TextColumn::make('company')->searchable()->wrap(),
-                TextColumn::make('location')->searchable(),
+                TextColumn::make('location')->searchable()->wrap(),
                 TextColumn::make('period')->searchable(),
-                TextColumn::make('technologies')->badge()->limitList(3),
+                TextColumn::make('technologies')->badge()->limitList(3)->wrap(),
                 IconColumn::make('is_current')->label('Current')->boolean(),
             ])
             ->defaultSort('sort_order')

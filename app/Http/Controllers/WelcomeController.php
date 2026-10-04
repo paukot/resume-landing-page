@@ -5,21 +5,16 @@ namespace App\Http\Controllers;
 use App\Enums\CacheKey;
 use App\Http\Resources\ResumeResource;
 use App\Models\GeneralInformation;
+use App\Services\WelcomeService;
 use Inertia\Inertia;
 
 class WelcomeController extends Controller
 {
-    public function __invoke()
+    public function __invoke(WelcomeService $welcomeService)
     {
-        $information = cache()->remember(
-            CacheKey::GeneralInformation->value,
-            now()->addDay(),
-            fn () => GeneralInformation::query()->first()?->getAttributes()
-        );
-
         return Inertia::render('Welcome', [
             'resume' => ResumeResource::make(
-                (new GeneralInformation)->newFromBuilder($information)
+                $welcomeService->getCombinedData()
             )->resolve(),
         ]);
     }

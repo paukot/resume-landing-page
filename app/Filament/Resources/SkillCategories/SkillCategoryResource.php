@@ -60,7 +60,7 @@ class SkillCategoryResource extends Resource
             ->columns([
                 TextColumn::make('name'),
                 TextColumn::make('icon'),
-                TextColumn::make('skills')->badge()->limitList(5),
+                TextColumn::make('skills')->badge()->limitList(5)->wrap(),
             ])
             ->defaultSort('sort_order')
             ->reorderable('sort_order')

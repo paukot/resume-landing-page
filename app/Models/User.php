@@ -3,7 +3,9 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Database\Factories\UserFactory;
+use Filament\Auth\MultiFactor\App\Concerns\InteractsWithAppAuthentication;
+use Filament\Auth\MultiFactor\App\Concerns\InteractsWithAppAuthenticationRecovery;
+use Filament\Auth\MultiFactor\App\Contracts\HasAppAuthentication;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
@@ -19,15 +21,20 @@ use Illuminate\Support\Carbon;
  * @property string $email
  * @property Carbon|null $email_verified_at
  * @property string $password
+ * @property string $app_authentication_secret
+ * @property string $app_authentication_recovery_codes
  * @property string|null $remember_token
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  */
 #[Fillable(['name', 'email', 'password'])]
 #[Hidden(['password', 'remember_token'])]
-class User extends Authenticatable implements FilamentUser
+class User extends Authenticatable implements FilamentUser, HasAppAuthentication
 {
-    use HasFactory, Notifiable;
+    use HasFactory;
+    use Notifiable;
+    use InteractsWithAppAuthentication;
+    use InteractsWithAppAuthenticationRecovery;
 
     protected function casts(): array
     {

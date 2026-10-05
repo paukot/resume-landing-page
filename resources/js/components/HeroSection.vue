@@ -320,6 +320,7 @@ const scrollTo = (selector: string) => {
 
             <!-- Refined Concise Value Statement -->
             <p
+                v-if="data.intro"
                 class="text-sm sm:text-base md:text-lg text-neutral-600 dark:text-neutral-400 mt-4 max-w-xl mx-auto leading-relaxed font-normal"
             >
                 {{ data.intro }}
@@ -328,6 +329,7 @@ const scrollTo = (selector: string) => {
             <!-- Action Buttons -->
             <div class="flex flex-wrap items-center justify-center gap-3 mt-8">
                 <a
+                    v-if="data.cvPdfUrl"
                     :href="data.cvPdfUrl"
                     target="_blank"
                     download

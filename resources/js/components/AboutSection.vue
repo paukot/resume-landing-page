@@ -91,6 +91,7 @@ const copyEmail = () => {
 
                         <!-- Email -->
                         <div
+                            v-if="data.contact.email"
                             class="flex items-center justify-between gap-2 border-b-2 border-neutral-200/60 py-1.5 dark:border-neutral-800/60"
                         >
                             <div
@@ -121,6 +122,7 @@ const copyEmail = () => {
 
                         <!-- Phone -->
                         <div
+                            v-if="data.contact.phone"
                             class="flex items-center justify-between gap-2 border-b-2 border-neutral-200/60 py-1.5 dark:border-neutral-800/60"
                         >
                             <div
@@ -139,6 +141,7 @@ const copyEmail = () => {
 
                         <!-- Location -->
                         <div
+                            v-if="data.contact.location"
                             class="flex items-center justify-between gap-2 border-b-2 border-neutral-200/60 py-1.5 dark:border-neutral-800/60"
                         >
                             <div
@@ -156,12 +159,13 @@ const copyEmail = () => {
 
                         <!-- LinkedIn -->
                         <div
-                            class="flex items-center justify-between gap-2 py-1.5"
+                            v-if="data.contact.github"
+                            class="flex items-center justify-between gap-2 border-b-2 border-neutral-200/60 py-1.5 dark:border-neutral-800/60"
                         >
                             <div
                                 class="flex items-center gap-2 text-neutral-600 dark:text-neutral-400"
                             >
-                                <LinkedinIcon class="w-3.5 h-3.5" />
+                                <GithubIcon class="w-3.5 h-3.5" />
                                 <span>{{ t('linkedin') }}</span>
                             </div>
                             <a
@@ -171,10 +175,26 @@ const copyEmail = () => {
                                 class="inline-flex items-center gap-1 font-medium text-neutral-900 hover:underline dark:text-neutral-100"
                             >
                                 <span>{{ data.contact.github }}</span>
-                                <GithubIcon
-                                    name="external-link"
-                                    class="w-3 h-3 text-neutral-400"
-                                />
+                            </a>
+                        </div>
+
+                        <div
+                            v-if="data.contact.linkedin"
+                            class="flex items-center justify-between gap-2 py-1.5"
+                        >
+                            <div
+                                class="flex items-center gap-2 text-neutral-600 dark:text-neutral-400"
+                            >
+                                <LinkedinIcon class="w-3.5 h-3.5" />
+                                <span>{{ t('github') }}</span>
+                            </div>
+                            <a
+                                :href="data.contact.linkedin"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                class="inline-flex items-center gap-1 font-medium text-neutral-900 hover:underline dark:text-neutral-100"
+                            >
+                                <span>{{ data.contact.github }}</span>
                             </a>
                         </div>
                     </div>

@@ -32,6 +32,7 @@ return [
 
     'email' => 'Email',
     'phone' => 'Phone',
+    'github' => 'Github',
     'download_cv' => 'Download CV',
     'message_me' => 'Message Me',
     'location' => 'Location',

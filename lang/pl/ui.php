@@ -31,6 +31,7 @@ return [
 
     'email' => 'E-mail',
     'phone' => 'Telefon',
+    'github' => 'Github',
     'download_cv' => 'Pobierz CV',
     'message_me' => 'Napisz do mnie',
     'location' => 'Lokalizacja',

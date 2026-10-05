@@ -31,6 +31,11 @@ const { t } = useTranslations();
                 >
                     <!-- Timeline Marker -->
                     <div
+                        v-if="job.isCurrent"
+                        class="absolute top-1.5 -left-2.25 h-4 w-4 rounded-full border-2 border-green-400 bg-white transition-colors group-hover:border-green-700 dark:border-green-800 dark:bg-green-950 dark:group-hover:border-green-400"
+                    />
+                    <div
+                        v-else
                         class="absolute top-1.5 -left-2.25 h-4 w-4 rounded-full border-2 border-neutral-400 bg-white transition-colors group-hover:border-neutral-900 dark:border-neutral-600 dark:bg-neutral-950 dark:group-hover:border-white"
                     />
 

@@ -33,9 +33,9 @@ use Illuminate\Support\Carbon;
 class User extends Authenticatable implements FilamentUser, HasAppAuthentication, HasAppAuthenticationRecovery
 {
     use HasFactory;
-    use Notifiable;
     use InteractsWithAppAuthentication;
     use InteractsWithAppAuthenticationRecovery;
+    use Notifiable;
 
     protected function casts(): array
     {

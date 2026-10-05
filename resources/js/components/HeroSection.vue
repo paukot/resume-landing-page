@@ -2,10 +2,9 @@
 import { ref, onMounted, onUnmounted, watch } from 'vue';
 import type { ResumeData } from '@/types/resume';
 import Icon from './icons/Icon.vue';
-import {useTranslations} from "@/composables/useTranslations";
+import { useTranslations } from "@/composables/useTranslations";
 import LinkedinIcon from "@/components/icons/LinkedinIcon.vue";
-import {ChevronDown, Download, Mail} from "lucide-vue-next";
-
+import { ChevronDown, Download, Mail } from "lucide-vue-next";
 
 const props = defineProps<{
     data: ResumeData;
@@ -37,6 +36,7 @@ let animationFrameId: number | null = null;
 let isVisible = true;
 let width = 0;
 let height = 0;
+let lastWidth = 0; // Tracks width to prevent mobile URL bar resize glitch
 
 // Mouse tracking with smooth lerp
 const mouse = {
@@ -57,17 +57,17 @@ const initParticles = () => {
 
     const colors = props.isDark
         ? [
-              'rgba(52, 211, 153, ', // emerald-400
-              'rgba(56, 189, 248, ', // sky-400
-              'rgba(167, 139, 250, ', // violet-400
-              'rgba(244, 244, 245, ', // neutral-100
-          ]
+            'rgba(52, 211, 153, ', // emerald-400
+            'rgba(56, 189, 248, ', // sky-400
+            'rgba(167, 139, 250, ', // violet-400
+            'rgba(244, 244, 245, ', // neutral-100
+        ]
         : [
-              'rgba(16, 185, 129, ', // emerald-500
-              'rgba(14, 165, 233, ', // sky-500
-              'rgba(124, 58, 237, ', // violet-600
-              'rgba(15, 23, 42, ', // slate-900
-          ];
+            'rgba(16, 185, 129, ', // emerald-500
+            'rgba(14, 165, 233, ', // sky-500
+            'rgba(124, 58, 237, ', // violet-600
+            'rgba(15, 23, 42, ', // slate-900
+        ];
 
     particles = [];
     for (let i = 0; i < count; i++) {
@@ -86,6 +86,15 @@ const initParticles = () => {
 const handleResize = () => {
     if (!canvasRef.value || !heroSectionRef.value) return;
     const rect = heroSectionRef.value.getBoundingClientRect();
+
+    // OPTIMIZATION: On mobile, scrolling hides the address bar, triggering a resize event.
+    // If the width hasn't changed, and the height change is small, IGNORE the resize
+    // to prevent the canvas from clearing and causing lag.
+    if (lastWidth === rect.width && Math.abs(height - rect.height) < 150) {
+        return;
+    }
+
+    lastWidth = rect.width;
     width = rect.width;
     height = rect.height;
 
@@ -95,7 +104,7 @@ const handleResize = () => {
     canvasRef.value.style.width = `${width}px`;
     canvasRef.value.style.height = `${height}px`;
 
-    const ctx = canvasRef.value.getContext('2d');
+    const ctx = canvasRef.value.getContext('2d', { alpha: true });
     if (ctx) {
         ctx.scale(dpr, dpr);
     }
@@ -116,20 +125,6 @@ const handleMouseLeave = () => {
     mouse.targetY = -1000;
 };
 
-const handleTouchMove = (e: TouchEvent) => {
-    if (!heroSectionRef.value || e.touches.length === 0) return;
-    const rect = heroSectionRef.value.getBoundingClientRect();
-    mouse.targetX = e.touches[0].clientX - rect.left;
-    mouse.targetY = e.touches[0].clientY - rect.top;
-    mouse.active = true;
-};
-
-const handleTouchEnd = () => {
-    mouse.active = false;
-    mouse.targetX = -1000;
-    mouse.targetY = -1000;
-};
-
 const render = () => {
     if (!isVisible || !canvasRef.value) {
         animationFrameId = requestAnimationFrame(render);
@@ -139,22 +134,18 @@ const render = () => {
     const ctx = canvasRef.value.getContext('2d');
     if (!ctx) return;
 
-    // Smooth lerp mouse coordinates
+    // Smooth mouse coordinates
     mouse.x += (mouse.targetX - mouse.x) * 0.12;
     mouse.y += (mouse.targetY - mouse.y) * 0.12;
 
     ctx.clearRect(0, 0, width, height);
 
-    // Draw ambient cursor glow spotlight
-    if (mouse.active || mouse.x > 0) {
+    // Draw ambient cursor glow spotlight if mouse is active
+    if (mouse.active) {
         const glowRadius = width < 640 ? 180 : 260;
         const glowGradient = ctx.createRadialGradient(
-            mouse.x,
-            mouse.y,
-            0,
-            mouse.x,
-            mouse.y,
-            glowRadius,
+            mouse.x, mouse.y, 0,
+            mouse.x, mouse.y, glowRadius,
         );
         if (props.isDark) {
             glowGradient.addColorStop(0, 'rgba(52, 211, 153, 0.18)');
@@ -177,17 +168,14 @@ const render = () => {
     for (let i = 0; i < particles.length; i++) {
         const p = particles[i];
 
-        // Particle position update
         p.x += p.vx;
         p.y += p.vy;
 
-        // Wrap around boundaries smoothly
         if (p.x < 0) p.x = width;
         if (p.x > width) p.x = 0;
         if (p.y < 0) p.y = height;
         if (p.y > height) p.y = 0;
 
-        // Mouse proximity reaction (gentle magnetic push/pull)
         if (mouse.active) {
             const dx = mouse.x - p.x;
             const dy = mouse.y - p.y;
@@ -200,13 +188,11 @@ const render = () => {
             }
         }
 
-        // Draw particle dot
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
         ctx.fillStyle = `${p.color}${p.baseAlpha})`;
         ctx.fill();
 
-        // Connect nearby particles
         for (let j = i + 1; j < particles.length; j++) {
             const p2 = particles[j];
             const dx = p.x - p2.x;
@@ -230,7 +216,6 @@ const render = () => {
     animationFrameId = requestAnimationFrame(render);
 };
 
-// Intersection Observer: Pause canvas when hero is out of view (saves 100% battery)
 let observer: IntersectionObserver | null = null;
 
 onMounted(() => {
@@ -238,10 +223,9 @@ onMounted(() => {
     window.addEventListener('resize', handleResize, { passive: true });
 
     if (heroSectionRef.value) {
+        // Desktop mouse tracking only. Removed touch events for mobile scrolling performance.
         heroSectionRef.value.addEventListener('mousemove', handleMouseMove, { passive: true });
         heroSectionRef.value.addEventListener('mouseleave', handleMouseLeave, { passive: true });
-        heroSectionRef.value.addEventListener('touchmove', handleTouchMove, { passive: true });
-        heroSectionRef.value.addEventListener('touchend', handleTouchEnd, { passive: true });
 
         observer = new IntersectionObserver(
             ([entry]) => {
@@ -262,8 +246,6 @@ onUnmounted(() => {
     if (heroSectionRef.value) {
         heroSectionRef.value.removeEventListener('mousemove', handleMouseMove);
         heroSectionRef.value.removeEventListener('mouseleave', handleMouseLeave);
-        heroSectionRef.value.removeEventListener('touchmove', handleTouchMove);
-        heroSectionRef.value.removeEventListener('touchend', handleTouchEnd);
     }
 });
 
@@ -286,30 +268,24 @@ const scrollTo = (selector: string) => {
     <section
         id="hero"
         ref="heroSectionRef"
-        class="relative min-h-[calc(100vh-65px)] flex flex-col justify-center items-center text-center px-4 sm:px-6 lg:px-8 overflow-hidden border-b-2 border-neutral-200/80 dark:border-neutral-800/80 cursor-default select-none"
+        class="relative min-h-[calc(100svh-65px)] flex flex-col justify-center items-center text-center px-4 sm:px-6 lg:px-8 overflow-hidden border-b-2 border-neutral-200/80 dark:border-neutral-800/80 cursor-default select-none"
     >
-        <!-- Interactive Reactive Canvas Background -->
         <canvas
             ref="canvasRef"
             class="absolute inset-0 pointer-events-none z-0"
         />
 
-        <!-- Soft Radiant Ambient Aura Behind Text -->
         <div
             class="pointer-events-none absolute inset-0 z-0 bg-radial from-emerald-100/30 via-transparent to-transparent dark:from-emerald-950/20 dark:via-transparent dark:to-transparent"
         />
 
-        <!-- Hero Content: Simple, Focused, Monumental -->
         <div class="relative z-10 max-w-3xl mx-auto py-12 sm:py-16">
-
-            <!-- Monumental Name Headline -->
             <h1
                 class="text-5xl sm:text-7xl md:text-8xl font-black tracking-tight text-neutral-950 dark:text-white leading-[1.05]"
             >
                 {{ data.name }}
             </h1>
 
-            <!-- Subtitle -->
             <p
                 class="text-xl sm:text-2xl md:text-3xl font-semibold tracking-tight text-neutral-800 dark:text-neutral-200 mt-4"
             >
@@ -318,7 +294,6 @@ const scrollTo = (selector: string) => {
                 </span>
             </p>
 
-            <!-- Refined Concise Value Statement -->
             <p
                 v-if="data.intro"
                 class="text-sm sm:text-base md:text-lg text-neutral-600 dark:text-neutral-400 mt-4 max-w-xl mx-auto leading-relaxed font-normal"
@@ -326,7 +301,6 @@ const scrollTo = (selector: string) => {
                 {{ data.intro }}
             </p>
 
-            <!-- Action Buttons -->
             <div class="flex flex-wrap items-center justify-center gap-3 mt-8">
                 <a
                     v-if="data.cvPdfUrl"
@@ -359,7 +333,6 @@ const scrollTo = (selector: string) => {
                 </a>
             </div>
 
-            <!-- Floating / Animated Stats Banner -->
             <div
                 v-if="data.quickStats?.length"
                 class="mt-8 grid max-w-4xl auto-cols-fr sm:grid-flow-col gap-3 rounded-2xl p-4 sm:gap-4 sm:p-5"
@@ -367,32 +340,23 @@ const scrollTo = (selector: string) => {
                 <div
                     v-for="(stat, index) in data.quickStats"
                     :key="index"
-                    class="relative flex flex-col items-center justify-center rounded-xl p-2.5
-                        after:absolute after:top-1/4 after:-right-1.5 after:h-1/2 after:w-0.5 after:rounded-full after:bg-neutral-300 sm:after:-right-2 dark:after:bg-neutral-700
-                        max-md:even:after:hidden max-md:last:after:hidden md:last:after:hidden"
+                    class="relative flex flex-col items-center justify-center rounded-xl p-2.5 max-md:even:after:hidden max-md:last:after:hidden md:last:after:hidden"
                 >
                     <div
                         class="bg-linear-to-r from-violet-600 to-indigo-600 bg-clip-text text-2xl font-extrabold tracking-tight text-transparent sm:text-3xl dark:from-violet-400 dark:to-indigo-300"
                     >
                         {{ stat.value }}
                     </div>
-                    <div
-                        class="mt-0.5 text-xs font-semibold text-neutral-800 dark:text-neutral-200"
-                    >
+                    <div class="mt-0.5 text-xs font-semibold text-neutral-800 dark:text-neutral-200">
                         {{ stat.label }}
                     </div>
-                    <div
-                        class="mt-0.5 hidden text-center text-[11px] text-neutral-500 sm:block dark:text-neutral-400"
-                    >
+                    <div class="mt-0.5 hidden text-center text-[11px] text-neutral-500 sm:block dark:text-neutral-400">
                         {{ stat.description }}
                     </div>
                 </div>
             </div>
-
-
         </div>
 
-        <!-- Scroll down indicator -->
         <div class="absolute bottom-4 inset-x-0 flex justify-center z-10 pointer-events-auto">
             <button
                 type="button"

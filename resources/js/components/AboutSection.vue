@@ -194,7 +194,7 @@ const copyEmail = () => {
                                 rel="noopener noreferrer"
                                 class="inline-flex items-center gap-1 font-medium text-neutral-900 hover:underline dark:text-neutral-100"
                             >
-                                <span>{{ data.contact.github }}</span>
+                                <span>{{ data.contact.linkedin }}</span>
                             </a>
                         </div>
                     </div>

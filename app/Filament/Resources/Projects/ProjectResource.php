@@ -88,9 +88,9 @@ class ProjectResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('title')->searchable()->wrap(),
-                TextColumn::make('category'),
-                TextColumn::make('github_url'),
-                TextColumn::make('technologies')->badge()->limitList(3),
+                TextColumn::make('category')->wrap(),
+                TextColumn::make('github_url')->wrap(),
+                TextColumn::make('technologies')->badge()->limitList(3)->wrap(),
                 IconColumn::make('featured')->boolean(),
             ])
             ->defaultSort('sort_order')

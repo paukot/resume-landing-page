@@ -39,7 +39,7 @@ return [
     'linkedin' => 'LinkedIn',
     'scroll' => 'Scroll',
     'languages' => 'Languages',
-    'featured' => 'Languages',
+    'featured' => 'Featured',
     'code' => 'Code',
     'fast_response' => 'Code',
     'message_on_linkedin' => 'Message on LinkedIn',

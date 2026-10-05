@@ -46,7 +46,7 @@ class GeneralInformationResource extends Resource
                         ->label('CV')
                         ->nullable()
                         ->disk('public')
-                        ->directory("cv\{$locale}")
+                        ->directory("cv\\$locale")
                         ->visibility('public')
                         ->preserveFilenames()
                         ->acceptedFileTypes(['application/pdf']),

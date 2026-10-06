@@ -24,7 +24,7 @@ return [
     ],
 
     'contact' => [
-        'message_me_email_or_linkedin' => 'Message me email or LinkedIn',
+        'message_me_email_or_linkedin' => 'Message me on email or LinkedIn',
         'reach_out_description' => 'Whether you have an open Backend PHP / Laravel position, an engineering project, or would like to connect professionally, feel free to reach out through your preferred channel.',
         'linkedin_details' => 'Best for direct recruitment inquiries, networking, and message discussions.',
         'email_details' => 'Send project briefs, job descriptions, or schedule technical interviews.',
@@ -41,7 +41,7 @@ return [
     'languages' => 'Languages',
     'featured' => 'Featured',
     'code' => 'Code',
-    'fast_response' => 'Code',
+    'fast_response' => 'Fast Response',
     'message_on_linkedin' => 'Message on LinkedIn',
     'direct_inbox' => 'Direct Inbox',
     'send_email' => 'Send Email',

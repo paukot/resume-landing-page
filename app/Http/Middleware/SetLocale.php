@@ -11,7 +11,11 @@ class SetLocale
     public function handle(Request $request, Closure $next): Response
     {
         $allowedLocales = config('app.locales');
-        $requestedLocale = $request->query('lang', config('app.locale'));
+        $requestedLocale = session('locale');
+
+        if (! empty($requestedLocale)) {
+            $requestedLocale = $request->getPreferredLanguage(array_keys($allowedLocales));
+        }
 
         if (! array_key_exists($requestedLocale, $allowedLocales)) {
             $requestedLocale = config('app.locale');

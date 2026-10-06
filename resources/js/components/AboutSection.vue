@@ -157,7 +157,7 @@ const copyEmail = () => {
                             </span>
                         </div>
 
-                        <!-- LinkedIn -->
+                        <!-- Github -->
                         <div
                             v-if="data.contact.github"
                             class="flex items-center justify-between gap-2 border-b-2 border-neutral-200/60 py-1.5 dark:border-neutral-800/60"
@@ -166,10 +166,10 @@ const copyEmail = () => {
                                 class="flex items-center gap-2 text-neutral-600 dark:text-neutral-400"
                             >
                                 <GithubIcon class="w-3.5 h-3.5" />
-                                <span>{{ t('linkedin') }}</span>
+                                <span>{{ t('github') }}</span>
                             </div>
                             <a
-                                :href="data.contact.linkedin"
+                                :href="data.contact.github"
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 class="inline-flex items-center gap-1 font-medium text-neutral-900 hover:underline dark:text-neutral-100"
@@ -178,6 +178,7 @@ const copyEmail = () => {
                             </a>
                         </div>
 
+                        <!-- Linkedin -->
                         <div
                             v-if="data.contact.linkedin"
                             class="flex items-center justify-between gap-2 py-1.5"
@@ -186,7 +187,7 @@ const copyEmail = () => {
                                 class="flex items-center gap-2 text-neutral-600 dark:text-neutral-400"
                             >
                                 <LinkedinIcon class="w-3.5 h-3.5" />
-                                <span>{{ t('github') }}</span>
+                                <span>{{ t('linkedin') }}</span>
                             </div>
                             <a
                                 :href="data.contact.linkedin"

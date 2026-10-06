@@ -28,6 +28,12 @@ php artisan key:generate
 # Run migrations and link storage
 php artisan migrate
 php artisan storage:link
+
+#Built frontend
+npm run build
+
+# Create filament user
+php artisan filament:user
 ```
  That's all, you can run `php artisan dev` to run app in dev mode.
 

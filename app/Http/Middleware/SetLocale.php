@@ -11,9 +11,9 @@ class SetLocale
     public function handle(Request $request, Closure $next): Response
     {
         $allowedLocales = config('app.locales');
-        $requestedLocale = session('locale');
+        $requestedLocale = \request('lang');
 
-        if (! empty($requestedLocale)) {
+        if (empty($requestedLocale)) {
             $requestedLocale = $request->getPreferredLanguage(array_keys($allowedLocales));
         }
 

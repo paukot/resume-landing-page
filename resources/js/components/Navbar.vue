@@ -151,6 +151,7 @@ onUnmounted(() => {
 
                 <!-- CV PDF Button -->
                 <a
+                    v-if="cvPdfUrl"
                     :href="cvPdfUrl"
                     target="_blank"
                     download

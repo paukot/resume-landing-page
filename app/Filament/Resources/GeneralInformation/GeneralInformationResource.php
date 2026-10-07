@@ -35,7 +35,7 @@ class GeneralInformationResource extends Resource
         return $schema
             ->components([
                 TextInput::make('name')->required(),
-                TextInput::make('phone')->required(),
+                TextInput::make('phone')->nullable(),
 
                 LocaleTabs::make(fn (string $locale): array => [
                     TextInput::make("title.$locale")
@@ -52,7 +52,7 @@ class GeneralInformationResource extends Resource
                         ->acceptedFileTypes(['application/pdf']),
                     Textarea::make("intro.$locale")
                         ->label('Intro')
-                        ->required()
+                        ->nullable()
                         ->maxLength(512)
                         ->rows(2),
                     Textarea::make("summary.$locale")

@@ -12,8 +12,7 @@ services:
             APP_URL: https://${APP_DOMAIN:?Set APP_DOMAIN in .env}
 
             # --- Domain + automatic HTTPS (Caddy / Let's Encrypt) ---
-            CADDY_AUTO_HTTPS: "on"
-            CADDY_HTTPS_SERVER_ADDRESS: https://${APP_DOMAIN}
+            CADDY_AUTO_HTTPS: "off"
             SSL_MODE: "full"
 
             # --- Laravel automations on every container start ---

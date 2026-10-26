@@ -10,6 +10,8 @@ without touching the codebase.
 
 <img src="public/readme/1.jpg" alt="main landing page image" width="80%" style="display: block; max-width: 600px; margin-left: auto; margin-right: auto;">
 
+#### Note: On first run in production there will be created admin user for filament dashboard on admin@example.com and password: password that can be easily changed in the panel
+
 # Installation
 ```bash
 git clone https://github.com/paukot/resume-landing-page

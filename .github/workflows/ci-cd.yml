@@ -54,7 +54,10 @@ jobs:
         run: composer ci:check
 
       - name: Verify Docker Build
-        run: docker compose build
+        run: |
+          cp .env.docker.example .env
+          php artisan key:generate --force
+          docker compose build
 
   deploy:
     name: "Deploy to Cloud Server"

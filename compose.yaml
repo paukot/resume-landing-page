@@ -8,8 +8,8 @@ services:
         restart: unless-stopped
         env_file: .env
         environment:
-            APP_KEY: ${APP_KEY:?Set APP_KEY in .env}
-            APP_URL: https://${APP_DOMAIN:?Set APP_DOMAIN in .env}
+            APP_KEY: ${APP_KEY:-}
+            APP_URL: ${APP_URL:-https://${APP_DOMAIN:-localhost}}
 
             # --- Domain + automatic HTTPS (Caddy / Let's Encrypt) ---
             CADDY_AUTO_HTTPS: 'off'

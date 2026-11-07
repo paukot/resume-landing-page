@@ -9,7 +9,6 @@ use BackedEnum;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
-use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
@@ -21,6 +20,8 @@ class GeneralInformationResource extends Resource
     protected static ?string $slug = 'general-information';
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedInformationCircle;
+
+    protected static \UnitEnum|string|null $navigationGroup = 'Settings';
 
     protected static ?int $navigationSort = 1;
 

@@ -1,12 +1,10 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import type { ResumeData } from '@/types/resume';
-import Icon from './icons/Icon.vue';
-import {useTranslations} from "@/composables/useTranslations";
-import {Mail, Check, Copy, Smartphone, MapPin} from "lucide-vue-next";
-import LinkedinIcon from "@/components/icons/LinkedinIcon.vue";
-import GithubIcon from "@/components/icons/GithubIcon.vue";
-import {Link} from "@inertiajs/vue3";
+import { useTranslations } from '@/composables/useTranslations';
+import { Mail, Check, Copy, Smartphone, MapPin } from 'lucide-vue-next';
+import LinkedinIcon from '@/components/icons/LinkedinIcon.vue';
+import GithubIcon from '@/components/icons/GithubIcon.vue';
 
 const props = defineProps<{
     data: ResumeData;
@@ -37,10 +35,8 @@ const copyEmail = () => {
     >
         <div class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
             <div
-                class="mb-6 flex items-center gap-2 text-xs font-semibold tracking-wider text-neutral-500 uppercase dark:text-neutral-400"
+                class="mb-6 text-xs font-semibold tracking-wider text-neutral-500 uppercase dark:text-neutral-400"
             >
-                <span>01</span>
-                <span>/</span>
                 <span>{{ t('section.about_and_contact') }}</span>
             </div>
 
@@ -64,7 +60,7 @@ const copyEmail = () => {
                             <span
                                 v-for="lang in data.languages"
                                 :key="lang.name"
-                                class="inline-flex items-center gap-1.5 rounded-md bg-neutral-100 shadow-xs shadow-neutral-300 dark:shadow-neutral-700v px-3 py-1 text-xs font-medium text-neutral-800 dark:bg-neutral-800 dark:text-neutral-200"
+                                class="inline-flex items-center gap-1.5 rounded-md bg-neutral-100 px-3 py-1 text-xs font-medium text-neutral-800 shadow-xs shadow-neutral-300 dark:bg-neutral-800 dark:text-neutral-200 dark:shadow-neutral-700"
                             >
                                 <span class="font-semibold"
                                     >{{ lang.name }}:</span
@@ -81,10 +77,10 @@ const copyEmail = () => {
                 <!-- Right: Contact & Quick Info -->
                 <div class="space-y-3 md:col-span-5">
                     <div
-                        class="space-y-3 rounded-xl border border-neutral-200/80 bg-neutral-50 p-5 text-xs dark:border-neutral-800/80 dark:bg-neutral-900 shadow-xs shadow-neutral-300 dark:shadow-neutral-700"
+                        class="space-y-3 rounded-xl border border-neutral-200/80 bg-neutral-50 p-5 text-xs shadow-xs shadow-neutral-300 dark:border-neutral-800/80 dark:bg-neutral-900 dark:shadow-neutral-700"
                     >
                         <div
-                            class="text-[11px] font-semibold tracking-wider text-neutral-900 uppercase dark:text-neutral-400 dark:text-white"
+                            class="text-[11px] font-semibold tracking-wider text-neutral-900 uppercase dark:text-neutral-300"
                         >
                             {{ t('about.direct_contact_details') }}
                         </div>
@@ -97,7 +93,7 @@ const copyEmail = () => {
                             <div
                                 class="flex items-center gap-2 text-neutral-600 dark:text-neutral-400"
                             >
-                                <Mail class="w-3.5 h-3.5" />
+                                <Mail class="h-3.5 w-3.5" />
                                 <span>{{ t('email') }}</span>
                             </div>
                             <div
@@ -115,7 +111,10 @@ const copyEmail = () => {
                                     class="cursor-pointer rounded p-1 text-neutral-400 transition-colors hover:bg-neutral-200 hover:text-neutral-900 dark:hover:bg-neutral-800 dark:hover:text-white"
                                     title="Copy email"
                                 >
-                                    <component :is="copied ? Check : Copy" class="h-3.5 w-3.5" />
+                                    <component
+                                        :is="copied ? Check : Copy"
+                                        class="h-3.5 w-3.5"
+                                    />
                                 </button>
                             </div>
                         </div>
@@ -128,7 +127,7 @@ const copyEmail = () => {
                             <div
                                 class="flex items-center gap-2 text-neutral-600 dark:text-neutral-400"
                             >
-                                <Smartphone class="w-3.5 h-3.5" />
+                                <Smartphone class="h-3.5 w-3.5" />
                                 <span>{{ t('phone') }}</span>
                             </div>
                             <a
@@ -147,7 +146,7 @@ const copyEmail = () => {
                             <div
                                 class="flex items-center gap-2 text-neutral-600 dark:text-neutral-400"
                             >
-                                <MapPin class="w-3.5 h-3.5" />
+                                <MapPin class="h-3.5 w-3.5" />
                                 <span>{{ t('location') }}</span>
                             </div>
                             <span
@@ -165,7 +164,7 @@ const copyEmail = () => {
                             <div
                                 class="flex items-center gap-2 text-neutral-600 dark:text-neutral-400"
                             >
-                                <GithubIcon class="w-3.5 h-3.5" />
+                                <GithubIcon class="h-3.5 w-3.5" />
                                 <span>{{ t('github') }}</span>
                             </div>
                             <a
@@ -186,7 +185,7 @@ const copyEmail = () => {
                             <div
                                 class="flex items-center gap-2 text-neutral-600 dark:text-neutral-400"
                             >
-                                <LinkedinIcon class="w-3.5 h-3.5" />
+                                <LinkedinIcon class="h-3.5 w-3.5" />
                                 <span>{{ t('linkedin') }}</span>
                             </div>
                             <a

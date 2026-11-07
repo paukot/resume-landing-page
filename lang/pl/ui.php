@@ -50,4 +50,11 @@ return [
     'poland' => 'Polska',
     'polish' => 'Polski',
     'english' => 'Angielski',
+    'download_pdf' => 'Pobierz PDF',
+    'resume_preview' => 'Podgląd Curriculum Vitae',
+    'print' => 'Drukuj',
+    'view_full_image' => 'Kliknij, aby powiększyć',
+    'close_full_view' => 'Zamknij pełny widok',
+    'previous_image' => 'Poprzednie zdjęcie',
+    'next_image' => 'Następne zdjęcie',
 ];

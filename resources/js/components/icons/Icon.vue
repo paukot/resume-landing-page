@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, type Component } from 'vue';
+import { computed, useAttrs, type Component } from 'vue';
 import {
     ArrowRight,
     Award,
@@ -120,22 +120,24 @@ const icons: Record<string, Component> = {
     search: Search,
 };
 
-const props = withDefaults(
-    defineProps<{
-        name?: string | null;
-        className?: string;
-    }>(),
-    {
-        name: null,
-        className: 'w-4 h-4',
-    },
-);
+const attrs = useAttrs();
+
+const props = defineProps<{
+    name?: string | null;
+    className?: string;
+}>();
 
 const icon = computed<Component>(
     () => icons[props.name?.toLowerCase().trim() ?? ''] ?? CircleAlert,
 );
+
+const defaultClasses = computed(() => {
+    if (props.className) return props.className;
+    if (attrs.class) return '';
+    return 'w-4 h-4';
+});
 </script>
 
 <template>
-    <component :is="icon" :class="className" aria-hidden="true" />
+    <component :is="icon" :class="defaultClasses" aria-hidden="true" />
 </template>

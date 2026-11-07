@@ -4,7 +4,10 @@ namespace Database\Factories\Concerns;
 
 trait HasHighlights
 {
-    private function generateHighlights($amount): array
+    /**
+     * @return list<array<string, string>>
+     */
+    private function generateHighlights(int $amount = 3): array
     {
         $highlights = [];
 

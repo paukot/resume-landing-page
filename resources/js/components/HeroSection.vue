@@ -1,10 +1,9 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted, watch } from 'vue';
+import { ref, computed, onMounted, onUnmounted, watch } from 'vue';
 import type { ResumeData } from '@/types/resume';
-import Icon from './icons/Icon.vue';
-import { useTranslations } from "@/composables/useTranslations";
-import LinkedinIcon from "@/components/icons/LinkedinIcon.vue";
-import { ChevronDown, Download, Mail } from "lucide-vue-next";
+import { useTranslations } from '@/composables/useTranslations';
+import LinkedinIcon from '@/components/icons/LinkedinIcon.vue';
+import { ChevronDown, Download, Mail } from 'lucide-vue-next';
 
 const props = defineProps<{
     data: ResumeData;
@@ -12,11 +11,6 @@ const props = defineProps<{
 }>();
 
 const { t } = useTranslations();
-
-defineEmits<{
-    (e: 'copy-email', email: string): void;
-    (e: 'open-resume'): void;
-}>();
 
 // Canvas & Particle animation state
 const canvasRef = ref<HTMLCanvasElement | null>(null);
@@ -57,17 +51,17 @@ const initParticles = () => {
 
     const colors = props.isDark
         ? [
-            'rgba(52, 211, 153, ', // emerald-400
-            'rgba(56, 189, 248, ', // sky-400
-            'rgba(167, 139, 250, ', // violet-400
-            'rgba(244, 244, 245, ', // neutral-100
-        ]
+              'rgba(52, 211, 153, ', // emerald-400
+              'rgba(56, 189, 248, ', // sky-400
+              'rgba(167, 139, 250, ', // violet-400
+              'rgba(244, 244, 245, ', // neutral-100
+          ]
         : [
-            'rgba(16, 185, 129, ', // emerald-500
-            'rgba(14, 165, 233, ', // sky-500
-            'rgba(124, 58, 237, ', // violet-600
-            'rgba(15, 23, 42, ', // slate-900
-        ];
+              'rgba(16, 185, 129, ', // emerald-500
+              'rgba(14, 165, 233, ', // sky-500
+              'rgba(124, 58, 237, ', // violet-600
+              'rgba(15, 23, 42, ', // slate-900
+          ];
 
     particles = [];
     for (let i = 0; i < count; i++) {
@@ -144,8 +138,12 @@ const render = () => {
     if (mouse.active) {
         const glowRadius = width < 640 ? 180 : 260;
         const glowGradient = ctx.createRadialGradient(
-            mouse.x, mouse.y, 0,
-            mouse.x, mouse.y, glowRadius,
+            mouse.x,
+            mouse.y,
+            0,
+            mouse.x,
+            mouse.y,
+            glowRadius,
         );
         if (props.isDark) {
             glowGradient.addColorStop(0, 'rgba(52, 211, 153, 0.18)');
@@ -200,7 +198,8 @@ const render = () => {
             const dist = Math.sqrt(dx * dx + dy * dy);
 
             if (dist < lineDistance) {
-                const alpha = (1 - dist / lineDistance) * (props.isDark ? 0.22 : 0.16);
+                const alpha =
+                    (1 - dist / lineDistance) * (props.isDark ? 0.22 : 0.16);
                 ctx.beginPath();
                 ctx.moveTo(p.x, p.y);
                 ctx.lineTo(p2.x, p2.y);
@@ -224,8 +223,12 @@ onMounted(() => {
 
     if (heroSectionRef.value) {
         // Desktop mouse tracking only. Removed touch events for mobile scrolling performance.
-        heroSectionRef.value.addEventListener('mousemove', handleMouseMove, { passive: true });
-        heroSectionRef.value.addEventListener('mouseleave', handleMouseLeave, { passive: true });
+        heroSectionRef.value.addEventListener('mousemove', handleMouseMove, {
+            passive: true,
+        });
+        heroSectionRef.value.addEventListener('mouseleave', handleMouseLeave, {
+            passive: true,
+        });
 
         observer = new IntersectionObserver(
             ([entry]) => {
@@ -242,10 +245,14 @@ onMounted(() => {
 onUnmounted(() => {
     if (animationFrameId) cancelAnimationFrame(animationFrameId);
     window.removeEventListener('resize', handleResize);
-    if (observer && heroSectionRef.value) observer.unobserve(heroSectionRef.value);
+    if (observer && heroSectionRef.value)
+        observer.unobserve(heroSectionRef.value);
     if (heroSectionRef.value) {
         heroSectionRef.value.removeEventListener('mousemove', handleMouseMove);
-        heroSectionRef.value.removeEventListener('mouseleave', handleMouseLeave);
+        heroSectionRef.value.removeEventListener(
+            'mouseleave',
+            handleMouseLeave,
+        );
     }
 });
 
@@ -262,63 +269,84 @@ const scrollTo = (selector: string) => {
         el.scrollIntoView({ behavior: 'smooth' });
     }
 };
+
+const firstActiveSectionSelector = computed(() => {
+    const s = props.data.settings;
+    if (s?.showAbout ?? true) return '#about';
+    if (s?.showExperience ?? true) return '#experience';
+    if (s?.showSkills ?? true) return '#skills';
+    if (s?.showEducation ?? true) return '#education';
+    if (s?.showProjects ?? true) return '#projects';
+    if (s?.showContact ?? true) return '#contact';
+    return null;
+});
+
+const handleMessageMe = () => {
+    if (props.data.settings?.showContact ?? true) {
+        scrollTo('#contact');
+    } else if (props.data.contact?.email) {
+        window.location.href = `mailto:${props.data.contact.email}`;
+    }
+};
 </script>
 
 <template>
     <section
         id="hero"
         ref="heroSectionRef"
-        class="relative min-h-[calc(100svh-65px)] flex flex-col justify-center items-center text-center px-4 sm:px-6 lg:px-8 overflow-hidden border-b-2 border-neutral-200/80 dark:border-neutral-800/80 cursor-default select-none"
+        class="relative flex min-h-[calc(100svh-65px)] cursor-default flex-col items-center justify-center overflow-hidden border-b-2 border-neutral-200/80 px-4 text-center select-none sm:px-6 lg:px-8 dark:border-neutral-800/80"
     >
         <canvas
             ref="canvasRef"
-            class="absolute inset-0 pointer-events-none z-0"
+            class="pointer-events-none absolute inset-0 z-0"
         />
 
         <div
             class="pointer-events-none absolute inset-0 z-0 bg-radial from-emerald-100/30 via-transparent to-transparent dark:from-emerald-950/20 dark:via-transparent dark:to-transparent"
         />
 
-        <div class="relative z-10 max-w-3xl mx-auto py-12 sm:py-16">
+        <div class="relative z-10 mx-auto max-w-3xl py-12 sm:py-16">
             <h1
-                class="text-5xl sm:text-7xl md:text-8xl font-black tracking-tight text-neutral-950 dark:text-white leading-[1.05]"
+                class="text-5xl leading-[1.05] font-black tracking-tight text-neutral-950 sm:text-7xl md:text-8xl dark:text-white"
             >
                 {{ data.name }}
             </h1>
 
             <p
-                class="text-xl sm:text-2xl md:text-3xl font-semibold tracking-tight text-neutral-800 dark:text-neutral-200 mt-4"
+                class="mt-4 text-xl font-semibold tracking-tight text-neutral-800 sm:text-2xl md:text-3xl dark:text-neutral-200"
             >
-                <span class="bg-linear-to-r from-emerald-600 via-teal-600 to-sky-600 dark:from-emerald-400 dark:via-teal-300 dark:to-sky-400 bg-clip-text text-transparent">
+                <span
+                    class="bg-linear-to-r from-emerald-600 via-teal-600 to-sky-600 bg-clip-text text-transparent dark:from-emerald-400 dark:via-teal-300 dark:to-sky-400"
+                >
                     {{ data.title }}
                 </span>
             </p>
 
             <p
                 v-if="data.intro"
-                class="text-sm sm:text-base md:text-lg text-neutral-600 dark:text-neutral-400 mt-4 max-w-xl mx-auto leading-relaxed font-normal"
+                class="mx-auto mt-4 max-w-xl text-sm leading-relaxed font-normal text-neutral-600 sm:text-base md:text-lg dark:text-neutral-400"
             >
                 {{ data.intro }}
             </p>
 
-            <div class="flex flex-wrap items-center justify-center gap-3 mt-8">
+            <div class="mt-8 flex flex-wrap items-center justify-center gap-3">
                 <a
                     v-if="data.cvPdfUrl"
                     :href="data.cvPdfUrl"
                     target="_blank"
                     download
-                    class="inline-flex items-center gap-2 px-6 py-3 rounded-full text-xs sm:text-sm font-semibold bg-neutral-950 dark:bg-white text-white dark:text-neutral-950 hover:bg-neutral-800 dark:hover:bg-neutral-100 transition-all shadow-sm hover:shadow-md transform hover:-translate-y-0.5 cursor-pointer"
+                    class="inline-flex transform cursor-pointer items-center gap-2 rounded-full bg-neutral-950 px-6 py-3 text-xs font-semibold text-white shadow-sm transition-all hover:-translate-y-0.5 hover:bg-neutral-800 hover:shadow-md sm:text-sm dark:bg-white dark:text-neutral-950 dark:hover:bg-neutral-100"
                 >
-                    <Download class="w-4 h-4" />
+                    <Download class="h-4 w-4" />
                     <span>{{ t('download_cv') }}</span>
                 </a>
 
                 <button
                     type="button"
-                    @click="scrollTo('#contact')"
-                    class="inline-flex items-center gap-2 px-6 py-3 rounded-full text-xs sm:text-sm font-semibold bg-white/90 dark:bg-neutral-900/90 text-neutral-800 dark:text-neutral-200 border border-neutral-300 dark:border-neutral-700 hover:border-emerald-500 hover:text-emerald-600 dark:hover:text-emerald-400 transition-all shadow-xs backdrop-blur-md transform hover:-translate-y-0.5 cursor-pointer"
+                    @click="handleMessageMe"
+                    class="inline-flex transform cursor-pointer items-center gap-2 rounded-full border border-neutral-300 bg-white/90 px-6 py-3 text-xs font-semibold text-neutral-800 shadow-xs backdrop-blur-md transition-all hover:-translate-y-0.5 hover:border-emerald-500 hover:text-emerald-600 sm:text-sm dark:border-neutral-700 dark:bg-neutral-900/90 dark:text-neutral-200 dark:hover:text-emerald-400"
                 >
-                    <Mail class="w-4 h-4" />
+                    <Mail class="h-4 w-4" />
                     <span>{{ t('message_me') }}</span>
                 </button>
 
@@ -326,48 +354,56 @@ const scrollTo = (selector: string) => {
                     :href="data.contact.linkedin"
                     target="_blank"
                     rel="noopener noreferrer"
-                    class="inline-flex items-center gap-2 px-5 py-3 rounded-full text-xs sm:text-sm font-semibold text-neutral-600 dark:text-neutral-400 hover:text-sky-600 dark:hover:text-sky-400 transition-colors"
+                    class="inline-flex items-center gap-2 rounded-full px-5 py-3 text-xs font-semibold text-neutral-600 transition-colors hover:text-sky-600 sm:text-sm dark:text-neutral-400 dark:hover:text-sky-400"
                 >
-                    <LinkedinIcon class="w-4 h-4 text-sky-600" />
+                    <LinkedinIcon class="h-4 w-4 text-sky-600" />
                     <span>{{ t('linkedin') }}</span>
                 </a>
             </div>
 
             <div
                 v-if="data.quickStats?.length"
-                class="mt-8 grid max-w-4xl auto-cols-fr sm:grid-flow-col gap-3 rounded-2xl p-4 sm:gap-4 sm:p-5"
+                class="mt-8 grid max-w-4xl auto-cols-fr gap-3 rounded-2xl p-4 sm:grid-flow-col sm:gap-4 sm:p-5"
             >
                 <div
                     v-for="(stat, index) in data.quickStats"
                     :key="index"
-                    class="relative flex flex-col items-center justify-center rounded-xl p-2.5 max-md:even:after:hidden max-md:last:after:hidden md:last:after:hidden"
+                    class="relative flex flex-col items-center justify-center rounded-xl p-2.5 max-md:last:after:hidden max-md:even:after:hidden md:last:after:hidden"
                 >
                     <div
                         class="bg-linear-to-r from-violet-600 to-indigo-600 bg-clip-text text-2xl font-extrabold tracking-tight text-transparent sm:text-3xl dark:from-violet-400 dark:to-indigo-300"
                     >
                         {{ stat.value }}
                     </div>
-                    <div class="mt-0.5 text-xs font-semibold text-neutral-800 dark:text-neutral-200">
+                    <div
+                        class="mt-0.5 text-xs font-semibold text-neutral-800 dark:text-neutral-200"
+                    >
                         {{ stat.label }}
                     </div>
-                    <div class="mt-0.5 hidden text-center text-[11px] text-neutral-500 sm:block dark:text-neutral-400">
+                    <div
+                        class="mt-0.5 hidden text-center text-[11px] text-neutral-500 sm:block dark:text-neutral-400"
+                    >
                         {{ stat.description }}
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="absolute bottom-4 inset-x-0 flex justify-center z-10 pointer-events-auto">
+        <div
+            v-if="firstActiveSectionSelector"
+            class="pointer-events-auto absolute inset-x-0 bottom-4 z-10 flex justify-center"
+        >
             <button
                 type="button"
-                @click="scrollTo('#about')"
-                class="flex flex-col items-center gap-1 text-neutral-400 dark:text-neutral-500 hover:text-neutral-800 dark:hover:text-neutral-200 transition-colors cursor-pointer group"
-                aria-label="Scroll to about section"
+                @click="scrollTo(firstActiveSectionSelector)"
+                class="group flex cursor-pointer flex-col items-center gap-1 text-neutral-400 transition-colors hover:text-neutral-800 dark:text-neutral-500 dark:hover:text-neutral-200"
+                aria-label="Scroll to next section"
             >
-                <span class="text-[10px] font-mono tracking-wider uppercase">{{ t('scroll') }}</span>
+                <span class="font-mono text-[10px] tracking-wider uppercase">{{
+                    t('scroll')
+                }}</span>
                 <ChevronDown
-                    name="chevron-down"
-                    class="w-3.5 h-3.5 animate-bounce group-hover:text-emerald-500 transition-colors"
+                    class="h-3.5 w-3.5 animate-bounce transition-colors group-hover:text-emerald-500"
                 />
             </button>
         </div>

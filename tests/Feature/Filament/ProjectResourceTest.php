@@ -1,11 +1,12 @@
 <?php
 
-use App\Filament\Resources\Projects\ProjectResource;
 use App\Filament\Resources\Projects\Pages\ManageProjects;
+use App\Filament\Resources\Projects\ProjectResource;
 use App\Models\Project;
 use App\Models\User;
 use Filament\Forms\Components\Repeater;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
 use Livewire\Livewire;
 
 uses(RefreshDatabase::class);
@@ -43,6 +44,7 @@ describe('table', function () {
 
         Livewire::test(ManageProjects::class)
             ->assertCanSeeTableRecords([$project])
+            ->assertTableColumnExists('cover_image')
             ->assertTableColumnExists('title')
             ->assertTableColumnExists('category')
             ->assertTableColumnExists('github_url')
@@ -175,6 +177,41 @@ describe('editing', function () {
             ->and($project->technologies)->toHaveCount(3)->toContain('Alpine.js')
             ->and($project->highlights)->toHaveCount(2);
         $undoFakeRepeater();
+    });
+
+    it('can create a project with localized rich content, cover_image and gallery', function () {
+        Livewire::test(ManageProjects::class)
+            ->assertFormFieldExists('cover_image')
+            ->assertFormFieldExists('gallery')
+            ->assertFormFieldExists('content.en')
+            ->assertFormFieldExists('content.pl')
+            ->mountAction('create')
+            ->setActionData([
+                'title' => ['en' => 'SaaS Dashboard', 'pl' => 'Panel SaaS'],
+                'tagline' => ['en' => 'Analytics tool', 'pl' => 'Narzędzie analityczne'],
+                'category' => ['en' => 'Fullstack', 'pl' => 'Fullstack'],
+                'description' => ['en' => 'A modern analytics platform.', 'pl' => 'Nowoczesna platforma analityczna.'],
+                'content' => [
+                    'en' => '<h2>Architecture</h2><p>Built with <strong>Laravel</strong>.</p>',
+                    'pl' => '<h2>Architektura</h2><p>Zbudowany z <strong>Laravel</strong>.</p>',
+                ],
+                'cover_image' => [UploadedFile::fake()->image('sample.png')],
+                'gallery' => [
+                    UploadedFile::fake()->image('screen1.png'),
+                    UploadedFile::fake()->image('screen2.png'),
+                ],
+                'technologies' => ['Vue 3', 'Tailwind CSS'],
+            ])
+            ->callMountedAction()
+            ->assertHasNoActionErrors();
+
+        $project = Project::where('title->en', 'SaaS Dashboard')->first();
+
+        expect($project)->not->toBeNull()
+            ->and($project->cover_image)->not->toBeNull()
+            ->and($project->gallery)->toBeArray()->toHaveCount(2)
+            ->and($project->getTranslation('content', 'en'))->toContain('<strong>Laravel</strong>')
+            ->and($project->getTranslation('content', 'pl'))->toContain('<h2>Architektura</h2>');
     });
 });
 

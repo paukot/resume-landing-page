@@ -14,6 +14,7 @@ class SkillCategoryFactory extends Factory
 
     protected $model = SkillCategory::class;
 
+    /** @var list<string> */
     private static array $icons = [
         'database',
         'layers',

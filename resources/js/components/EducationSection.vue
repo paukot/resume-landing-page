@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { EducationItem } from '@/types/resume';
-import {useTranslations} from "@/composables/useTranslations";
+import { useTranslations } from '@/composables/useTranslations';
 
 defineProps<{
     education: EducationItem[];
@@ -16,10 +16,8 @@ const { t } = useTranslations();
     >
         <div class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
             <div
-                class="mb-8 flex items-center gap-2 text-xs font-semibold tracking-wider text-neutral-500 uppercase dark:text-neutral-400"
+                class="mb-8 text-xs font-semibold tracking-wider text-neutral-500 uppercase dark:text-neutral-400"
             >
-                <span>04</span>
-                <span>/</span>
                 <span>{{ t('section.education') }}</span>
             </div>
 
@@ -27,7 +25,7 @@ const { t } = useTranslations();
                 <div
                     v-for="edu in education"
                     :key="edu.id"
-                    class="rounded-xl border border-neutral-200/80 bg-neutral-50 p-6 dark:border-neutral-800/80 dark:bg-neutral-900 shadow-xs shadow-neutral-300 dark:shadow-neutral-700"
+                    class="rounded-xl border border-neutral-200/80 bg-neutral-50 p-6 shadow-xs shadow-neutral-300 dark:border-neutral-800/80 dark:bg-neutral-900 dark:shadow-neutral-700"
                 >
                     <div
                         class="flex flex-col justify-between gap-1 sm:flex-row sm:items-baseline"
@@ -50,11 +48,11 @@ const { t } = useTranslations();
                                 {{ edu.field }} • {{ edu.location }}
                             </div>
                         </div>
-                        <div
+                        <time
                             class="mt-1 font-mono text-xs text-neutral-500 sm:mt-0 dark:text-neutral-400"
                         >
                             {{ edu.period }}
-                        </div>
+                        </time>
                     </div>
                 </div>
             </div>

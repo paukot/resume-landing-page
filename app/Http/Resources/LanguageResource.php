@@ -9,6 +9,9 @@ use Illuminate\Http\Resources\Json\JsonResource;
 /** @mixin Language */
 class LanguageResource extends JsonResource
 {
+    /**
+     * @return array<string, mixed>
+     */
     public function toArray(Request $request): array
     {
         $locale = session('locale');

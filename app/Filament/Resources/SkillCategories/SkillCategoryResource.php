@@ -29,7 +29,9 @@ class SkillCategoryResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCpuChip;
 
-    protected static ?int $navigationSort = 5;
+    protected static \UnitEnum|string|null $navigationGroup = 'Content';
+
+    protected static ?int $navigationSort = 4;
 
     protected static ?string $recordTitleAttribute = 'icon';
 

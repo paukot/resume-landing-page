@@ -8,10 +8,10 @@ use Database\Factories\Concerns\HasTechnologies;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Carbon;
 
-/** @extends Factory<\App\Models\Project> */
+/** @extends Factory<Project> */
 class ProjectFactory extends Factory
 {
-    use HasTechnologies, HasHighlights;
+    use HasHighlights, HasTechnologies;
 
     protected $model = Project::class;
 
@@ -34,6 +34,12 @@ class ProjectFactory extends Factory
                 'en' => $this->faker->paragraphs($this->faker->numberBetween(2, 4), true),
                 'pl' => $this->faker->paragraphs($this->faker->numberBetween(2, 4), true),
             ],
+            'content' => [
+                'en' => '<p>'.$this->faker->paragraph().'</p>',
+                'pl' => '<p>'.$this->faker->paragraph().'</p>',
+            ],
+            'cover_image' => null,
+            'gallery' => null,
             'highlights' => $this->generateHighlights($this->faker->numberBetween(3, 5)),
             'technologies' => $this->generateTechnologies($this->faker->numberBetween(3, 5)),
             'live_url' => $this->faker->url(),

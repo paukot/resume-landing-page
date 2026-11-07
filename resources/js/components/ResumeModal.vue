@@ -1,10 +1,10 @@
 <script setup lang="ts">
+import { onMounted, onUnmounted } from 'vue';
 import type { ResumeData } from '@/types/resume';
-import Icon from './icons/Icon.vue';
-import {useTranslations} from "@/composables/useTranslations";
-import {Download, Printer, X} from "lucide-vue-next";
+import { useTranslations } from '@/composables/useTranslations';
+import { Download, Printer, X } from 'lucide-vue-next';
 
-defineProps<{
+const props = defineProps<{
     data: ResumeData;
     isOpen: boolean;
 }>();
@@ -18,11 +18,28 @@ const emit = defineEmits<{
 const handlePrint = () => {
     window.print();
 };
+
+const handleKeyDown = (e: KeyboardEvent) => {
+    if (props.isOpen && e.key === 'Escape') {
+        emit('close');
+    }
+};
+
+onMounted(() => {
+    window.addEventListener('keydown', handleKeyDown);
+});
+
+onUnmounted(() => {
+    window.removeEventListener('keydown', handleKeyDown);
+});
 </script>
 
 <template>
     <div
         v-if="isOpen"
+        role="dialog"
+        aria-modal="true"
+        :aria-label="t('resume_preview')"
         class="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-black/60 p-3 backdrop-blur-xs sm:p-6"
     >
         <div class="fixed inset-0" @click="emit('close')" />
@@ -37,7 +54,7 @@ const handlePrint = () => {
                 <span
                     class="text-xs font-semibold tracking-wider text-neutral-900 uppercase dark:text-white"
                 >
-                    Curriculum Vitae Preview
+                    {{ t('resume_preview') }}
                 </span>
                 <div class="flex items-center gap-2">
                     <a
@@ -46,7 +63,7 @@ const handlePrint = () => {
                         download
                         class="inline-flex items-center gap-1.5 rounded-md bg-neutral-900 px-3 py-1.5 text-xs font-medium text-white transition-colors hover:bg-neutral-800 dark:bg-white dark:text-neutral-950 dark:hover:bg-neutral-100"
                     >
-                        <Download class="w-3.5 h-3.5" />
+                        <Download class="h-3.5 w-3.5" />
                         <span>{{ t('download_pdf') }}</span>
                     </a>
                     <button
@@ -54,8 +71,8 @@ const handlePrint = () => {
                         @click="handlePrint"
                         class="inline-flex cursor-pointer items-center gap-1.5 rounded-md bg-neutral-200 px-3 py-1.5 text-xs font-medium text-neutral-800 transition-colors hover:bg-neutral-300 dark:bg-neutral-800 dark:text-neutral-200 dark:hover:bg-neutral-700"
                     >
-                        <Printer class="w-3.5 h-3.5" />
-                        <span>Print</span>
+                        <Printer class="h-3.5 w-3.5" />
+                        <span>{{ t('print') }}</span>
                     </button>
                     <button
                         type="button"
@@ -63,7 +80,7 @@ const handlePrint = () => {
                         class="cursor-pointer rounded-md p-1.5 text-neutral-400 transition-colors hover:bg-neutral-200/60 hover:text-neutral-700 dark:hover:bg-neutral-800 dark:hover:text-neutral-200"
                         aria-label="Close modal"
                     >
-                        <X class="w-4 h-4" />
+                        <X class="h-4 w-4" />
                     </button>
                 </div>
             </div>

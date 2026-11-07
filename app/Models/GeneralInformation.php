@@ -3,14 +3,17 @@
 namespace App\Models;
 
 use App\Enums\CacheKey;
+use Database\Factories\GeneralInformationFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Translatable\HasTranslations;
 
 class GeneralInformation extends Model
 {
+    /** @use HasFactory<GeneralInformationFactory> */
     use HasFactory, HasTranslations;
 
+    /** @var list<string> */
     public array $translatable = ['title', 'intro', 'summary', 'cv'];
 
     protected $fillable = [

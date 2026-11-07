@@ -9,12 +9,12 @@ use App\Models\GeneralInformation;
 use App\Models\Language;
 use App\Models\Project;
 use App\Models\QuickStat;
+use App\Models\SectionSetting;
 use App\Models\SkillCategory;
 use Illuminate\Database\Eloquent\Collection;
 
 class WelcomeService
 {
-
     public function getCombinedData(): GeneralInformation
     {
         $information = $this->getGeneralInformation();
@@ -26,9 +26,21 @@ class WelcomeService
             'educations' => $this->getEducations(),
             'skillCategories' => $this->getSkillCategories(),
             'projects' => $this->getProjects(),
+            'sectionSettings' => $this->getSectionSettings(),
         ]);
 
         return $information;
+    }
+
+    public function getSectionSettings(): SectionSetting
+    {
+        $settings = cache()->remember(
+            CacheKey::SectionSettings->value,
+            now()->addDay(),
+            fn () => SectionSetting::query()->first()?->getAttributes() ?? (new SectionSetting)->getAttributes()
+        );
+
+        return (new SectionSetting)->newFromBuilder((array) $settings);
     }
 
     public function getGeneralInformation(): GeneralInformation
@@ -42,6 +54,9 @@ class WelcomeService
         return (new GeneralInformation)->newFromBuilder($information);
     }
 
+    /**
+     * @return Collection<int, Language>
+     */
     public function getLanguages(): Collection
     {
         return Language::hydrate(
@@ -58,6 +73,9 @@ class WelcomeService
         );
     }
 
+    /**
+     * @return Collection<int, QuickStat>
+     */
     public function getQuickStats(): Collection
     {
         return QuickStat::hydrate(
@@ -74,6 +92,9 @@ class WelcomeService
         );
     }
 
+    /**
+     * @return Collection<int, Experience>
+     */
     public function getExperiences(): Collection
     {
         return Experience::hydrate(
@@ -90,6 +111,9 @@ class WelcomeService
         );
     }
 
+    /**
+     * @return Collection<int, Education>
+     */
     public function getEducations(): Collection
     {
         return Education::hydrate(
@@ -106,6 +130,9 @@ class WelcomeService
         );
     }
 
+    /**
+     * @return Collection<int, SkillCategory>
+     */
     public function getSkillCategories(): Collection
     {
         return SkillCategory::hydrate(
@@ -122,6 +149,9 @@ class WelcomeService
         );
     }
 
+    /**
+     * @return Collection<int, Project>
+     */
     public function getProjects(): Collection
     {
         return Project::hydrate(

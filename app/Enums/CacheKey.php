@@ -11,6 +11,7 @@ enum CacheKey: string
     case Languages = 'languages';
     case QuickStats = 'quick_stats';
     case SkillCategories = 'skill_categories';
+    case SectionSettings = 'section_settings';
 
     public function forget(): void
     {

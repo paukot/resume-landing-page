@@ -10,15 +10,19 @@ use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Resources\Resource;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
@@ -30,7 +34,9 @@ class ProjectResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRocketLaunch;
 
-    protected static ?int $navigationSort = 7;
+    protected static \UnitEnum|string|null $navigationGroup = 'Content';
+
+    protected static ?int $navigationSort = 3;
 
     protected static ?string $recordTitleAttribute = 'title';
 
@@ -48,6 +54,29 @@ class ProjectResource extends Resource
                     ->label('GitHub URL')
                     ->url()
                     ->maxLength(255),
+                Section::make('Visual Media')
+                    ->description('Cover image for portfolio cards and screenshots for the detail modal.')
+                    ->schema([
+                        FileUpload::make('cover_image')
+                            ->label('Primary Cover Image')
+                            ->image()
+                            ->disk('public')
+                            ->directory('projects/covers')
+                            ->visibility('public')
+                            ->imageEditor()
+                            ->helperText('Main thumbnail displayed on the landing page card (recommended 16:9).'),
+                        FileUpload::make('gallery')
+                            ->label('Screenshots & Diagrams Gallery')
+                            ->multiple()
+                            ->reorderable()
+                            ->image()
+                            ->disk('public')
+                            ->directory('projects/gallery')
+                            ->visibility('public')
+                            ->helperText('Screenshots and architecture diagrams displayed in the detail modal.'),
+                    ])
+                    ->columns(2)
+                    ->columnSpanFull(),
                 LocaleTabs::make(fn (string $locale): array => [
                     TextInput::make("title.$locale")
                         ->label('Title')
@@ -63,9 +92,29 @@ class ProjectResource extends Resource
                         ->required()
                         ->maxLength(255),
                     Textarea::make("description.$locale")
-                        ->label('Description')
+                        ->label('Short Card Summary')
                         ->required()
-                        ->rows(4)
+                        ->rows(3)
+                        ->helperText('Brief overview displayed on the portfolio card.')
+                        ->columnSpanFull(),
+                    RichEditor::make("content.$locale")
+                        ->label('Detailed Case Study / Story')
+                        ->nullable()
+                        ->toolbarButtons([
+                            'bold',
+                            'italic',
+                            'strike',
+                            'link',
+                            'h2',
+                            'h3',
+                            'bulletList',
+                            'orderedList',
+                            'blockquote',
+                            'codeBlock',
+                            'undo',
+                            'redo',
+                        ])
+                        ->helperText('Formatted rich text shown in the project detail modal.')
                         ->columnSpanFull(),
                 ]),
                 Repeater::make('highlights')
@@ -87,6 +136,11 @@ class ProjectResource extends Resource
     {
         return $table
             ->columns([
+                ImageColumn::make('cover_image')
+                    ->label('Cover')
+                    ->disk('public')
+                    ->square()
+                    ->defaultImageUrl(null),
                 TextColumn::make('title')->searchable()->wrap(),
                 TextColumn::make('category')->wrap(),
                 TextColumn::make('github_url')->wrap(),

@@ -145,7 +145,7 @@ describe('saving', function () {
 });
 
 describe('validation', function () {
-    it('requires name, phone, email, linkedin and both title, intro, summary translations', function () {
+    it('requires name, email, linkedin and title, summary translations while intro and phone are optional', function () {
         Livewire::test(EditGeneralInformation::class)
             ->fillForm([
                 'name' => null,
@@ -159,16 +159,14 @@ describe('validation', function () {
             ->call('save')
             ->assertHasFormErrors([
                 'name' => 'required',
-                'phone' => 'required',
                 'email' => 'required',
                 'linkedin' => 'required',
                 'title.pl' => 'required',
                 'title.en' => 'required',
-                'intro.pl' => 'required',
-                'intro.en' => 'required',
                 'summary.pl' => 'required',
                 'summary.en' => 'required',
-            ]);
+            ])
+            ->assertHasNoFormErrors(['phone', 'intro.pl', 'intro.en']);
     });
 
     it('validates email and url formats', function () {

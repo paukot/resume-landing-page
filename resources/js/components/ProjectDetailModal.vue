@@ -644,4 +644,30 @@ const allImages = computed(() => {
 .project-prose :deep(a:hover) {
     color: #1d4ed8;
 }
+
+.project-prose :deep(table) {
+    width: 100%;
+    margin-top: 1rem;
+    margin-bottom: 1.5rem;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+    overflow-x: auto;
+    display: block;
+}
+
+.project-prose :deep(th),
+.project-prose :deep(td) {
+    padding: 0.5rem 0.75rem;
+    border: 1px solid rgba(120, 120, 120, 0.25);
+    text-align: left;
+}
+
+.project-prose :deep(th) {
+    background-color: rgba(120, 120, 120, 0.1);
+    font-weight: 600;
+}
+
+.project-prose :deep(tr:nth-child(even)) {
+    background-color: rgba(120, 120, 120, 0.04);
+}
 </style>

@@ -5,6 +5,7 @@ namespace Database\Factories;
 use App\Models\GeneralInformation;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
+/** @extends Factory<GeneralInformation> */
 class GeneralInformationFactory extends Factory
 {
     protected $model = GeneralInformation::class;
@@ -12,7 +13,7 @@ class GeneralInformationFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => $this->faker->name().' '.$this->faker->lastname(),
+            'name' => $this->faker->name().' '.$this->faker->lastName(),
             'title' => ['en' => $this->faker->jobTitle(), 'pl' => $this->faker->jobTitle()],
             'intro' => ['en' => $this->faker->text(160), 'pl' => $this->faker->text(160)],
             'summary' => ['en' => $this->faker->text(380), 'pl' => $this->faker->text(380)],

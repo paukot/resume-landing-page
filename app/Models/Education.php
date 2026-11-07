@@ -3,13 +3,17 @@
 namespace App\Models;
 
 use App\Enums\CacheKey;
+use Database\Factories\EducationFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Translatable\HasTranslations;
 
 class Education extends Model
 {
+    /** @use HasFactory<EducationFactory> */
     use HasFactory, HasTranslations;
+
+    /** @var list<string> */
     public array $translatable = ['institution', 'institution_url', 'degree', 'field', 'location'];
 
     protected $fillable = ['degree', 'field', 'institution', 'institution_url', 'location', 'period', 'sort_order'];

@@ -24,6 +24,7 @@ class DatabaseSeeder extends Seeder
     {
         if (app()->isProduction()) {
             $this->command->warn('Skipping demo data in production.');
+
             return;
         }
 
@@ -38,7 +39,7 @@ class DatabaseSeeder extends Seeder
         Experience::factory(fake()->numberBetween(1, 4))->create();
         Education::factory(fake()->numberBetween(1, 2))->create();
         SkillCategory::factory(4)->create();
-        Language::factory(fake()->numberBetween(2,4))->create();
+        Language::factory(fake()->numberBetween(2, 4))->create();
         Project::factory(fake()->numberBetween(2, 4))->create();
     }
 }

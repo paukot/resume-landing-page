@@ -11,11 +11,12 @@ class LocaleTabs
 {
     public static function make(Closure $fields): Tabs
     {
-        $locales = config('app.locales');
+        /** @var array<string, string> $locales */
+        $locales = config('app.locales', []);
 
         return Tabs::make('Translations')
             ->tabs(array_map(
-                fn (string $locale, string $name): Tab => Tab::make($name)->schema($fields($locale)),
+                fn (int|string $locale, string $name): Tab => Tab::make($name)->schema($fields((string) $locale)),
                 array_keys($locales),
                 $locales,
             ))
@@ -25,7 +26,14 @@ class LocaleTabs
     public static function fill(): Closure
     {
         return function (array $data, Model $record): array {
-            foreach ($record->getTranslatableAttributes() as $attribute) {
+            if (! method_exists($record, 'getTranslatableAttributes') || ! method_exists($record, 'getTranslations')) {
+                return $data;
+            }
+
+            /** @var list<string> $attributes */
+            $attributes = $record->getTranslatableAttributes();
+
+            foreach ($attributes as $attribute) {
                 $data[$attribute] = $record->getTranslations($attribute);
             }
 

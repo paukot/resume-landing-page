@@ -5,15 +5,25 @@ namespace App\Http\Resources;
 use App\Models\Project;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Storage;
 
 /** @mixin Project */
 class ProjectResource extends JsonResource
 {
+    /**
+     * @return array<string, mixed>
+     */
     public function toArray(Request $request): array
     {
         $locale = session('locale');
 
-        $highlights = collect($this->highlights)->select($locale)->flatten()->toArray();
+        $highlights = collect($this->highlights ?? [])->select($locale)->flatten()->toArray();
+
+        $galleryUrls = collect($this->gallery ?? [])
+            ->filter()
+            ->map(fn (string $path) => Storage::disk('public')->url($path))
+            ->values()
+            ->all();
 
         return [
             'id' => $this->id,
@@ -21,6 +31,9 @@ class ProjectResource extends JsonResource
             'tagline' => $this->getTranslation('tagline', $locale),
             'category' => $this->getTranslation('category', $locale),
             'description' => $this->getTranslation('description', $locale),
+            'content' => $this->getTranslation('content', $locale),
+            'coverImageUrl' => filled($this->cover_image) ? Storage::disk('public')->url($this->cover_image) : null,
+            'galleryUrls' => $galleryUrls,
             'highlights' => $highlights,
             'technologies' => $this->technologies ?? [],
             'liveUrl' => $this->when(filled($this->live_url), $this->live_url),

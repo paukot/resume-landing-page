@@ -1,7 +1,7 @@
 <?php
 
-use App\Filament\Resources\QuickStats\QuickStatResource;
 use App\Filament\Resources\QuickStats\Pages\ManageQuickStats;
+use App\Filament\Resources\QuickStats\QuickStatResource;
 use App\Models\QuickStat;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -128,7 +128,7 @@ describe('editing', function () {
 
         $stat->refresh();
 
-        expect($stat->value)->toBe('15+')             ->and($stat->getTranslation('label', 'en'))->toBe('Awards Won')
+        expect($stat->value)->toBe('15+')->and($stat->getTranslation('label', 'en'))->toBe('Awards Won')
             ->and($stat->getTranslation('label', 'pl'))->toBe('Zdobyte Nagrody')
             ->and($stat->getTranslation('description', 'en'))->toBe('Total won');
     });

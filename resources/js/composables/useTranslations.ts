@@ -1,5 +1,5 @@
-import {computed} from 'vue';
-import {usePage} from '@inertiajs/vue3';
+import { computed } from 'vue';
+import { usePage } from '@inertiajs/vue3';
 
 type Messages = { [key: string]: string | Messages };
 
@@ -8,11 +8,15 @@ export function useTranslations() {
     const messages = computed(() => page.props.translations as Messages);
     const locale = computed(() => page.props.locale as string);
 
-    const t = (key: string, replace: Record<string, string | number> = {}): string => {
+    const t = (
+        key: string,
+        replace: Record<string, string | number> = {},
+    ): string => {
         const value = key
             .split('.')
             .reduce<string | Messages | undefined>(
-                (node, part) => (typeof node === 'object' ? node[part] : undefined),
+                (node, part) =>
+                    typeof node === 'object' ? node[part] : undefined,
                 messages.value,
             );
 
@@ -24,5 +28,5 @@ export function useTranslations() {
         );
     };
 
-    return {t, locale};
+    return { t, locale };
 }

@@ -9,11 +9,14 @@ use Illuminate\Http\Resources\Json\JsonResource;
 /** @mixin Experience */
 class ExperienceResource extends JsonResource
 {
+    /**
+     * @return array<string, mixed>
+     */
     public function toArray(Request $request): array
     {
         $locale = session('locale');
 
-        $highlights = collect($this->highlights)->select($locale)->flatten()->toArray();
+        $highlights = collect($this->highlights ?? [])->select($locale)->flatten()->toArray();
 
         return [
             'id' => $this->id,

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { ExperienceItem } from '@/types/resume';
-import {useTranslations} from "@/composables/useTranslations";
+import { useTranslations } from '@/composables/useTranslations';
 
 defineProps<{
     experience: ExperienceItem[];
@@ -16,10 +16,8 @@ const { t } = useTranslations();
     >
         <div class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
             <div
-                class="mb-8 flex items-center gap-2 text-xs font-semibold tracking-wider text-neutral-500 uppercase dark:text-neutral-400"
+                class="mb-8 text-xs font-semibold tracking-wider text-neutral-500 uppercase dark:text-neutral-400"
             >
-                <span>02</span>
-                <span>/</span>
                 <span>{{ t('section.work_experience') }}</span>
             </div>
 
@@ -55,19 +53,20 @@ const { t } = useTranslations();
                                 {{ job.company }}
                                 <span
                                     class="text-neutral-800 dark:text-neutral-300"
-                                    > • </span
                                 >
+                                    •
+                                </span>
                                 <span
                                     class="text-xs text-neutral-500 dark:text-neutral-400"
                                     >{{ job.location }}</span
                                 >
                             </div>
                         </div>
-                        <div
-                            class="items-center mt-1 shrink-0 font-mono text-neutral-500 sm:mt-0 dark:text-neutral-400"
+                        <time
+                            class="mt-1 shrink-0 items-center font-mono text-xs text-neutral-500 sm:mt-0 sm:text-sm dark:text-neutral-400"
                         >
                             {{ job.period }}
-                        </div>
+                        </time>
                     </div>
 
                     <!-- Description -->
@@ -98,7 +97,7 @@ const { t } = useTranslations();
                         <span
                             v-for="tech in job.technologies"
                             :key="tech"
-                            class="rounded-md border shadow-xs shadow-neutral-300 dark:shadow-neutral-700 border-neutral-200/60 bg-neutral-100 px-2 py-0.5 text-[11px] font-medium text-neutral-700 dark:border-neutral-700/60 dark:bg-neutral-800/80 dark:text-neutral-300"
+                            class="rounded-md border border-neutral-200/60 bg-neutral-100 px-2 py-0.5 text-[11px] font-medium text-neutral-700 shadow-xs shadow-neutral-300 dark:border-neutral-700/60 dark:bg-neutral-800/80 dark:text-neutral-300 dark:shadow-neutral-700"
                         >
                             {{ tech }}
                         </span>

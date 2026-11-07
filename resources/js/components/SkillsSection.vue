@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { SkillCategory } from '@/types/resume';
 import Icon from './icons/Icon.vue';
-import {useTranslations} from "@/composables/useTranslations";
+import { useTranslations } from '@/composables/useTranslations';
 
 defineProps<{
     categories: SkillCategory[];
@@ -17,10 +17,8 @@ const { t } = useTranslations();
     >
         <div class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
             <div
-                class="mb-8 flex items-center gap-2 text-xs font-semibold tracking-wider text-neutral-500 uppercase dark:text-neutral-400"
+                class="mb-8 text-xs font-semibold tracking-wider text-neutral-500 uppercase dark:text-neutral-400"
             >
-                <span>03</span>
-                <span>/</span>
                 <span>{{ t('section.skills_and_tools') }}</span>
             </div>
 
@@ -29,12 +27,12 @@ const { t } = useTranslations();
                 <div
                     v-for="cat in categories"
                     :key="cat.id"
-                    class="rounded-xl border border-neutral-200/80 bg-neutral-50 p-5 dark:border-neutral-800/80 dark:bg-neutral-900 shadow-xs shadow-neutral-300 dark:shadow-neutral-700"
+                    class="rounded-xl border border-neutral-200/80 bg-neutral-50 p-5 shadow-xs shadow-neutral-300 dark:border-neutral-800/80 dark:bg-neutral-900 dark:shadow-neutral-700"
                 >
                     <div class="mb-3 flex items-center gap-2">
                         <Icon
                             :name="cat.icon"
-                            className="w-4 h-4 text-neutral-500 dark:text-neutral-400"
+                            class="h-4 w-4 text-neutral-500 dark:text-neutral-400"
                         />
                         <h3
                             class="text-xs font-bold tracking-wider text-neutral-800 uppercase dark:text-neutral-200"
@@ -47,7 +45,7 @@ const { t } = useTranslations();
                         <span
                             v-for="skill in cat.skills"
                             :key="skill"
-                            class="rounded-md border border-neutral-200/80 bg-white px-2.5 py-1 text-xs font-medium text-neutral-800 transition-colors hover:border-neutral-400 dark:border-neutral-700/80 dark:bg-neutral-800 dark:text-neutral-200 dark:hover:border-neutral-600 shadow-xs shadow-neutral-300 dark:shadow-neutral-700"
+                            class="rounded-md border border-neutral-200/80 bg-white px-2.5 py-1 text-xs font-medium text-neutral-800 shadow-xs shadow-neutral-300 transition-colors hover:border-neutral-400 dark:border-neutral-700/80 dark:bg-neutral-800 dark:text-neutral-200 dark:shadow-neutral-700 dark:hover:border-neutral-600"
                         >
                             {{ skill }}
                         </span>

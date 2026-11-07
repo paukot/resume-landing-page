@@ -1,14 +1,16 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue';
-import Icon from './icons/Icon.vue';
+import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { useTranslations } from '@/composables/useTranslations';
-import {Link, usePage} from "@inertiajs/vue3";
-import {Download, Menu, Moon, Sun, X} from "lucide-vue-next";
+import { Link, usePage } from '@inertiajs/vue3';
+import { home } from '@/routes';
+import { Download, Menu, Moon, Sun, X } from 'lucide-vue-next';
+import type { SectionSettings } from '@/types/resume';
 
-defineProps<{
+const props = defineProps<{
     name: string;
     isDark: boolean;
     cvPdfUrl: string;
+    settings?: SectionSettings;
 }>();
 
 const { t } = useTranslations();
@@ -23,27 +25,59 @@ const isScrolled = ref(false);
 const isMobileMenuOpen = ref(false);
 const activeSection = ref('hero');
 
-const navItems = [
-    { label: 'about', href: '#about' },
-    { label: 'experience', href: '#experience' },
-    { label: 'skills', href: '#skills' },
-    { label: 'education', href: '#education' },
-    { label: 'projects', href: '#projects' },
-    { label: 'contact', href: '#contact' },
-];
+const navItems = computed(() => {
+    const items = [
+        {
+            label: 'about',
+            href: '#about',
+            id: 'about',
+            visible: props.settings?.showAbout ?? true,
+        },
+        {
+            label: 'experience',
+            href: '#experience',
+            id: 'experience',
+            visible: props.settings?.showExperience ?? true,
+        },
+        {
+            label: 'skills',
+            href: '#skills',
+            id: 'skills',
+            visible: props.settings?.showSkills ?? true,
+        },
+        {
+            label: 'education',
+            href: '#education',
+            id: 'education',
+            visible: props.settings?.showEducation ?? true,
+        },
+        {
+            label: 'projects',
+            href: '#projects',
+            id: 'projects',
+            visible: props.settings?.showProjects ?? true,
+        },
+        {
+            label: 'contact',
+            href: '#contact',
+            id: 'contact',
+            visible: props.settings?.showContact ?? true,
+        },
+    ];
 
-const switchToLanguage = page.props.locale === 'en' ? 'pl' : 'en';
+    return items.filter((item) => item.visible);
+});
+
+const switchToLanguage = computed(() =>
+    page.props.locale === 'en' ? 'pl' : 'en',
+);
+const switchLangUrl = computed(() =>
+    home.url({ query: { lang: switchToLanguage.value } }),
+);
 const handleScroll = () => {
     isScrolled.value = window.scrollY > 20;
 
-    const sections = [
-        'about',
-        'experience',
-        'skills',
-        'education',
-        'projects',
-        'contact',
-    ];
+    const sections = navItems.value.map((item) => item.id);
     const scrollPosition = window.scrollY + 180;
 
     for (const section of sections) {
@@ -98,7 +132,7 @@ onUnmounted(() => {
                 @click.prevent="scrollTo('#hero')"
                 class="flex items-center gap-2 font-medium text-neutral-900 transition-opacity hover:opacity-80 dark:text-white"
             >
-                <span class="text-sm font-semibold trackitext-xs ng-tight">
+                <span class="text-sm font-semibold tracking-tight">
                     {{ name }}
                 </span>
             </a>
@@ -110,7 +144,7 @@ onUnmounted(() => {
                     :key="item.href"
                     :href="item.href"
                     @click.prevent="scrollTo(item.href)"
-                    class="text-xs lg:text-sm font-medium transition-colors"
+                    class="text-xs font-medium transition-colors lg:text-sm"
                     :class="[
                         activeSection === item.href.slice(1)
                             ? 'font-semibold text-neutral-900 dark:text-white'
@@ -125,14 +159,19 @@ onUnmounted(() => {
             <div class="flex items-center gap-3">
                 <!-- Lang switcher -->
                 <Link
-                    :href="`/?lang=${switchToLanguage}`"
-                    :title="switchToLanguage === 'en' ? t('english'): t('polish')"
-                    :aria-label="switchToLanguage === 'en' ? t('english'): t('polish')"
+                    :href="switchLangUrl"
+                    :title="
+                        switchToLanguage === 'en' ? t('english') : t('polish')
+                    "
+                    :aria-label="
+                        switchToLanguage === 'en' ? t('english') : t('polish')
+                    "
                     preserve-scroll
-                    class="inline-flex items-center p-2 "
-
+                    class="inline-flex items-center p-2"
                 >
-                    <span :class="`fi fi-${switchToLanguage === 'en' ? 'gb' : 'pl'} fis rounded-sm shadow-md shadow-neutral-300 dark:shadow-neutral-700`" />
+                    <span
+                        :class="`fi fi-${switchToLanguage === 'en' ? 'gb' : 'pl'} fis rounded-sm shadow-md shadow-neutral-300 dark:shadow-neutral-700`"
+                    />
                 </Link>
 
                 <!-- Theme Toggle -->
@@ -157,7 +196,7 @@ onUnmounted(() => {
                     download
                     class="hidden items-center gap-1.5 rounded-lg bg-neutral-900 px-3 py-1.5 text-xs font-medium text-white transition-colors hover:bg-neutral-800 sm:inline-flex dark:bg-white dark:text-neutral-950 dark:hover:bg-neutral-100"
                 >
-                    <Download class="w-3.5 h-3.5" />
+                    <Download class="h-3.5 w-3.5" />
                     <span> {{ t('download_cv') }}</span>
                 </a>
 
@@ -167,16 +206,11 @@ onUnmounted(() => {
                     @click="isMobileMenuOpen = !isMobileMenuOpen"
                     class="rounded-lg p-2 text-neutral-700 hover:bg-neutral-100 md:hidden dark:text-neutral-200 dark:hover:bg-neutral-800"
                     aria-label="Toggle mobile menu"
+                    :aria-expanded="isMobileMenuOpen"
+                    aria-controls="mobile-nav-menu"
                 >
-
-                    <X
-                        v-if="isMobileMenuOpen"
-                        class="w-5 h-5"
-                    />
-                    <Menu
-                        v-else
-                        class="w-5 h-5"
-                    />
+                    <X v-if="isMobileMenuOpen" class="h-5 w-5" />
+                    <Menu v-else class="h-5 w-5" />
                 </button>
             </div>
         </div>
@@ -184,6 +218,7 @@ onUnmounted(() => {
         <!-- Mobile Menu -->
         <div
             v-if="isMobileMenuOpen"
+            id="mobile-nav-menu"
             class="border-b border-neutral-200 bg-white px-4 py-4 md:hidden dark:border-neutral-800 dark:bg-neutral-950"
         >
             <div class="flex flex-col gap-2">
@@ -207,7 +242,7 @@ onUnmounted(() => {
                     download
                     class="mt-2 flex items-center justify-center gap-2 rounded-lg bg-neutral-900 py-2 text-xs font-semibold text-white dark:bg-white dark:text-neutral-950"
                 >
-                    <Download class="w-4 h-4" />
+                    <Download class="h-4 w-4" />
                     <span> {{ t('download_cv') }} </span>
                 </a>
             </div>

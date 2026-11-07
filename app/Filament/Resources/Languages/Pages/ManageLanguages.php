@@ -15,8 +15,8 @@ class ManageLanguages extends ManageRecords
     {
         return [
             CreateAction::make()->mutateDataUsing(fn (array $data): array => $data + [
-                    'sort_order' => (int) Language::max('sort_order') + 1,
-                ]),
+                'sort_order' => (int) Language::max('sort_order') + 1,
+            ]),
         ];
     }
 }

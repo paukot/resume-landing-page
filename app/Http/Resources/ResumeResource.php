@@ -2,13 +2,13 @@
 
 namespace App\Http\Resources;
 
-use App\Enums\CacheKey;
 use App\Models\Education;
 use App\Models\Experience;
 use App\Models\GeneralInformation;
 use App\Models\Language;
 use App\Models\Project;
 use App\Models\QuickStat;
+use App\Models\SectionSetting;
 use App\Models\SkillCategory;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -19,15 +19,20 @@ use Illuminate\Support\Facades\Storage;
  * Builds the full `ResumeData` payload (see resources/js/types/resume.ts).
  *
  * @mixin GeneralInformation
+ *
  * @property-read Collection<int, Language> $languages
  * @property-read Collection<int, QuickStat> $quickStats
  * @property-read Collection<int, Experience> $experiences
  * @property-read Collection<int, Education> $educations
  * @property-read Collection<int, SkillCategory> $skillCategories
  * @property-read Collection<int, Project> $projects
+ * @property-read SectionSetting|null $sectionSettings
  */
 class ResumeResource extends JsonResource
 {
+    /**
+     * @return array<string, mixed>
+     */
     public function toArray(Request $request): array
     {
         $locale = session('locale');
@@ -45,6 +50,14 @@ class ResumeResource extends JsonResource
                 'location' => $this->location,
                 'linkedin' => $this->linkedin,
                 'github' => $this->github,
+            ],
+            'settings' => [
+                'showAbout' => (bool) ($this->sectionSettings->show_about ?? true),
+                'showExperience' => (bool) ($this->sectionSettings->show_experience ?? true),
+                'showSkills' => (bool) ($this->sectionSettings->show_skills ?? true),
+                'showEducation' => (bool) ($this->sectionSettings->show_education ?? true),
+                'showProjects' => (bool) ($this->sectionSettings->show_projects ?? true),
+                'showContact' => (bool) ($this->sectionSettings->show_contact ?? true),
             ],
             'cvPdfUrl' => filled($cv) ? Storage::disk('public')->url($cv) : '',
             'languages' => LanguageResource::collection($this->languages)->resolve(),

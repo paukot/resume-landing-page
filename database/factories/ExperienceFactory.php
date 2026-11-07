@@ -13,7 +13,7 @@ use Illuminate\Support\Carbon;
  */
 class ExperienceFactory extends Factory
 {
-    use HasTechnologies, HasHighlights;
+    use HasHighlights, HasTechnologies;
 
     protected $model = Experience::class;
 

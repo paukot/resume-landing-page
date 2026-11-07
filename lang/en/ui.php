@@ -51,4 +51,11 @@ return [
     'poland' => 'Poland',
     'polish' => 'Polish',
     'english' => 'English',
+    'download_pdf' => 'Download PDF',
+    'resume_preview' => 'Curriculum Vitae Preview',
+    'print' => 'Print',
+    'view_full_image' => 'Click to view full image',
+    'close_full_view' => 'Close full view',
+    'previous_image' => 'Previous image',
+    'next_image' => 'Next image',
 ];

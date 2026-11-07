@@ -45,11 +45,23 @@ export interface ProjectItem {
     tagline: string;
     category: string;
     description: string;
+    content?: string | null;
+    coverImageUrl?: string | null;
+    galleryUrls?: string[];
     highlights: string[];
     technologies: string[];
     liveUrl?: string;
     githubUrl?: string;
     featured?: boolean;
+}
+
+export interface SectionSettings {
+    showAbout: boolean;
+    showExperience: boolean;
+    showSkills: boolean;
+    showEducation: boolean;
+    showProjects: boolean;
+    showContact: boolean;
 }
 
 export interface ResumeData {
@@ -65,6 +77,7 @@ export interface ResumeData {
         github?: string;
     };
     cvPdfUrl: string;
+    settings?: SectionSettings;
     languages: LanguageItem[];
     quickStats: QuickStat[];
     experience: ExperienceItem[];

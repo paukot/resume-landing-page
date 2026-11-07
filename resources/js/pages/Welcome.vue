@@ -11,7 +11,10 @@ import EducationSection from '../components/EducationSection.vue';
 import ProjectsSection from '../components/ProjectsSection.vue';
 import ContactSection from '../components/ContactSection.vue';
 import ResumeModal from '../components/ResumeModal.vue';
-import {Check} from "lucide-vue-next";
+import ProjectDetailModal from '../components/ProjectDetailModal.vue';
+import type { ProjectItem } from '@/types/resume';
+import { useScrollLock } from '@/composables/useScrollLock';
+import { Check } from 'lucide-vue-next';
 
 const props = withDefaults(
     defineProps<{
@@ -51,6 +54,28 @@ const showToast = (message: string) => {
 // Resume modal state
 const isResumeModalOpen = ref(false);
 
+// Project detail modal state
+const selectedProject = ref<ProjectItem | null>(null);
+
+const isAnyModalOpen = computed(
+    () => isResumeModalOpen.value || selectedProject.value !== null,
+);
+useScrollLock(isAnyModalOpen);
+
+const openProjectModal = (project: ProjectItem) => {
+    selectedProject.value = project;
+    const url = new URL(window.location.href);
+    url.searchParams.set('project', String(project.id));
+    window.history.replaceState({}, '', url);
+};
+
+const closeProjectModal = () => {
+    selectedProject.value = null;
+    const url = new URL(window.location.href);
+    url.searchParams.delete('project');
+    window.history.replaceState({}, '', url);
+};
+
 onMounted(() => {
     const savedTheme = localStorage.getItem('theme');
     const prefersDark = window.matchMedia(
@@ -63,6 +88,18 @@ onMounted(() => {
     } else {
         isDark.value = false;
         document.documentElement.classList.remove('dark');
+    }
+
+    // Check URL params for project deep linking
+    const params = new URLSearchParams(window.location.search);
+    const projectId = params.get('project');
+    if (projectId && data.value.projects) {
+        const found = data.value.projects.find(
+            (p) => String(p.id) === projectId,
+        );
+        if (found) {
+            selectedProject.value = found;
+        }
     }
 });
 </script>
@@ -89,7 +126,7 @@ onMounted(() => {
                 class="fixed right-5 bottom-5 z-50 flex items-center gap-2 rounded-lg bg-neutral-900 px-3.5 py-2.5 text-xs font-medium text-white shadow-lg dark:bg-white dark:text-neutral-950"
             >
                 <Check
-                    className="w-3.5 h-3.5 text-emerald-400 dark:text-emerald-600"
+                    class="h-3.5 w-3.5 text-emerald-400 dark:text-emerald-600"
                 />
                 <span>{{ toastMessage }}</span>
             </div>
@@ -100,6 +137,7 @@ onMounted(() => {
             :name="data.name"
             :isDark="isDark"
             :cvPdfUrl="data.cvPdfUrl"
+            :settings="data.settings"
             @toggle-theme="toggleTheme"
             @open-resume="isResumeModalOpen = true"
         />
@@ -107,43 +145,54 @@ onMounted(() => {
         <!-- Main Content -->
         <main>
             <!-- Hero -->
-            <HeroSection
-                :data="data"
-                :isDark="isDark"
-                @open-resume="isResumeModalOpen = true"
-                @copy-email="showToast(`Copied: ${$event}`)"
-            />
+            <HeroSection :data="data" :isDark="isDark" />
 
             <!-- About & Direct Channels -->
             <AboutSection
+                v-if="data.settings?.showAbout ?? true"
                 :data="data"
                 @copy-email="showToast(`Copied: ${$event}`)"
             />
 
             <!-- Work Experience -->
-            <ExperienceSection :experience="data.experience" />
+            <ExperienceSection
+                v-if="data.settings?.showExperience ?? true"
+                :experience="data.experience"
+            />
 
             <!-- Skills (Simplified) -->
-            <SkillsSection :categories="data.skillCategories" />
+            <SkillsSection
+                v-if="data.settings?.showSkills ?? true"
+                :categories="data.skillCategories"
+            />
 
             <!-- Education -->
-            <EducationSection :education="data.education" />
+            <EducationSection
+                v-if="data.settings?.showEducation ?? true"
+                :education="data.education"
+            />
 
             <!-- Projects & Architecture -->
-            <ProjectsSection :projects="data.projects" />
+            <ProjectsSection
+                v-if="data.settings?.showProjects ?? true"
+                :projects="data.projects"
+                @select-project="openProjectModal"
+            />
 
             <!-- Contact & Footer -->
             <ContactSection
+                v-if="data.settings?.showContact ?? true"
                 :data="data"
                 @copy-email="showToast(`Copied: ${$event}`)"
-                @open-resume="isResumeModalOpen = true"
             />
 
             <!-- Clean minimalist footer -->
-            <section class="relative p-4 border-t border-neutral-200/80">
+            <section
+                class="relative border-t border-neutral-200/80 p-4 dark:border-neutral-800/80"
+            >
                 <div class="mx-auto max-w-4xl">
                     <footer
-                        class="no-print flex xs:px-2 px-4 items-center justify-between gap-3 text-xs text-neutral-500 sm:flex-rowdark:border-neutral-800/80 dark:text-neutral-400"
+                        class="no-print xs:px-2 flex items-center justify-between gap-3 px-4 text-xs text-neutral-500 sm:flex-row dark:text-neutral-400"
                     >
                         <div>{{ data.name }} • {{ data.title }}</div>
                         <div>{{ new Date().getFullYear() }} • Poland</div>
@@ -157,6 +206,15 @@ onMounted(() => {
             :data="data"
             :isOpen="isResumeModalOpen"
             @close="isResumeModalOpen = false"
+        />
+
+        <!-- Project Detail Modal -->
+        <ProjectDetailModal
+            :project="selectedProject"
+            :isOpen="selectedProject !== null"
+            :projects="data.projects"
+            @close="closeProjectModal"
+            @navigate="openProjectModal"
         />
     </div>
 </template>

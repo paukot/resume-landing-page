@@ -12,23 +12,23 @@ services:
             APP_URL: https://${APP_DOMAIN:?Set APP_DOMAIN in .env}
 
             # --- Domain + automatic HTTPS (Caddy / Let's Encrypt) ---
-            CADDY_AUTO_HTTPS: "off"
-            SSL_MODE: "full"
+            CADDY_AUTO_HTTPS: 'off'
+            SSL_MODE: 'full'
 
             # --- Laravel automations on every container start ---
-            AUTORUN_ENABLED: "true"
-            AUTORUN_LARAVEL_MIGRATION: "true"
+            AUTORUN_ENABLED: 'true'
+            AUTORUN_LARAVEL_MIGRATION: 'true'
             # SQLite is a local file, there is no database server to wait for
-            AUTORUN_LARAVEL_MIGRATION_SKIP_DB_CHECK: "true"
-            AUTORUN_LARAVEL_STORAGE_LINK: "true"
+            AUTORUN_LARAVEL_MIGRATION_SKIP_DB_CHECK: 'true'
+            AUTORUN_LARAVEL_STORAGE_LINK: 'true'
 
             # --- PHP ---
-            PHP_OPCACHE_ENABLE: "1"
-            PHP_UPLOAD_MAX_FILE_SIZE: "100M"
+            PHP_OPCACHE_ENABLE: '1'
+            PHP_UPLOAD_MAX_FILE_SIZE: '100M'
         ports:
-            - "80:8080"
-            - "443:8443"
-            - "443:8443/udp"
+            - '80:8080'
+            - '443:8443'
+            - '443:8443/udp'
         volumes:
             - storage:/var/www/html/storage
             - caddy_data:/data
@@ -36,8 +36,8 @@ services:
         logging:
             driver: json-file
             options:
-                max-size: "10m"
-                max-file: "3"
+                max-size: '10m'
+                max-file: '3'
 
 volumes:
     storage:

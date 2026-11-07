@@ -2,15 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Enums\CacheKey;
 use App\Http\Resources\ResumeResource;
-use App\Models\GeneralInformation;
 use App\Services\WelcomeService;
 use Inertia\Inertia;
+use Inertia\Response;
 
 class WelcomeController extends Controller
 {
-    public function __invoke(WelcomeService $welcomeService)
+    public function __invoke(WelcomeService $welcomeService): Response
     {
         return Inertia::render('Welcome', [
             'resume' => ResumeResource::make(

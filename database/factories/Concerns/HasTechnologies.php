@@ -4,12 +4,16 @@ namespace Database\Factories\Concerns;
 
 trait HasTechnologies
 {
-    private function generateTechnologies($amount): array
+    /**
+     * @return list<string>
+     */
+    private function generateTechnologies(int $amount = 3): array
     {
         $technologies = [];
 
         for ($i = 0; $i < $amount; $i++) {
-            $technologies[] = $this->faker->words($this->faker->numberBetween(1, 3), true);
+            $words = $this->faker->words($this->faker->numberBetween(1, 3));
+            $technologies[] = is_array($words) ? implode(' ', $words) : (string) $words;
         }
 
         return $technologies;

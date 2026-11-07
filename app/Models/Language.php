@@ -3,14 +3,17 @@
 namespace App\Models;
 
 use App\Enums\CacheKey;
+use Database\Factories\LanguageFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Translatable\HasTranslations;
 
 class Language extends Model
 {
+    /** @use HasFactory<LanguageFactory> */
     use HasFactory, HasTranslations;
 
+    /** @var list<string> */
     public array $translatable = ['name', 'level'];
 
     protected $fillable = ['name', 'level', 'sort_order'];

@@ -11,8 +11,8 @@ use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\MarkdownEditor;
 use Filament\Forms\Components\Repeater;
-use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -97,7 +97,7 @@ class ProjectResource extends Resource
                         ->rows(3)
                         ->helperText('Brief overview displayed on the portfolio card.')
                         ->columnSpanFull(),
-                    RichEditor::make("content.$locale")
+                    MarkdownEditor::make("content.$locale")
                         ->label('Detailed Case Study / Story')
                         ->nullable()
                         ->toolbarButtons([
@@ -105,16 +105,16 @@ class ProjectResource extends Resource
                             'italic',
                             'strike',
                             'link',
-                            'h2',
-                            'h3',
-                            'bulletList',
-                            'orderedList',
+                            'heading',
                             'blockquote',
                             'codeBlock',
+                            'bulletList',
+                            'orderedList',
+                            'table',
                             'undo',
                             'redo',
                         ])
-                        ->helperText('Formatted rich text shown in the project detail modal.')
+                        ->helperText('Supports Markdown syntax and rich tables shown in the project detail modal.')
                         ->columnSpanFull(),
                 ]),
                 Repeater::make('highlights')

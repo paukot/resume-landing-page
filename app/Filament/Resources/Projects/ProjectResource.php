@@ -64,18 +64,37 @@ class ProjectResource extends Resource
                             ->directory('projects/covers')
                             ->visibility('public')
                             ->imageEditor()
-                            ->helperText('Main thumbnail displayed on the landing page card (recommended 16:9).'),
+                            ->imageEditorAspectRatios([
+                                '16:9',
+                                '4:3',
+                                '1:1',
+                            ])
+                            ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp', 'image/svg+xml'])
+                            ->maxSize(20480)
+                            ->openable()
+                            ->downloadable()
+                            ->helperText('Main thumbnail displayed on the landing page card (recommended 16:9, max 20MB).')
+                            ->columnSpanFull(),
                         FileUpload::make('gallery')
                             ->label('Screenshots & Diagrams Gallery')
                             ->multiple()
                             ->reorderable()
+                            ->appendFiles()
+                            ->panelLayout('grid')
                             ->image()
                             ->disk('public')
                             ->directory('projects/gallery')
                             ->visibility('public')
-                            ->helperText('Screenshots and architecture diagrams displayed in the detail modal.'),
+                            ->maxParallelUploads(2)
+                            ->maxFiles(20)
+                            ->maxSize(20480)
+                            ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp', 'image/svg+xml', 'image/gif'])
+                            ->openable()
+                            ->downloadable()
+                            ->imageEditor()
+                            ->helperText('Screenshots and architecture diagrams displayed in the detail modal. Drag to reorder, up to 20 images (max 20MB each).')
+                            ->columnSpanFull(),
                     ])
-                    ->columns(2)
                     ->columnSpanFull(),
                 LocaleTabs::make(fn (string $locale): array => [
                     TextInput::make("title.$locale")

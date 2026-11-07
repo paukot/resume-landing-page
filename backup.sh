@@ -9,7 +9,7 @@ KEEP="${KEEP:-14}"
 mkdir -p backups
 out="backups/db-$(date +%Y%m%d-%H%M%S).sql.gz"
 
-if ! docker compose exec -T app sh -c 'sqlite3 "$DB_DATABASE" .dump' | gzip > "$out"; then
+if ! docker compose exec -T app sh -c 'sqlite3 "${DB_DATABASE:-/var/www/html/storage/database/database.sqlite}" .dump' | gzip > "$out"; then
     rm -f "$out"
     echo "Backup failed." >&2
     exit 1

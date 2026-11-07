@@ -168,7 +168,7 @@ const { t } = useTranslations();
                                     @click="emit('select-project', project)"
                                     class="inline-flex cursor-pointer items-center gap-1 text-xs font-semibold text-neutral-900 transition-colors hover:text-neutral-600 dark:text-white dark:hover:text-neutral-300"
                                 >
-                                    <span>Explore Details</span>
+                                    <span>{{ t('show_details') }}</span>
                                     <ArrowUpRight
                                         class="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
                                     />

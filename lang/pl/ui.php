@@ -57,4 +57,5 @@ return [
     'close_full_view' => 'Zamknij pełny widok',
     'previous_image' => 'Poprzednie zdjęcie',
     'next_image' => 'Następne zdjęcie',
+    'show_details' => 'Pokaż więcej',
 ];

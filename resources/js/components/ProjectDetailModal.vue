@@ -66,6 +66,44 @@ const lightboxNext = () => {
     activeGalleryIndex.value = activeLightboxIndex.value;
 };
 
+// Top preview image slider navigation
+const prevGalleryImage = () => {
+    if (allImages.value.length <= 1) return;
+    if (activeGalleryIndex.value > 0) {
+        activeGalleryIndex.value--;
+    } else {
+        activeGalleryIndex.value = allImages.value.length - 1;
+    }
+};
+
+const nextGalleryImage = () => {
+    if (allImages.value.length <= 1) return;
+    if (activeGalleryIndex.value < allImages.value.length - 1) {
+        activeGalleryIndex.value++;
+    } else {
+        activeGalleryIndex.value = 0;
+    }
+};
+
+// Thumbnail slider & auto-scrolling
+const thumbnailStripRef = ref<HTMLElement | null>(null);
+const thumbnailRefs = ref<HTMLElement[]>([]);
+
+const scrollToThumbnail = (idx: number) => {
+    const el = thumbnailRefs.value[idx];
+    if (el && typeof el.scrollIntoView === 'function') {
+        el.scrollIntoView({
+            behavior: 'smooth',
+            block: 'nearest',
+            inline: 'center',
+        });
+    }
+};
+
+watch(activeGalleryIndex, (newIdx) => {
+    scrollToThumbnail(newIdx);
+});
+
 // Reset gallery & lightbox when project changes or closes
 watch(
     () => props.project?.id,
@@ -73,6 +111,7 @@ watch(
         activeGalleryIndex.value = 0;
         activeLightboxIndex.value = 0;
         isLightboxOpen.value = false;
+        thumbnailRefs.value = [];
     },
 );
 
@@ -174,7 +213,7 @@ const allImages = computed(() => {
 
         <!-- Modal Dialog Box -->
         <div
-            class="relative z-10 flex max-h-[92vh] w-full max-w-4xl flex-col overflow-hidden rounded-2xl border border-neutral-200 bg-white shadow-2xl dark:border-neutral-800 dark:bg-neutral-900"
+            class="relative z-10 flex max-h-[92vh] w-full max-w-7xl flex-col overflow-hidden rounded-2xl border border-neutral-200 bg-white shadow-2xl dark:border-neutral-800 dark:bg-neutral-900"
             @click.stop
         >
             <!-- Header Toolbar -->
@@ -262,17 +301,52 @@ const allImages = computed(() => {
                             openLightbox(activeGalleryIndex)
                         "
                         :title="t('view_full_image')"
-                        class="group relative aspect-video w-full cursor-zoom-in overflow-hidden rounded-xl border border-neutral-200/80 bg-neutral-100 transition-colors focus:ring-2 focus:ring-neutral-400 focus:outline-hidden dark:border-neutral-800 dark:bg-neutral-950 dark:focus:ring-neutral-600"
+                        class="group relative aspect-video max-h-120 w-full cursor-zoom-in overflow-hidden rounded-xl border border-neutral-200/80 bg-neutral-100 transition-colors focus:ring-2 focus:ring-neutral-400 focus:outline-hidden dark:border-neutral-800 dark:bg-neutral-950 dark:focus:ring-neutral-600"
                     >
                         <img
                             :src="allImages[activeGalleryIndex]"
                             :alt="project.title"
-                            class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.02]"
+                            class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.01]"
                         />
+
+                        <!-- Previous Image Button (<) on Top Image -->
+                        <button
+                            v-if="allImages.length > 1"
+                            type="button"
+                            @click.stop="prevGalleryImage"
+                            :title="`${t('previous_image')} (←)`"
+                            class="absolute top-1/2 left-3 z-20 inline-flex h-10 w-10 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full bg-black/60 text-white backdrop-blur-xs transition-all hover:scale-110 hover:bg-black/85 focus:ring-2 focus:ring-white/50 focus:outline-hidden active:scale-95 sm:h-11 sm:w-11"
+                        >
+                            <ChevronLeft class="h-6 w-6" />
+                        </button>
+
+                        <!-- Next Image Button (>) on Top Image -->
+                        <button
+                            v-if="allImages.length > 1"
+                            type="button"
+                            @click.stop="nextGalleryImage"
+                            :title="`${t('next_image')} (→)`"
+                            class="absolute top-1/2 right-3 z-20 inline-flex h-10 w-10 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full bg-black/60 text-white backdrop-blur-xs transition-all hover:scale-110 hover:bg-black/85 focus:ring-2 focus:ring-white/50 focus:outline-hidden active:scale-95 sm:h-11 sm:w-11"
+                        >
+                            <ChevronRight class="h-6 w-6" />
+                        </button>
+
+                        <!-- Image Counter Badge -->
+                        <div
+                            v-if="allImages.length > 1"
+                            class="pointer-events-none absolute bottom-3 left-3 z-10"
+                        >
+                            <span
+                                class="inline-flex items-center rounded-full bg-black/65 px-3 py-1 font-mono text-xs font-medium text-white shadow-md backdrop-blur-xs"
+                            >
+                                {{ activeGalleryIndex + 1 }} /
+                                {{ allImages.length }}
+                            </span>
+                        </div>
 
                         <!-- Hover Overlay Indicator -->
                         <div
-                            class="pointer-events-none absolute inset-0 flex items-center justify-center bg-black/25 opacity-0 transition-opacity duration-200 group-hover:opacity-100"
+                            class="pointer-events-none absolute inset-0 flex items-center justify-center bg-black/20 opacity-0 transition-opacity duration-200 group-hover:opacity-100"
                         >
                             <span
                                 class="inline-flex items-center gap-1.5 rounded-full bg-black/80 px-3.5 py-1.5 text-xs font-medium text-white shadow-lg backdrop-blur-xs"
@@ -284,7 +358,7 @@ const allImages = computed(() => {
 
                         <!-- Corner expand badge -->
                         <div
-                            class="pointer-events-none absolute right-2.5 bottom-2.5"
+                            class="pointer-events-none absolute right-3 bottom-3 z-10"
                         >
                             <span
                                 class="inline-flex h-7 w-7 items-center justify-center rounded-md bg-black/60 text-white backdrop-blur-xs transition-colors group-hover:bg-black/80"
@@ -294,28 +368,41 @@ const allImages = computed(() => {
                         </div>
                     </div>
 
-                    <!-- Thumbnails Strip (if multiple images) -->
+                    <!-- Thumbnails Strip Slider (if multiple images) -->
                     <div
                         v-if="allImages.length > 1"
-                        class="mt-3 flex items-center gap-2 overflow-x-auto pb-1"
+                        ref="thumbnailStripRef"
+                        class="mt-4 flex [scrollbar-width:none] items-center gap-3 overflow-x-auto scroll-smooth px-0.5 py-1 [&::-webkit-scrollbar]:hidden"
                     >
                         <button
                             v-for="(imgUrl, idx) in allImages"
                             :key="idx"
+                            :ref="
+                                (el) => {
+                                    if (el)
+                                        thumbnailRefs[idx] = el as HTMLElement;
+                                }
+                            "
                             type="button"
                             @click="activeGalleryIndex = idx"
-                            class="relative h-16 w-24 shrink-0 cursor-pointer overflow-hidden rounded-lg border-2 transition-all duration-150"
+                            class="group/thumb relative h-20 w-32 shrink-0 cursor-pointer overflow-hidden rounded-xl border-2 transition-all duration-200 sm:h-22 sm:w-36"
                             :class="[
                                 activeGalleryIndex === idx
-                                    ? 'border-neutral-900 ring-2 ring-neutral-900/20 dark:border-white dark:ring-white/20'
-                                    : 'border-transparent opacity-60 hover:opacity-100',
+                                    ? 'scale-[1.02] border-neutral-900 shadow-md ring-2 ring-neutral-900/25 dark:border-white dark:ring-white/30'
+                                    : 'border-transparent opacity-60 hover:scale-[1.01] hover:opacity-100',
                             ]"
                         >
                             <img
                                 :src="imgUrl"
-                                :alt="`Screenshot ${idx + 1}`"
-                                class="h-full w-full object-cover"
+                                :alt="`Thumbnail ${idx + 1}`"
+                                class="h-full w-full object-cover transition-transform duration-200 group-hover/thumb:scale-105"
                             />
+                            <span
+                                v-if="activeGalleryIndex === idx"
+                                class="absolute right-1 bottom-1 rounded bg-black/70 px-1.5 py-0.5 font-mono text-[9px] font-semibold text-white backdrop-blur-xs"
+                            >
+                                {{ idx + 1 }}
+                            </span>
                         </button>
                     </div>
                 </div>

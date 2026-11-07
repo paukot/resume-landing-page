@@ -213,6 +213,30 @@ describe('editing', function () {
             ->and($project->getTranslation('content', 'en'))->toContain('<strong>Laravel</strong>')
             ->and($project->getTranslation('content', 'pl'))->toContain('<h2>Architektura</h2>');
     });
+
+    it('supports uploading multiple gallery screenshots in the visual media section', function () {
+        Livewire::test(ManageProjects::class)
+            ->mountAction('create')
+            ->setActionData([
+                'title' => ['en' => 'Multi Image App', 'pl' => 'Aplikacja wieloobrazowa'],
+                'tagline' => ['en' => 'Gallery showcase', 'pl' => 'Prezentacja galerii'],
+                'category' => ['en' => 'Showcase', 'pl' => 'Prezentacja'],
+                'description' => ['en' => 'A project with multiple gallery screenshots.', 'pl' => 'Projekt z wieloma zrzutami ekranu.'],
+                'gallery' => [
+                    UploadedFile::fake()->image('screen1.png'),
+                    UploadedFile::fake()->image('screen2.png'),
+                    UploadedFile::fake()->image('screen3.png'),
+                    UploadedFile::fake()->image('screen4.png'),
+                ],
+            ])
+            ->callMountedAction()
+            ->assertHasNoActionErrors();
+
+        $project = Project::where('title->en', 'Multi Image App')->first();
+
+        expect($project)->not->toBeNull()
+            ->and($project->gallery)->toBeArray()->toHaveCount(4);
+    });
 });
 
 describe('deletion', function () {

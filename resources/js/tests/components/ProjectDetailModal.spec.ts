@@ -162,4 +162,51 @@ describe('ProjectDetailModal.vue', () => {
             'https://example.com/alpha-screen1.jpg',
         );
     });
+
+    it('navigates through gallery images using next and prev buttons on main preview', async () => {
+        // Arrange
+        const wrapper = mount(ProjectDetailModal, {
+            props: {
+                project: mockProjects[0],
+                isOpen: true,
+                projects: mockProjects,
+            },
+        });
+
+        const mainContainer = wrapper.find('.aspect-video');
+        const prevBtn = mainContainer.find('button[title*="←"]');
+        const nextBtn = mainContainer.find('button[title*="→"]');
+
+        expect(prevBtn.exists()).toBe(true);
+        expect(nextBtn.exists()).toBe(true);
+
+        // Initially cover image (index 0)
+        expect(mainContainer.find('img').attributes('src')).toBe(
+            'https://example.com/alpha-cover.jpg',
+        );
+
+        // Click Next -> screen1
+        await nextBtn.trigger('click');
+        expect(mainContainer.find('img').attributes('src')).toBe(
+            'https://example.com/alpha-screen1.jpg',
+        );
+
+        // Click Next -> screen2
+        await nextBtn.trigger('click');
+        expect(mainContainer.find('img').attributes('src')).toBe(
+            'https://example.com/alpha-screen2.jpg',
+        );
+
+        // Click Next (loops back to cover)
+        await nextBtn.trigger('click');
+        expect(mainContainer.find('img').attributes('src')).toBe(
+            'https://example.com/alpha-cover.jpg',
+        );
+
+        // Click Prev (loops to last image)
+        await prevBtn.trigger('click');
+        expect(mainContainer.find('img').attributes('src')).toBe(
+            'https://example.com/alpha-screen2.jpg',
+        );
+    });
 });

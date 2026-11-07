@@ -49,3 +49,4 @@ yarn-error.log
 /opencode.json
 /opencode.jsonc
 .env.before_lerd
+/backups

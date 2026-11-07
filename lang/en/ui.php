@@ -58,4 +58,5 @@ return [
     'close_full_view' => 'Close full view',
     'previous_image' => 'Previous image',
     'next_image' => 'Next image',
+    'show_details' => 'Show details',
 ];

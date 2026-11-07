@@ -38,9 +38,14 @@ yarn-error.log
 /.junie
 /.kiro
 /.pi
+/.gemini
+/skills
+/.plans
 /.mcp.json
 /AGENTS.md
+/GEMINI.md
 /CLAUDE.md
 /boost.json
 /opencode.json
 /opencode.jsonc
+.env.before_lerd

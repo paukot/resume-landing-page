@@ -14,6 +14,7 @@ vi.mock('@inertiajs/vue3', () => ({
                 open_project: 'Open project: :title',
                 featured: 'Featured',
                 code: 'Code',
+                live_demo: 'Live Demo',
             },
         },
     }),
@@ -144,5 +145,26 @@ describe('ProjectsSection.vue', () => {
         expect(wrapper.emitted('select-project')?.[0]).toEqual([
             mockProjects[0],
         ]);
+    });
+
+    it('shows a labelled live demo link that opens without opening the project modal', async () => {
+        // Arrange
+        const projects: ProjectItem[] = [
+            { ...mockProjects[0], liveUrl: 'https://demo.example.com' },
+            mockProjects[1],
+        ];
+        const wrapper = mount(ProjectsSection, {
+            props: { projects },
+        });
+
+        // Act
+        const demoLinks = wrapper.findAll('a[href="https://demo.example.com"]');
+        await demoLinks[0].trigger('click');
+
+        // Assert
+        expect(demoLinks).toHaveLength(1);
+        expect(demoLinks[0].text()).toContain('Live Demo');
+        expect(demoLinks[0].attributes('target')).toBe('_blank');
+        expect(wrapper.emitted('select-project')).toBeUndefined();
     });
 });

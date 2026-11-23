@@ -1,57 +1,63 @@
 <script setup lang="ts">
+import { computed } from 'vue';
 import type { SkillCategory } from '@/types/resume';
-import Icon from './icons/Icon.vue';
 import { useTranslations } from '@/composables/useTranslations';
+import SectionShell from '@/components/ui/SectionShell.vue';
+import TechBadge from '@/components/ui/TechBadge.vue';
+import Icon from '@/components/icons/Icon.vue';
 
-defineProps<{
+const props = defineProps<{
     categories: SkillCategory[];
+    index?: number;
 }>();
 
 const { t } = useTranslations();
+
+const nonEmptyCategories = computed(() =>
+    props.categories.filter((category) => category.skills?.length > 0),
+);
 </script>
 
 <template>
-    <section
+    <SectionShell
         id="skills"
-        class="border-b-2 border-neutral-200/80 py-16 dark:border-neutral-800/80"
+        :index="index"
+        :eyebrow="t('section.skills_and_tools')"
+        :title="t('section.skills_title')"
     >
-        <div class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
             <div
-                class="mb-8 text-xs font-semibold tracking-wider text-neutral-500 uppercase dark:text-neutral-400"
+                v-for="(category, position) in nonEmptyCategories"
+                :key="category.id"
+                v-reveal="position"
+                v-spotlight
+                class="card-glow relative overflow-hidden rounded-3xl border border-zinc-300 bg-white p-6 shadow-card dark:border-white/10 dark:bg-zinc-900"
             >
-                <span>{{ t('section.skills_and_tools') }}</span>
-            </div>
-
-            <!-- Simple, structured 2-column or 4-group grid without fake percentages -->
-            <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
-                <div
-                    v-for="cat in categories"
-                    :key="cat.id"
-                    class="rounded-xl border border-neutral-200/80 bg-neutral-50 p-5 shadow-xs shadow-neutral-300 dark:border-neutral-800/80 dark:bg-neutral-900 dark:shadow-neutral-700"
-                >
-                    <div class="mb-3 flex items-center gap-2">
-                        <Icon
-                            :name="cat.icon"
-                            class="h-4 w-4 text-neutral-500 dark:text-neutral-400"
-                        />
-                        <h3
-                            class="text-xs font-bold tracking-wider text-neutral-800 uppercase dark:text-neutral-200"
+                <div class="relative z-[2]">
+                    <div class="mb-4 flex items-center gap-3">
+                        <span
+                            class="flex h-10 w-10 items-center justify-center rounded-2xl bg-cyan-700/10 text-cyan-700 dark:bg-cyan-400/10 dark:text-cyan-300"
                         >
-                            {{ cat.name }}
+                            <Icon :name="category.icon" class="h-5 w-5" />
+                        </span>
+                        <h3
+                            class="text-base font-bold tracking-tight text-zinc-950 dark:text-white"
+                        >
+                            {{ category.name }}
                         </h3>
                     </div>
 
                     <div class="flex flex-wrap gap-1.5">
-                        <span
-                            v-for="skill in cat.skills"
+                        <TechBadge
+                            v-for="skill in category.skills"
                             :key="skill"
-                            class="rounded-md border border-neutral-200/80 bg-white px-2.5 py-1 text-xs font-medium text-neutral-800 shadow-xs shadow-neutral-300 transition-colors hover:border-neutral-400 dark:border-neutral-700/80 dark:bg-neutral-800 dark:text-neutral-200 dark:shadow-neutral-700 dark:hover:border-neutral-600"
+                            size="md"
                         >
                             {{ skill }}
-                        </span>
+                        </TechBadge>
                     </div>
                 </div>
             </div>
         </div>
-    </section>
+    </SectionShell>
 </template>

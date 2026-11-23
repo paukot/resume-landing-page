@@ -1,205 +1,223 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { computed, type Component } from 'vue';
 import type { ResumeData } from '@/types/resume';
 import { useTranslations } from '@/composables/useTranslations';
-import { Mail, Check, Copy, Smartphone, MapPin } from 'lucide-vue-next';
+import { useClipboard } from '@/composables/useClipboard';
+import { displayUrl } from '@/lib/utils';
+import SectionShell from '@/components/ui/SectionShell.vue';
 import LinkedinIcon from '@/components/icons/LinkedinIcon.vue';
 import GithubIcon from '@/components/icons/GithubIcon.vue';
+import {
+    Check,
+    Copy,
+    Languages,
+    Mail,
+    MapPin,
+    Smartphone,
+} from 'lucide-vue-next';
 
 const props = defineProps<{
     data: ResumeData;
+    index?: number;
 }>();
-
-const { t } = useTranslations();
 
 const emit = defineEmits<{
     (e: 'copy-email', email: string): void;
 }>();
 
-const copied = ref(false);
+const { t } = useTranslations();
+const { copied, copy } = useClipboard();
 
-const copyEmail = () => {
-    navigator.clipboard.writeText(props.data.contact.email);
-    copied.value = true;
-    emit('copy-email', props.data.contact.email);
-    setTimeout(() => {
-        copied.value = false;
-    }, 2000);
+interface ContactRow {
+    key: string;
+    label: string;
+    value: string;
+    href?: string;
+    external?: boolean;
+    icon: Component;
+}
+
+const contactRows = computed<ContactRow[]>(() => {
+    const contact = props.data.contact ?? {};
+    const rows: ContactRow[] = [];
+
+    if (contact.email) {
+        rows.push({
+            key: 'email',
+            icon: Mail,
+            label: t('email'),
+            value: contact.email,
+            href: `mailto:${contact.email}`,
+        });
+    }
+    if (contact.phone) {
+        rows.push({
+            key: 'phone',
+            icon: Smartphone,
+            label: t('phone'),
+            value: contact.phone,
+            href: `tel:${contact.phone.replace(/\s+/g, '')}`,
+        });
+    }
+    if (contact.location) {
+        rows.push({
+            key: 'location',
+            icon: MapPin,
+            label: t('location'),
+            value: contact.location,
+        });
+    }
+    if (contact.linkedin) {
+        rows.push({
+            key: 'linkedin',
+            icon: LinkedinIcon,
+            label: t('linkedin'),
+            value: displayUrl(contact.linkedin),
+            href: contact.linkedin,
+            external: true,
+        });
+    }
+    if (contact.github) {
+        rows.push({
+            key: 'github',
+            icon: GithubIcon,
+            label: t('github'),
+            value: displayUrl(contact.github),
+            href: contact.github,
+            external: true,
+        });
+    }
+
+    return rows;
+});
+
+const hasSideColumn = computed(
+    () =>
+        contactRows.value.length > 0 || (props.data.languages?.length ?? 0) > 0,
+);
+
+const copyEmail = async () => {
+    const email = props.data.contact?.email;
+    if (email && (await copy(email))) {
+        emit('copy-email', email);
+    }
 };
 </script>
 
 <template>
-    <section
+    <SectionShell
         id="about"
-        class="border-b-2 border-neutral-200/80 py-16 dark:border-neutral-800/80"
+        :index="index"
+        :eyebrow="t('nav.about')"
+        :title="t('section.about_title')"
     >
-        <div class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
-            <div
-                class="mb-6 text-xs font-semibold tracking-wider text-neutral-500 uppercase dark:text-neutral-400"
-            >
-                <span>{{ t('section.about_and_contact') }}</span>
-            </div>
-
-            <div class="grid grid-cols-1 items-start gap-8 md:grid-cols-12">
-                <!-- Left: Bio & Philosophy -->
-                <div
-                    class="space-y-4 text-sm leading-relaxed text-neutral-700 sm:text-base md:col-span-7 dark:text-neutral-300"
+        <div
+            class="grid grid-cols-1 items-start gap-10"
+            :class="{ 'lg:grid-cols-12': hasSideColumn }"
+        >
+            <div v-if="data.summary" v-reveal class="lg:col-span-7">
+                <p
+                    class="text-lg leading-relaxed whitespace-pre-line text-zinc-700 sm:text-xl sm:leading-relaxed dark:text-zinc-300"
                 >
                     {{ data.summary }}
+                </p>
+            </div>
 
-                    <!-- Spoken Languages -->
-                    <div
-                        class="border-t border-neutral-200/60 pt-4 dark:border-neutral-800/60"
-                    >
-                        <div
-                            class="mb-2 text-xs font-semibold text-neutral-500 dark:text-neutral-400"
+            <div
+                v-if="hasSideColumn"
+                v-reveal="1"
+                class="flex flex-col gap-6"
+                :class="data.summary ? 'lg:col-span-5' : 'lg:col-span-12'"
+            >
+                <div
+                    v-if="contactRows.length"
+                    class="card-glow rounded-3xl border border-zinc-300 bg-white p-2 shadow-card dark:border-white/10 dark:bg-zinc-900"
+                >
+                    <ul class="divide-y divide-zinc-300 dark:divide-white/5">
+                        <li
+                            v-for="row in contactRows"
+                            :key="row.key"
+                            class="flex items-center gap-3 px-3 py-3"
                         >
-                            {{ t('languages') }}:
-                        </div>
-                        <div class="flex flex-wrap gap-2">
                             <span
-                                v-for="lang in data.languages"
-                                :key="lang.name"
-                                class="inline-flex items-center gap-1.5 rounded-md bg-neutral-100 px-3 py-1 text-xs font-medium text-neutral-800 shadow-xs shadow-neutral-300 dark:bg-neutral-800 dark:text-neutral-200 dark:shadow-neutral-700"
+                                class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-zinc-100 text-zinc-700 dark:bg-white/5 dark:text-zinc-300"
                             >
-                                <span class="font-semibold"
-                                    >{{ lang.name }}:</span
-                                >
-                                <span
-                                    class="text-neutral-500 dark:text-neutral-400"
-                                    >{{ lang.level }}</span
-                                >
+                                <component :is="row.icon" class="h-4 w-4" />
                             </span>
-                        </div>
-                    </div>
+                            <div class="min-w-0 flex-1">
+                                <div
+                                    class="text-[11px] font-semibold tracking-wider text-zinc-600 uppercase"
+                                >
+                                    {{ row.label }}
+                                </div>
+                                <a
+                                    v-if="row.href"
+                                    :href="row.href"
+                                    :target="
+                                        row.external ? '_blank' : undefined
+                                    "
+                                    :rel="
+                                        row.external
+                                            ? 'noopener noreferrer'
+                                            : undefined
+                                    "
+                                    class="block truncate text-sm font-medium text-zinc-900 transition-colors hover:text-cyan-600 dark:text-zinc-100 dark:hover:text-cyan-400"
+                                >
+                                    {{ row.value }}
+                                </a>
+                                <span
+                                    v-else
+                                    class="block truncate text-sm font-medium text-zinc-900 dark:text-zinc-100"
+                                >
+                                    {{ row.value }}
+                                </span>
+                            </div>
+                            <button
+                                v-if="row.key === 'email'"
+                                type="button"
+                                @click="copyEmail"
+                                :title="t('copy_email')"
+                                :aria-label="t('copy_email')"
+                                class="cursor-pointer rounded-lg p-2 text-zinc-500 transition-colors hover:bg-zinc-100 hover:text-zinc-900 dark:hover:bg-white/5 dark:hover:text-white"
+                            >
+                                <component
+                                    :is="copied ? Check : Copy"
+                                    class="h-4 w-4"
+                                    :class="{ 'text-emerald-500': copied }"
+                                />
+                            </button>
+                        </li>
+                    </ul>
                 </div>
 
-                <!-- Right: Contact & Quick Info -->
-                <div class="space-y-3 md:col-span-5">
+                <div v-if="data.languages?.length">
                     <div
-                        class="space-y-3 rounded-xl border border-neutral-200/80 bg-neutral-50 p-5 text-xs shadow-xs shadow-neutral-300 dark:border-neutral-800/80 dark:bg-neutral-900 dark:shadow-neutral-700"
+                        class="mb-3 flex items-center gap-2 text-xs font-semibold tracking-wider text-zinc-600 uppercase"
                     >
-                        <div
-                            class="text-[11px] font-semibold tracking-wider text-neutral-900 uppercase dark:text-neutral-300"
+                        <Languages class="h-3.5 w-3.5" />
+                        {{ t('languages') }}
+                    </div>
+                    <div class="flex flex-wrap gap-2">
+                        <span
+                            v-for="lang in data.languages"
+                            :key="lang.name"
+                            class="inline-flex items-center gap-2 rounded-full border border-zinc-300 bg-white px-3.5 py-1.5 text-sm dark:border-white/10 dark:bg-zinc-900"
                         >
-                            {{ t('about.direct_contact_details') }}
-                        </div>
-
-                        <!-- Email -->
-                        <div
-                            v-if="data.contact.email"
-                            class="flex items-center justify-between gap-2 border-b-2 border-neutral-200/60 py-1.5 dark:border-neutral-800/60"
-                        >
-                            <div
-                                class="flex items-center gap-2 text-neutral-600 dark:text-neutral-400"
-                            >
-                                <Mail class="h-3.5 w-3.5" />
-                                <span>{{ t('email') }}</span>
-                            </div>
-                            <div
-                                class="flex items-center gap-1.5 font-medium text-neutral-900 dark:text-neutral-100"
-                            >
-                                <a
-                                    :href="`mailto:${data.contact.email}`"
-                                    class="hover:underline"
-                                >
-                                    {{ data.contact.email }}
-                                </a>
-                                <button
-                                    type="button"
-                                    @click="copyEmail"
-                                    class="cursor-pointer rounded p-1 text-neutral-400 transition-colors hover:bg-neutral-200 hover:text-neutral-900 dark:hover:bg-neutral-800 dark:hover:text-white"
-                                    title="Copy email"
-                                >
-                                    <component
-                                        :is="copied ? Check : Copy"
-                                        class="h-3.5 w-3.5"
-                                    />
-                                </button>
-                            </div>
-                        </div>
-
-                        <!-- Phone -->
-                        <div
-                            v-if="data.contact.phone"
-                            class="flex items-center justify-between gap-2 border-b-2 border-neutral-200/60 py-1.5 dark:border-neutral-800/60"
-                        >
-                            <div
-                                class="flex items-center gap-2 text-neutral-600 dark:text-neutral-400"
-                            >
-                                <Smartphone class="h-3.5 w-3.5" />
-                                <span>{{ t('phone') }}</span>
-                            </div>
-                            <a
-                                :href="`tel:${data.contact.phone}`"
-                                class="font-medium text-neutral-900 hover:underline dark:text-neutral-100"
-                            >
-                                {{ data.contact.phone }}
-                            </a>
-                        </div>
-
-                        <!-- Location -->
-                        <div
-                            v-if="data.contact.location"
-                            class="flex items-center justify-between gap-2 border-b-2 border-neutral-200/60 py-1.5 dark:border-neutral-800/60"
-                        >
-                            <div
-                                class="flex items-center gap-2 text-neutral-600 dark:text-neutral-400"
-                            >
-                                <MapPin class="h-3.5 w-3.5" />
-                                <span>{{ t('location') }}</span>
-                            </div>
                             <span
-                                class="font-medium text-neutral-900 dark:text-neutral-100"
+                                class="font-semibold text-zinc-900 dark:text-white"
                             >
-                                {{ data.contact.location }}
+                                {{ lang.name }}
                             </span>
-                        </div>
-
-                        <!-- Github -->
-                        <div
-                            v-if="data.contact.github"
-                            class="flex items-center justify-between gap-2 border-b-2 border-neutral-200/60 py-1.5 dark:border-neutral-800/60"
-                        >
-                            <div
-                                class="flex items-center gap-2 text-neutral-600 dark:text-neutral-400"
+                            <span
+                                v-if="lang.level"
+                                class="text-zinc-600 dark:text-zinc-400"
                             >
-                                <GithubIcon class="h-3.5 w-3.5" />
-                                <span>{{ t('github') }}</span>
-                            </div>
-                            <a
-                                :href="data.contact.github"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                class="inline-flex items-center gap-1 font-medium text-neutral-900 hover:underline dark:text-neutral-100"
-                            >
-                                <span>{{ data.contact.github }}</span>
-                            </a>
-                        </div>
-
-                        <!-- Linkedin -->
-                        <div
-                            v-if="data.contact.linkedin"
-                            class="flex items-center justify-between gap-2 py-1.5"
-                        >
-                            <div
-                                class="flex items-center gap-2 text-neutral-600 dark:text-neutral-400"
-                            >
-                                <LinkedinIcon class="h-3.5 w-3.5" />
-                                <span>{{ t('linkedin') }}</span>
-                            </div>
-                            <a
-                                :href="data.contact.linkedin"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                class="inline-flex items-center gap-1 font-medium text-neutral-900 hover:underline dark:text-neutral-100"
-                            >
-                                <span>{{ data.contact.linkedin }}</span>
-                            </a>
-                        </div>
+                                {{ lang.level }}
+                            </span>
+                        </span>
                     </div>
                 </div>
             </div>
         </div>
-    </section>
+    </SectionShell>
 </template>

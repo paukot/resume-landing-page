@@ -1,170 +1,182 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { computed } from 'vue';
 import type { ResumeData } from '@/types/resume';
 import { useTranslations } from '@/composables/useTranslations';
+import { useClipboard } from '@/composables/useClipboard';
+import { displayUrl } from '@/lib/utils';
 import LinkedinIcon from '@/components/icons/LinkedinIcon.vue';
-import { Check, Copy, ExternalLink, Mail } from 'lucide-vue-next';
+import GithubIcon from '@/components/icons/GithubIcon.vue';
+import { ArrowUpRight, Check, Copy, Mail } from 'lucide-vue-next';
 
 const props = defineProps<{
     data: ResumeData;
+    index?: number;
 }>();
-
-const { t } = useTranslations();
 
 const emit = defineEmits<{
     (e: 'copy-email', email: string): void;
 }>();
 
-const copied = ref(false);
+const { t } = useTranslations();
+const { copied, copy } = useClipboard();
 
-const copyEmail = () => {
-    navigator.clipboard.writeText(props.data.contact.email);
-    copied.value = true;
-    emit('copy-email', props.data.contact.email);
-    setTimeout(() => {
-        copied.value = false;
-    }, 2000);
+const email = computed(() => props.data.contact?.email ?? '');
+const linkedin = computed(() => props.data.contact?.linkedin ?? '');
+const github = computed(() => props.data.contact?.github ?? '');
+
+const mailtoHref = computed(() => {
+    const subject = t('contact.email_subject', { name: props.data.name });
+    return `mailto:${email.value}?subject=${encodeURIComponent(subject)}`;
+});
+
+const hasBothChannels = computed(() => Boolean(email.value && linkedin.value));
+
+const copyEmail = async () => {
+    if (email.value && (await copy(email.value))) {
+        emit('copy-email', email.value);
+    }
 };
 </script>
 
 <template>
-    <section id="contact" class="relative py-16 sm:py-20">
-        <div class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
-            <!-- Section Header -->
+    <section id="contact" class="relative py-20 sm:py-28">
+        <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
             <div
-                class="mb-4 text-xs font-semibold tracking-wider text-neutral-500 uppercase dark:text-neutral-400"
+                v-reveal
+                class="relative overflow-hidden rounded-[2rem] border border-zinc-300 bg-white px-6 py-14 shadow-sm sm:px-12 sm:py-20 dark:border-white/10 dark:bg-zinc-900"
             >
-                <span>{{ t('section.connect') }}</span>
-            </div>
-
-            <div class="mb-10">
-                <h2
-                    class="text-2xl font-extrabold tracking-tight text-neutral-950 sm:text-4xl dark:text-white"
-                >
-                    {{ t('contact.message_me_email_or_linkedin') }}
-                </h2>
-                <p
-                    class="mt-2 max-w-2xl text-sm leading-relaxed text-neutral-600 sm:text-base dark:text-neutral-400"
-                >
-                    {{ t('contact.reach_out_description') }}
-                </p>
-            </div>
-
-            <!-- Primary Direct Connect Cards (LinkedIn & Email) -->
-            <div class="mb-10 grid grid-cols-1 gap-5 sm:grid-cols-2">
-                <!-- LinkedIn Card -->
-                <div
-                    class="group flex flex-col justify-between rounded-2xl border border-sky-200/80 bg-linear-to-br from-sky-500/10 via-sky-500/5 to-transparent p-6 shadow-xs transition-all hover:border-sky-400 dark:border-sky-900/60 dark:from-sky-950/30 dark:via-neutral-900 dark:to-neutral-900 dark:hover:border-sky-700"
-                >
-                    <div>
-                        <div
-                            class="mb-4 flex items-center justify-between gap-2"
-                        >
-                            <div
-                                class="flex h-10 w-10 items-center justify-center rounded-xl bg-sky-100 text-sky-600 shadow-xs dark:bg-sky-900/50 dark:text-sky-300"
-                            >
-                                <LinkedinIcon class="h-5 w-5" />
-                            </div>
-                            <span
-                                class="rounded-full bg-sky-100 px-2 py-0.5 text-[10px] font-semibold tracking-wider text-sky-800 uppercase dark:bg-sky-900/60 dark:text-sky-200"
-                            >
-                                {{ t('fast_response') }}
-                            </span>
-                        </div>
-
-                        <h3
-                            class="text-lg font-bold text-neutral-950 transition-colors group-hover:text-sky-600 dark:text-white dark:group-hover:text-sky-400"
-                        >
-                            {{ t('linkedin') }}
-                        </h3>
-                        <p
-                            class="mt-1 text-xs text-neutral-600 dark:text-neutral-400"
-                        >
-                            {{ t('contact.linkedin_details') }}
-                        </p>
-                        <div
-                            class="mt-3 font-mono text-xs text-neutral-800 dark:text-neutral-200"
-                        >
-                            {{ data.contact.linkedin }}
-                        </div>
-                    </div>
-
-                    <div
-                        class="mt-6 border-t border-sky-200/50 pt-4 dark:border-sky-900/40"
+                <div class="mx-auto max-w-2xl text-center">
+                    <p
+                        class="text-gradient text-xs font-semibold tracking-[0.2em] uppercase"
                     >
-                        <a
-                            :href="data.contact.linkedin"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            class="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-sky-600 px-4 py-2.5 text-xs font-semibold text-white shadow-xs transition-colors hover:bg-sky-700 sm:text-sm"
-                        >
-                            <span>{{ t('message_on_linkedin') }}</span>
-                            <ExternalLink class="h-3.5 w-3.5" />
-                        </a>
-                    </div>
+                        {{ t('section.connect') }}
+                    </p>
+                    <h2
+                        class="mt-4 text-3xl font-bold tracking-tight text-balance text-zinc-950 sm:text-5xl dark:text-white"
+                    >
+                        {{ t('contact.message_me_email_or_linkedin') }}
+                    </h2>
+                    <p
+                        class="mt-4 text-base leading-relaxed text-zinc-700 dark:text-zinc-400"
+                    >
+                        {{ t('contact.reach_out_description') }}
+                    </p>
                 </div>
 
-                <!-- Email Card -->
                 <div
-                    class="group flex flex-col justify-between rounded-2xl border border-emerald-200/80 bg-linear-to-br from-emerald-500/10 via-emerald-500/5 to-transparent p-6 shadow-xs transition-all hover:border-emerald-400 dark:border-emerald-900/60 dark:from-emerald-950/30 dark:via-neutral-900 dark:to-neutral-900 dark:hover:border-emerald-700"
+                    class="mx-auto mt-12 grid max-w-3xl grid-cols-1 gap-5"
+                    :class="{ 'md:grid-cols-2': hasBothChannels }"
                 >
-                    <div>
-                        <div
-                            class="mb-4 flex items-center justify-between gap-2"
-                        >
-                            <div
-                                class="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-100 text-emerald-600 shadow-xs dark:bg-emerald-900/50 dark:text-emerald-300"
+                    <div
+                        v-if="email"
+                        class="card-glow flex flex-col rounded-3xl border border-zinc-300 bg-zinc-100 p-6 dark:border-white/10 dark:bg-zinc-950/60"
+                    >
+                        <div class="flex items-center justify-between gap-2">
+                            <span
+                                class="flex h-11 w-11 items-center justify-center rounded-2xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"
                             >
                                 <Mail class="h-5 w-5" />
-                            </div>
+                            </span>
                             <span
-                                class="rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-semibold tracking-wider text-emerald-800 uppercase dark:bg-emerald-900/60 dark:text-emerald-200"
+                                class="rounded-full bg-emerald-500/10 px-2.5 py-0.5 text-[10px] font-bold tracking-wider text-emerald-700 uppercase dark:text-emerald-300"
                             >
                                 {{ t('direct_inbox') }}
                             </span>
                         </div>
-
                         <h3
-                            class="text-lg font-bold text-neutral-950 transition-colors group-hover:text-emerald-600 dark:text-white dark:group-hover:text-emerald-400"
+                            class="mt-4 text-lg font-bold text-zinc-950 dark:text-white"
                         >
                             {{ t('email') }}
                         </h3>
                         <p
-                            class="mt-1 text-xs text-neutral-600 dark:text-neutral-400"
+                            class="mt-1 text-sm text-zinc-700 dark:text-zinc-400"
                         >
                             {{ t('contact.email_details') }}
                         </p>
                         <div
-                            class="mt-3 font-mono text-xs text-neutral-800 select-all dark:text-neutral-200"
+                            class="mt-3 truncate text-sm font-medium text-zinc-900 select-all dark:text-zinc-100"
                         >
-                            {{ data.contact.email }}
+                            {{ email }}
+                        </div>
+                        <div class="mt-6 flex items-center gap-2">
+                            <a
+                                :href="mailtoHref"
+                                class="btn btn-primary flex-1 px-4 py-2.5 text-sm"
+                            >
+                                <Mail class="h-4 w-4" />
+                                {{ t('send_email') }}
+                            </a>
+                            <button
+                                type="button"
+                                @click="copyEmail"
+                                :title="t('copy_email')"
+                                class="btn btn-secondary shrink-0 px-4 py-2.5 text-sm"
+                            >
+                                <component
+                                    :is="copied ? Check : Copy"
+                                    class="h-4 w-4"
+                                    :class="{ 'text-emerald-500': copied }"
+                                />
+                                {{ copied ? t('copied') : t('copy') }}
+                            </button>
                         </div>
                     </div>
 
                     <div
-                        class="mt-6 flex items-center gap-2 border-t border-emerald-200/50 pt-4 dark:border-emerald-900/40"
+                        v-if="linkedin"
+                        class="card-glow flex flex-col rounded-3xl border border-zinc-300 bg-zinc-100 p-6 dark:border-white/10 dark:bg-zinc-950/60"
                     >
-                        <a
-                            :href="`mailto:${data.contact.email}?subject=Hello%20Paulina%20-%20Backend%20Role%20Inquiry`"
-                            class="inline-flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-emerald-600 px-3 py-2.5 text-xs font-semibold text-white shadow-xs transition-colors hover:bg-emerald-700 sm:text-sm"
+                        <div class="flex items-center justify-between gap-2">
+                            <span
+                                class="flex h-11 w-11 items-center justify-center rounded-2xl bg-sky-500/10 text-sky-600 dark:text-sky-400"
+                            >
+                                <LinkedinIcon class="h-5 w-5" />
+                            </span>
+                            <span
+                                class="rounded-full bg-sky-500/10 px-2.5 py-0.5 text-[10px] font-bold tracking-wider text-sky-700 uppercase dark:text-sky-300"
+                            >
+                                {{ t('fast_response') }}
+                            </span>
+                        </div>
+                        <h3
+                            class="mt-4 text-lg font-bold text-zinc-950 dark:text-white"
                         >
-                            <Mail class="h-3.5 w-3.5" />
-                            <span>{{ t('send_email') }}</span>
-                        </a>
-
-                        <button
-                            type="button"
-                            @click="copyEmail"
-                            class="inline-flex shrink-0 cursor-pointer items-center justify-center gap-1 rounded-xl border border-neutral-300 bg-white px-3 py-2.5 text-xs font-medium text-neutral-800 transition-colors hover:bg-neutral-50 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-200 dark:hover:bg-neutral-700"
-                            title="Copy email address"
+                            {{ t('linkedin') }}
+                        </h3>
+                        <p
+                            class="mt-1 text-sm text-zinc-700 dark:text-zinc-400"
                         >
-                            <component
-                                :is="copied ? Check : Copy"
-                                class="h-3.5 w-3.5"
-                            />
-                            <span>{{ copied ? t('copied') : t('copy') }}</span>
-                        </button>
+                            {{ t('contact.linkedin_details') }}
+                        </p>
+                        <div
+                            class="mt-3 truncate text-sm font-medium text-zinc-900 dark:text-zinc-100"
+                        >
+                            {{ displayUrl(linkedin) }}
+                        </div>
+                        <div class="mt-6">
+                            <a
+                                :href="linkedin"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                class="btn btn-primary w-full px-4 py-2.5 text-sm"
+                            >
+                                {{ t('message_on_linkedin') }}
+                                <ArrowUpRight class="h-4 w-4" />
+                            </a>
+                        </div>
                     </div>
+                </div>
+
+                <div v-if="github" class="mt-8 flex justify-center">
+                    <a
+                        :href="github"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="inline-flex items-center gap-2 text-sm font-semibold text-zinc-700 transition-colors hover:text-zinc-950 dark:text-zinc-400 dark:hover:text-white"
+                    >
+                        <GithubIcon class="h-4 w-4" />
+                        {{ displayUrl(github) }}
+                    </a>
                 </div>
             </div>
         </div>

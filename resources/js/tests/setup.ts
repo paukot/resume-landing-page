@@ -1,4 +1,8 @@
 import { vi } from 'vitest';
+import { config } from '@vue/test-utils';
+import { reveal, spotlight } from '@/lib/directives';
+
+config.global.directives = { reveal, spotlight };
 
 // Mock window.matchMedia
 Object.defineProperty(window, 'matchMedia', {
@@ -27,19 +31,5 @@ Object.defineProperty(window, 'IntersectionObserver', {
     value: MockIntersectionObserver,
 });
 
-// Mock window.print
-window.print = vi.fn();
-
 // Mock element.scrollIntoView
 Element.prototype.scrollIntoView = vi.fn();
-
-// Mock HTMLCanvasElement.prototype.getContext for particle canvas
-HTMLCanvasElement.prototype.getContext = vi.fn().mockReturnValue({
-    clearRect: vi.fn(),
-    beginPath: vi.fn(),
-    arc: vi.fn(),
-    fill: vi.fn(),
-    moveTo: vi.fn(),
-    lineTo: vi.fn(),
-    stroke: vi.fn(),
-});

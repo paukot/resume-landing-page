@@ -69,7 +69,7 @@ onUnmounted(() => {
         "
     >
         <div
-            class="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8"
+            class="mx-auto flex h-(--nav-height) max-w-6xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8"
         >
             <a
                 href="#hero"

@@ -52,6 +52,8 @@
 }
 
 :root {
+    /* Fixed navbar height; also the scroll offset for in-page links. */
+    --nav-height: 4rem;
     --gradient-brand: linear-gradient(
         100deg,
         var(--color-brand-from),
@@ -61,7 +63,7 @@
 }
 
 html {
-    scroll-padding-top: 5rem;
+    scroll-padding-top: var(--nav-height);
     scroll-behavior: smooth;
 }
 

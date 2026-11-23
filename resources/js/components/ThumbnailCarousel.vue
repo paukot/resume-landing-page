@@ -155,7 +155,7 @@ onUnmounted(() => {
                     activeIndex === index
                         ? tone === 'dark'
                             ? 'border-white opacity-100'
-                            : 'border-cyan-500 shadow-md dark:border-cyan-400'
+                            : 'border-lavender-500 shadow-md dark:border-lavender-300'
                         : 'border-transparent opacity-55 hover:opacity-100',
                 ]"
             >

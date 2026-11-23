@@ -112,7 +112,7 @@ const pageTitle = computed(() =>
 
 <template>
     <div
-        class="relative min-h-screen overflow-x-clip bg-canvas font-sans text-zinc-900 antialiased selection:bg-cyan-400/30 selection:text-zinc-950 dark:bg-zinc-950 dark:text-zinc-100 dark:selection:text-white"
+        class="relative min-h-screen overflow-x-clip bg-canvas font-sans text-zinc-900 antialiased selection:bg-lavender-300/50 dark:selection:bg-lavender-400/40 selection:text-zinc-950 dark:bg-zinc-950 dark:text-zinc-100 dark:selection:text-white"
     >
         <Head :title="pageTitle">
             <meta

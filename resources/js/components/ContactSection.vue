@@ -128,12 +128,12 @@ const copyEmail = async () => {
                     >
                         <div class="flex items-center justify-between gap-2">
                             <span
-                                class="flex h-11 w-11 items-center justify-center rounded-2xl bg-sky-500/10 text-sky-600 dark:text-sky-400"
+                                class="flex h-11 w-11 items-center justify-center rounded-2xl bg-lavender-500/10 text-lavender-600 dark:text-lavender-300"
                             >
                                 <LinkedinIcon class="h-5 w-5" />
                             </span>
                             <span
-                                class="rounded-full bg-sky-500/10 px-2.5 py-0.5 text-[10px] font-bold tracking-wider text-sky-700 uppercase dark:text-sky-300"
+                                class="rounded-full bg-lavender-500/10 px-2.5 py-0.5 text-[10px] font-bold tracking-wider text-lavender-700 uppercase dark:text-lavender-300"
                             >
                                 {{ t('fast_response') }}
                             </span>

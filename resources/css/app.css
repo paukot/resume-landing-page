@@ -1,4 +1,4 @@
-@import 'tailwindcss';
+@import "tailwindcss";
 
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';
@@ -7,19 +7,48 @@
 
 @theme inline {
     --font-sans:
-        'Instrument Sans', ui-sans-serif, system-ui, Helvetica, Arial,
+        "Instrument Sans", ui-sans-serif, system-ui, Helvetica, Arial,
         sans-serif;
 }
 
 @theme {
-    --color-canvas: #e9e9ec;
+    /*
+     * Neutrals: zinc lightness steps kept 1:1 (so text / hover contrast is
+     * unchanged), tinted toward lavender.
+     */
+    --color-zinc-50: oklch(0.985 0.006 295);
+    --color-zinc-100: oklch(0.967 0.011 295);
+    --color-zinc-200: oklch(0.92 0.018 295);
+    --color-zinc-300: oklch(0.871 0.025 295);
+    --color-zinc-400: oklch(0.705 0.034 293);
+    --color-zinc-500: oklch(0.552 0.036 292);
+    --color-zinc-600: oklch(0.442 0.036 292);
+    --color-zinc-700: oklch(0.37 0.034 292);
+    --color-zinc-800: oklch(0.274 0.03 292);
+    --color-zinc-900: oklch(0.21 0.026 292);
+    --color-zinc-950: oklch(0.141 0.02 292);
+
+    /* Lavender accent */
+    --color-lavender-50: oklch(0.977 0.014 300);
+    --color-lavender-100: oklch(0.946 0.03 300);
+    --color-lavender-200: oklch(0.894 0.058 300);
+    --color-lavender-300: oklch(0.827 0.094 300);
+    --color-lavender-400: oklch(0.73 0.135 298);
+    --color-lavender-500: oklch(0.636 0.165 296);
+    --color-lavender-600: oklch(0.55 0.18 294);
+    --color-lavender-700: oklch(0.48 0.17 293);
+    --color-lavender-800: oklch(0.41 0.14 293);
+    --color-lavender-900: oklch(0.34 0.11 293);
+    --color-lavender-950: oklch(0.25 0.08 293);
+
+    --color-canvas: oklch(0.958 0.016 298);
     --shadow-card:
-        0 1px 2px rgb(24 24 27 / 0.08), 0 12px 28px -14px rgb(24 24 27 / 0.24);
+        0 1px 2px rgb(46 16 101 / 0.07), 0 12px 28px -14px rgb(46 16 101 / 0.22);
     --shadow-card-hover:
-        0 2px 4px rgb(24 24 27 / 0.08), 0 20px 40px -16px rgb(24 24 27 / 0.32);
-    --color-brand-from: oklch(0.72 0.16 165);
-    --color-brand-via: oklch(0.7 0.13 215);
-    --color-brand-to: oklch(0.6 0.19 285);
+        0 2px 4px rgb(46 16 101 / 0.08), 0 20px 40px -16px rgb(46 16 101 / 0.3);
+    --color-brand-from: oklch(0.66 0.16 330);
+    --color-brand-via: oklch(0.6 0.17 300);
+    --color-brand-to: oklch(0.52 0.19 278);
 }
 
 :root {
@@ -96,7 +125,7 @@ body {
 }
 
 .card-glow::before {
-    content: '';
+    content: "";
     position: absolute;
     inset: 0;
     padding: 1px;
@@ -120,7 +149,7 @@ body {
 
 /* Cursor-following highlight, position driven by v-spotlight */
 .spotlight::after {
-    content: '';
+    content: "";
     position: absolute;
     inset: 0;
     border-radius: inherit;
@@ -159,28 +188,29 @@ body {
             color 150ms ease;
 
         &:focus-visible {
-            outline: 2px solid var(--color-cyan-600);
+            outline: 2px solid var(--color-lavender-500);
             outline-offset: 2px;
         }
     }
 
     .btn-primary {
-        background-color: var(--color-cyan-700);
+        background-color: var(--color-lavender-600);
         color: var(--color-white);
 
         &:hover {
-            background-color: var(--color-cyan-800);
+            background-color: var(--color-lavender-700);
         }
     }
 
     .btn-secondary {
-        border-color: var(--color-zinc-400);
+        border-color: var(--color-lavender-300);
         background-color: var(--color-white);
         color: var(--color-zinc-900);
 
         &:hover {
-            border-color: var(--color-zinc-500);
-            background-color: var(--color-zinc-100);
+            border-color: var(--color-lavender-400);
+            background-color: var(--color-lavender-50);
+            color: var(--color-lavender-800);
         }
     }
 
@@ -188,17 +218,17 @@ body {
         color: var(--color-zinc-600);
 
         &:hover {
-            background-color: var(--color-zinc-100);
-            color: var(--color-zinc-950);
+            background-color: var(--color-lavender-100);
+            color: var(--color-lavender-800);
         }
     }
 
     .dark .btn-primary {
-        background-color: var(--color-cyan-600);
-        color: var(--color-white);
+        background-color: var(--color-lavender-300);
+        color: var(--color-lavender-950);
 
         &:hover {
-            background-color: var(--color-cyan-500);
+            background-color: var(--color-lavender-200);
         }
     }
 
@@ -208,8 +238,12 @@ body {
         color: var(--color-zinc-100);
 
         &:hover {
-            border-color: rgb(255 255 255 / 0.3);
-            background-color: rgb(255 255 255 / 0.05);
+            border-color: var(--color-lavender-400);
+            background-color: color-mix(
+                in oklch,
+                var(--color-lavender-400) 10%,
+                transparent
+            );
         }
     }
 
@@ -217,8 +251,12 @@ body {
         color: var(--color-zinc-400);
 
         &:hover {
-            background-color: rgb(255 255 255 / 0.06);
-            color: var(--color-white);
+            background-color: color-mix(
+                in oklch,
+                var(--color-lavender-400) 12%,
+                transparent
+            );
+            color: var(--color-lavender-200);
         }
     }
 }

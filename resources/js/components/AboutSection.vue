@@ -161,7 +161,7 @@ const copyEmail = async () => {
                                             ? 'noopener noreferrer'
                                             : undefined
                                     "
-                                    class="block truncate text-sm font-medium text-zinc-900 transition-colors hover:text-cyan-600 dark:text-zinc-100 dark:hover:text-cyan-400"
+                                    class="block truncate text-sm font-medium text-zinc-900 transition-colors hover:text-lavender-700 dark:text-zinc-100 dark:hover:text-lavender-300"
                                 >
                                     {{ row.value }}
                                 </a>

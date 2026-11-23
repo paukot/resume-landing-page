@@ -41,7 +41,7 @@ const { t } = useTranslations();
                         :class="
                             job.isCurrent
                                 ? 'border-emerald-500'
-                                : 'border-zinc-300 group-hover:border-cyan-500 dark:border-zinc-700'
+                                : 'border-zinc-300 group-hover:border-lavender-500 dark:border-zinc-700'
                         "
                     />
                 </span>
@@ -74,7 +74,7 @@ const { t } = useTranslations();
                                     :href="job.companyUrl"
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    class="inline-flex items-center gap-0.5 font-semibold text-zinc-800 transition-colors hover:text-cyan-600 dark:text-zinc-200 dark:hover:text-cyan-400"
+                                    class="inline-flex items-center gap-0.5 font-semibold text-zinc-800 transition-colors hover:text-lavender-700 dark:text-zinc-200 dark:hover:text-lavender-300"
                                 >
                                     {{ job.company }}
                                     <ArrowUpRight class="h-3.5 w-3.5" />

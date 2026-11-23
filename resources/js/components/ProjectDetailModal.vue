@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { ref, watch, onMounted, onUnmounted, computed } from 'vue';
-import type { ProjectItem } from '@/types/resume';
-import { useTranslations } from '@/composables/useTranslations';
-import GithubIcon from '@/components/icons/GithubIcon.vue';
-import ImageLightbox from '@/components/ImageLightbox.vue';
-import ThumbnailCarousel from '@/components/ThumbnailCarousel.vue';
-import TechBadge from '@/components/ui/TechBadge.vue';
+import { ref, watch, onMounted, onUnmounted, computed } from "vue";
+import type { ProjectItem } from "@/types/resume";
+import { useTranslations } from "@/composables/useTranslations";
+import GithubIcon from "@/components/icons/GithubIcon.vue";
+import ImageLightbox from "@/components/ImageLightbox.vue";
+import ThumbnailCarousel from "@/components/ThumbnailCarousel.vue";
+import TechBadge from "@/components/ui/TechBadge.vue";
 import {
     X,
     ExternalLink,
@@ -13,7 +13,7 @@ import {
     ChevronRight,
     ZoomIn,
     Maximize2,
-} from 'lucide-vue-next';
+} from "lucide-vue-next";
 
 const props = defineProps<{
     project: ProjectItem | null;
@@ -22,8 +22,8 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
-    (e: 'close'): void;
-    (e: 'navigate', project: ProjectItem): void;
+    (e: "close"): void;
+    (e: "navigate", project: ProjectItem): void;
 }>();
 
 const { t } = useTranslations();
@@ -37,7 +37,7 @@ const activeLightboxIndex = ref<number>(0);
 
 const openLightbox = (index?: number) => {
     activeLightboxIndex.value =
-        typeof index === 'number' ? index : activeGalleryIndex.value;
+        typeof index === "number" ? index : activeGalleryIndex.value;
     isLightboxOpen.value = true;
 };
 
@@ -127,13 +127,13 @@ const hasNext = computed(() => {
 
 const goToPrev = () => {
     if (hasPrev.value && props.projects) {
-        emit('navigate', props.projects[currentIndex.value - 1]);
+        emit("navigate", props.projects[currentIndex.value - 1]);
     }
 };
 
 const goToNext = () => {
     if (hasNext.value && props.projects) {
-        emit('navigate', props.projects[currentIndex.value + 1]);
+        emit("navigate", props.projects[currentIndex.value + 1]);
     }
 };
 
@@ -141,19 +141,19 @@ const goToNext = () => {
 const handleKeyDown = (e: KeyboardEvent) => {
     if (!props.isOpen) return;
 
-    if (e.key === 'Escape') {
+    if (e.key === "Escape") {
         if (isLightboxOpen.value) {
             closeLightbox();
         } else {
-            emit('close');
+            emit("close");
         }
-    } else if (e.key === 'ArrowLeft') {
+    } else if (e.key === "ArrowLeft") {
         if (isLightboxOpen.value) {
             lightboxPrev();
         } else {
             goToPrev();
         }
-    } else if (e.key === 'ArrowRight') {
+    } else if (e.key === "ArrowRight") {
         if (isLightboxOpen.value) {
             lightboxNext();
         } else {
@@ -163,11 +163,11 @@ const handleKeyDown = (e: KeyboardEvent) => {
 };
 
 onMounted(() => {
-    window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener("keydown", handleKeyDown);
 });
 
 onUnmounted(() => {
-    window.removeEventListener('keydown', handleKeyDown);
+    window.removeEventListener("keydown", handleKeyDown);
 });
 
 // All displayable images (Cover + Gallery)
@@ -209,15 +209,15 @@ const allImages = computed(() => {
             >
                 <div class="flex items-center gap-2 overflow-hidden">
                     <span
-                        class="rounded-full bg-zinc-100 px-2.5 py-0.5 text-[10px] font-bold tracking-wider text-cyan-700 uppercase dark:bg-white/5 dark:text-cyan-300"
+                        class="rounded-full bg-zinc-100 px-2.5 py-0.5 text-[10px] font-bold tracking-wider text-lavender-700 uppercase dark:bg-white/5 dark:text-lavender-300"
                     >
                         {{ project.category }}
                     </span>
                     <span
                         v-if="project.featured"
-                        class="inline-flex items-center gap-1 rounded-full bg-cyan-700 px-2.5 py-0.5 text-[10px] font-bold text-white dark:bg-cyan-600 dark:text-white"
+                        class="inline-flex items-center gap-1 rounded-full bg-lavender-600 px-2.5 py-0.5 text-[10px] font-bold text-white dark:bg-lavender-300 dark:text-lavender-950"
                     >
-                        {{ t('featured') }}
+                        {{ t("featured") }}
                     </span>
                 </div>
 
@@ -291,7 +291,7 @@ const allImages = computed(() => {
                             openLightbox(activeGalleryIndex)
                         "
                         :title="t('view_full_image')"
-                        class="group relative aspect-video max-h-120 w-full cursor-zoom-in overflow-hidden rounded-xl border border-zinc-300 bg-zinc-100 transition-colors focus:ring-2 focus:ring-cyan-500 focus:outline-hidden dark:border-white/10 dark:bg-zinc-800 dark:focus:ring-cyan-400"
+                        class="group relative aspect-video max-h-120 w-full cursor-zoom-in overflow-hidden rounded-xl border border-zinc-300 bg-zinc-100 transition-colors focus:ring-2 focus:ring-lavender-500 focus:outline-hidden dark:border-white/10 dark:bg-zinc-800 dark:focus:ring-lavender-300"
                     >
                         <img
                             :src="allImages[activeGalleryIndex]"
@@ -342,7 +342,7 @@ const allImages = computed(() => {
                                 class="inline-flex items-center gap-1.5 rounded-full bg-black/80 px-3.5 py-1.5 text-xs font-medium text-white shadow-lg backdrop-blur-xs"
                             >
                                 <ZoomIn class="h-3.5 w-3.5" />
-                                <span>{{ t('view_full_image') }}</span>
+                                <span>{{ t("view_full_image") }}</span>
                             </span>
                         </div>
 
@@ -384,7 +384,7 @@ const allImages = computed(() => {
                         <span
                             class="mr-1 text-xs font-semibold text-zinc-600 uppercase dark:text-zinc-400"
                         >
-                            {{ t('stack') }}
+                            {{ t("stack") }}
                         </span>
                         <TechBadge
                             v-for="tech in project.technologies"
@@ -404,7 +404,7 @@ const allImages = computed(() => {
                             class="btn btn-primary px-4 py-2 text-xs"
                         >
                             <ExternalLink class="h-3.5 w-3.5" />
-                            <span>{{ t('live_demo') }}</span>
+                            <span>{{ t("live_demo") }}</span>
                         </a>
 
                         <a
@@ -415,7 +415,7 @@ const allImages = computed(() => {
                             class="btn btn-secondary px-4 py-2 text-xs"
                         >
                             <GithubIcon class="h-3.5 w-3.5" />
-                            <span>{{ t('code') }}</span>
+                            <span>{{ t("code") }}</span>
                         </a>
                     </div>
                 </div>
@@ -425,7 +425,7 @@ const allImages = computed(() => {
                     <h3
                         class="mb-2 text-xs font-semibold tracking-wider text-zinc-600 uppercase dark:text-zinc-400"
                     >
-                        {{ t('overview') }}
+                        {{ t("overview") }}
                     </h3>
                     <p
                         class="text-sm leading-relaxed text-zinc-700 dark:text-zinc-400"
@@ -442,7 +442,7 @@ const allImages = computed(() => {
                     <h3
                         class="mb-3 text-xs font-semibold tracking-wider text-zinc-600 uppercase dark:text-zinc-400"
                     >
-                        {{ t('highlights') }}
+                        {{ t("highlights") }}
                     </h3>
                     <ul class="space-y-2">
                         <li
@@ -466,7 +466,7 @@ const allImages = computed(() => {
                     <h3
                         class="mb-4 text-xs font-semibold tracking-wider text-zinc-600 uppercase dark:text-zinc-400"
                     >
-                        {{ t('case_study') }}
+                        {{ t("case_study") }}
                     </h3>
                     <div
                         class="project-prose text-sm leading-relaxed text-zinc-950 dark:text-white"
@@ -495,7 +495,7 @@ const allImages = computed(() => {
                     @click="emit('close')"
                     class="btn btn-secondary px-5 py-2 text-xs"
                 >
-                    {{ t('close') }}
+                    {{ t("close") }}
                 </button>
             </div>
         </div>
@@ -548,7 +548,7 @@ const allImages = computed(() => {
 }
 
 .project-prose :deep(blockquote) {
-    border-left: 3px solid var(--color-cyan-500);
+    border-left: 3px solid var(--color-lavender-400);
     padding-left: 1rem;
     font-style: italic;
     margin-top: 1rem;
@@ -574,12 +574,20 @@ const allImages = computed(() => {
 }
 
 .project-prose :deep(a) {
-    color: var(--color-cyan-500);
+    color: var(--color-lavender-700);
     text-decoration: underline;
 }
 
 .project-prose :deep(a:hover) {
-    color: var(--color-cyan-500);
+    color: var(--color-lavender-900);
+}
+
+.dark .project-prose :deep(a) {
+    color: var(--color-lavender-300);
+}
+
+.dark .project-prose :deep(a:hover) {
+    color: var(--color-lavender-200);
 }
 
 .project-prose :deep(table) {

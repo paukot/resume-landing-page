@@ -109,7 +109,7 @@ const MAX_TECH = 5;
 
                     <span
                         v-if="project.featured"
-                        class="absolute top-4 left-4 rounded-full bg-cyan-700 px-2.5 py-1 text-[11px] font-bold text-white shadow-sm dark:bg-cyan-600 dark:text-white"
+                        class="absolute top-4 left-4 rounded-full bg-lavender-600 px-2.5 py-1 text-[11px] font-bold text-white shadow-sm dark:bg-lavender-300 dark:text-lavender-950"
                     >
                         {{ t('featured') }}
                     </span>
@@ -119,7 +119,7 @@ const MAX_TECH = 5;
                 <div class="relative z-[2] flex flex-1 flex-col p-6 sm:p-7">
                     <span
                         v-if="project.category"
-                        class="text-xs font-semibold tracking-wider text-cyan-700 uppercase dark:text-cyan-400"
+                        class="text-xs font-semibold tracking-wider text-lavender-700 uppercase dark:text-lavender-300"
                     >
                         {{ project.category }}
                     </span>

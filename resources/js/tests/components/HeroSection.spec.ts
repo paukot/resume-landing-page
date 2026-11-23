@@ -12,6 +12,8 @@ vi.mock('@inertiajs/vue3', () => ({
                 message_me: 'Message Me',
                 linkedin: 'LinkedIn',
                 scroll: 'Scroll',
+                scroll_next: 'Scroll to next section',
+                github: 'GitHub',
             },
         },
     }),
@@ -31,7 +33,7 @@ const createMockResumeData = (
         linkedin: 'https://linkedin.com/in/paulina',
     },
     cvPdfUrl: 'https://example.com/cv.pdf',
-    languages: [],
+    languages: [{ name: 'English', level: 'C1' }],
     quickStats: [
         {
             value: '7+',
@@ -51,6 +53,15 @@ const createMockResumeData = (
     ...overrides,
 });
 
+const allSectionsOn = {
+    showAbout: true,
+    showExperience: true,
+    showSkills: true,
+    showEducation: true,
+    showProjects: true,
+    showContact: true,
+};
+
 describe('HeroSection.vue', () => {
     it('renders hero name, title, and quick stats', () => {
         // Arrange
@@ -68,57 +79,59 @@ describe('HeroSection.vue', () => {
         expect(wrapper.text()).toContain('Years Experience');
     });
 
-    it('targets #about when showAbout is true', async () => {
+    it('scrolls to about when it is the first visible section', async () => {
         // Arrange
-        const data = createMockResumeData({
-            settings: {
-                showAbout: true,
-                showExperience: true,
-                showSkills: true,
-                showEducation: true,
-                showProjects: true,
-                showContact: true,
-            },
+        const about = document.createElement('section');
+        about.id = 'about';
+        document.body.appendChild(about);
+        const scrollSpy = vi.spyOn(about, 'scrollIntoView');
+        const wrapper = mount(HeroSection, {
+            props: { data: createMockResumeData() },
         });
 
         // Act
-        const wrapper = mount(HeroSection, {
-            props: { data },
-        });
+        await wrapper
+            .find('button[aria-label="Scroll to next section"]')
+            .trigger('click');
 
         // Assert
-        const scrollBtn = wrapper.find(
-            'button[aria-label="Scroll to next section"]',
-        );
-        expect(scrollBtn.exists()).toBe(true);
+        expect(scrollSpy).toHaveBeenCalled();
+        about.remove();
     });
 
-    it('targets #experience when showAbout is disabled', async () => {
+    it('skips disabled and empty sections when choosing the scroll target', async () => {
         // Arrange
+        const experience = document.createElement('section');
+        experience.id = 'experience';
+        document.body.appendChild(experience);
+        const scrollSpy = vi.spyOn(experience, 'scrollIntoView');
         const data = createMockResumeData({
-            settings: {
-                showAbout: false,
-                showExperience: true,
-                showSkills: true,
-                showEducation: true,
-                showProjects: true,
-                showContact: true,
-            },
+            settings: { ...allSectionsOn, showAbout: false },
+            projects: [],
+            experience: [
+                {
+                    id: 1,
+                    role: 'Engineer',
+                    company: 'Acme',
+                    period: '2020 - 2024',
+                    highlights: [],
+                    technologies: [],
+                },
+            ],
         });
+        const wrapper = mount(HeroSection, { props: { data } });
 
         // Act
-        const wrapper = mount(HeroSection, {
-            props: { data },
-        });
+        await wrapper
+            .find('button[aria-label="Scroll to next section"]')
+            .trigger('click');
 
         // Assert
-        const scrollBtn = wrapper.find(
-            'button[aria-label="Scroll to next section"]',
-        );
-        expect(scrollBtn.exists()).toBe(true);
+        expect(scrollSpy).toHaveBeenCalled();
+        experience.remove();
     });
 
-    it('hides bottom scroll button when all sections below hero are disabled', () => {
+    it('hides the scroll button when no section below the hero is visible', () => {
         // Arrange
         const data = createMockResumeData({
             settings: {
@@ -132,9 +145,7 @@ describe('HeroSection.vue', () => {
         });
 
         // Act
-        const wrapper = mount(HeroSection, {
-            props: { data },
-        });
+        const wrapper = mount(HeroSection, { props: { data } });
 
         // Assert
         expect(
@@ -142,5 +153,22 @@ describe('HeroSection.vue', () => {
                 .find('button[aria-label="Scroll to next section"]')
                 .exists(),
         ).toBe(false);
+    });
+
+    it('hides the CV, LinkedIn and GitHub buttons when they are not set', () => {
+        // Arrange
+        const data = createMockResumeData({
+            cvPdfUrl: '',
+            contact: { email: 'paulina@example.com' },
+        });
+
+        // Act
+        const wrapper = mount(HeroSection, { props: { data } });
+
+        // Assert
+        expect(wrapper.text()).not.toContain('Download CV');
+        expect(wrapper.find('a[aria-label="LinkedIn"]').exists()).toBe(false);
+        expect(wrapper.find('a[aria-label="GitHub"]').exists()).toBe(false);
+        expect(wrapper.text()).toContain('Message Me');
     });
 });

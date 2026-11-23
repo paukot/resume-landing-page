@@ -51,6 +51,10 @@ class WelcomeService
             fn () => GeneralInformation::query()->first()?->getAttributes()
         );
 
+        if (! is_array($information)) {
+            return new GeneralInformation;
+        }
+
         return (new GeneralInformation)->newFromBuilder($information);
     }
 

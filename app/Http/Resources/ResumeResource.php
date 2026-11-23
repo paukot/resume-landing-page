@@ -40,10 +40,10 @@ class ResumeResource extends JsonResource
         $cv = $this->getTranslation('cv', $locale);
 
         return [
-            'name' => $this->name,
-            'title' => $this->getTranslation('title', $locale),
-            'summary' => $this->getTranslation('summary', $locale),
-            'intro' => $this->getTranslation('intro', $locale),
+            'name' => (string) $this->name,
+            'title' => (string) $this->getTranslation('title', $locale),
+            'summary' => (string) $this->getTranslation('summary', $locale),
+            'intro' => (string) $this->getTranslation('intro', $locale),
             'contact' => [
                 'email' => $this->email,
                 'phone' => $this->phone,

@@ -9,8 +9,9 @@ vi.mock('@inertiajs/vue3', () => ({
             locale: 'en',
             translations: {
                 section: {
-                    featured_projects: 'Featured Projects',
+                    portfolio: 'Portfolio',
                 },
+                open_project: 'Open project: :title',
                 featured: 'Featured',
                 code: 'Code',
             },
@@ -52,21 +53,51 @@ describe('ProjectsSection.vue', () => {
         });
 
         // Assert
-        expect(wrapper.text()).toContain('Featured Projects');
+        expect(wrapper.text()).toContain('Portfolio');
         expect(wrapper.text()).toContain('Project Canvas');
         expect(wrapper.text()).toContain('Cloud Orchestrator');
     });
 
-    it('renders 2 projects per column responsive grid', () => {
+    it('shows the featured project first as the spotlight card', () => {
+        // Arrange
+        const projects = [mockProjects[1], mockProjects[0]];
+
+        // Act
+        const wrapper = mount(ProjectsSection, {
+            props: { projects },
+        });
+
+        // Assert
+        const cards = wrapper.findAll('article');
+        expect(cards).toHaveLength(2);
+        expect(cards[0].text()).toContain('Project Canvas');
+    });
+
+    it('stretches a regular project left alone on the last row to full width', () => {
         // Arrange & Act
         const wrapper = mount(ProjectsSection, {
             props: { projects: mockProjects },
         });
 
         // Assert
-        const grid = wrapper.find('.grid-cols-1.md\\:grid-cols-2');
-        expect(grid.exists()).toBe(true);
-        expect(wrapper.findAll('article')).toHaveLength(2);
+        const [featured, regular] = wrapper.findAll('article');
+        expect(featured.classes()).toContain('md:col-span-2');
+        expect(regular.classes()).toContain('md:col-span-2');
+    });
+
+    it('keeps paired regular projects at half width', () => {
+        // Arrange
+        const thirdProject = { ...mockProjects[1], id: 3, title: 'Third' };
+
+        // Act
+        const wrapper = mount(ProjectsSection, {
+            props: { projects: [...mockProjects, thirdProject] },
+        });
+
+        // Assert
+        const [, second, third] = wrapper.findAll('article');
+        expect(second.classes()).not.toContain('md:col-span-2');
+        expect(third.classes()).not.toContain('md:col-span-2');
     });
 
     it('renders cover image with lazy loading when available', () => {
@@ -81,15 +112,15 @@ describe('ProjectsSection.vue', () => {
         expect(img.attributes('loading')).toBe('lazy');
     });
 
-    it('emits select-project when card thumbnail or title is clicked', async () => {
+    it('emits select-project when a card is clicked', async () => {
         // Arrange
         const wrapper = mount(ProjectsSection, {
             props: { projects: mockProjects },
         });
 
         // Act - click thumbnail of first project
-        const firstThumbnail = wrapper.findAll('div[role="button"]')[0];
-        await firstThumbnail.trigger('click');
+        const firstCard = wrapper.findAll('article[role="button"]')[0];
+        await firstCard.trigger('click');
 
         // Assert
         expect(wrapper.emitted('select-project')).toBeTruthy();
@@ -105,8 +136,8 @@ describe('ProjectsSection.vue', () => {
         });
 
         // Act
-        const firstThumbnail = wrapper.findAll('div[role="button"]')[0];
-        await firstThumbnail.trigger('keydown.enter');
+        const firstCard = wrapper.findAll('article[role="button"]')[0];
+        await firstCard.trigger('keydown.enter');
 
         // Assert
         expect(wrapper.emitted('select-project')).toBeTruthy();

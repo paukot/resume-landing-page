@@ -35,7 +35,7 @@ class SectionSettingResource extends Resource
         return $schema
             ->components([
                 Section::make('Landing Page Sections Visibility')
-                    ->description('Turn sections below the main hero view on or off. Changes will immediately reflect on the public landing page.')
+                    ->description('Turn sections below the main hero view on or off. Sections without any content are hidden automatically. Changes will immediately reflect on the public landing page.')
                     ->schema([
                         Grid::make(['default' => 1, 'md' => 2])
                             ->schema([
@@ -60,7 +60,7 @@ class SectionSettingResource extends Resource
                                     ->default(true),
 
                                 Toggle::make('show_projects')
-                                    ->label('Projects & Architecture')
+                                    ->label('Portfolio')
                                     ->helperText('Displays featured portfolio projects with live and code links.')
                                     ->default(true),
 

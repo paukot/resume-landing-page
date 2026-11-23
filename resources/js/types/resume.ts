@@ -9,10 +9,10 @@ export interface ExperienceItem {
     role: string;
     company: string;
     companyUrl?: string | null;
-    location: string;
+    location?: string | null;
     period: string;
     isCurrent?: boolean;
-    description?: string;
+    description?: string | null;
     highlights: string[];
     technologies: string[];
 }
@@ -23,7 +23,7 @@ export interface EducationItem {
     field: string;
     institution: string;
     institutionUrl?: string | null;
-    location: string;
+    location?: string | null;
     period: string;
 }
 
@@ -70,11 +70,11 @@ export interface ResumeData {
     intro: string;
     summary: string;
     contact: {
-        email: string;
-        phone: string;
-        location: string;
-        linkedin: string;
-        github?: string;
+        email?: string | null;
+        phone?: string | null;
+        location?: string | null;
+        linkedin?: string | null;
+        github?: string | null;
     };
     cvPdfUrl: string;
     settings?: SectionSettings;

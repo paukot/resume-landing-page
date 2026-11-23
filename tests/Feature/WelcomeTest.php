@@ -1,6 +1,7 @@
 <?php
 
 use App\Enums\CacheKey;
+use App\Models\GeneralInformation;
 use App\Models\Project;
 use App\Models\SectionSetting;
 use Illuminate\Support\Facades\Cache;
@@ -97,4 +98,22 @@ it('primes cache keys on request and serves cached data', function () {
     expect(Cache::has(CacheKey::SectionSettings->value))->toBeTrue()
         ->and(Cache::has(CacheKey::Projects->value))->toBeTrue()
         ->and(Cache::has(CacheKey::GeneralInformation->value))->toBeTrue();
+});
+
+it('renders an empty resume when no general information has been entered', function () {
+    // Arrange
+    GeneralInformation::query()->delete();
+    Cache::flush();
+
+    // Act
+    $response = $this->get('/');
+
+    // Assert
+    $response->assertOk();
+    $response->assertInertia(fn (Assert $page) => $page
+        ->component('Welcome')
+        ->where('resume.name', '')
+        ->where('resume.summary', '')
+        ->where('resume.cvPdfUrl', '')
+    );
 });

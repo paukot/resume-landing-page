@@ -6,146 +6,300 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme inline {
-    --font-sans: 'Roboto Variable', Helvetica, Arial, sans-serif;
+    --font-sans:
+        'Instrument Sans', ui-sans-serif, system-ui, Helvetica, Arial,
+        sans-serif;
 }
 
-/* Smooth Scrolling */
+@theme {
+    --color-canvas: #e9e9ec;
+    --shadow-card:
+        0 1px 2px rgb(24 24 27 / 0.08), 0 12px 28px -14px rgb(24 24 27 / 0.24);
+    --shadow-card-hover:
+        0 2px 4px rgb(24 24 27 / 0.08), 0 20px 40px -16px rgb(24 24 27 / 0.32);
+    --color-brand-from: oklch(0.72 0.16 165);
+    --color-brand-via: oklch(0.7 0.13 215);
+    --color-brand-to: oklch(0.6 0.19 285);
+}
+
+:root {
+    --gradient-brand: linear-gradient(
+        100deg,
+        var(--color-brand-from),
+        var(--color-brand-via) 50%,
+        var(--color-brand-to)
+    );
+}
+
 html {
-    scroll-padding-top: 4rem;
+    scroll-padding-top: 5rem;
     scroll-behavior: smooth;
 }
 
-/* Subtle engineering grid background */
-.hero-grid {
-    background-size: 32px 32px;
-    background-image:
-        linear-gradient(to right, rgba(0, 0, 0, 0.04) 1px, transparent 1px),
-        linear-gradient(to bottom, rgba(0, 0, 0, 0.04) 1px, transparent 1px);
-    mask-image: radial-gradient(
-        ellipse 75% 65% at 50% 35%,
-        black 40%,
-        transparent 100%
-    );
-    -webkit-mask-image: radial-gradient(
-        ellipse 75% 65% at 50% 35%,
-        black 40%,
-        transparent 100%
-    );
+body {
+    background-color: var(--color-canvas);
 }
 
-.dark .hero-grid {
-    background-image:
-        linear-gradient(
-            to right,
-            rgba(255, 255, 255, 0.05) 1px,
-            transparent 1px
+.dark body {
+    background-color: var(--color-zinc-950);
+}
+
+@utility text-gradient {
+    background-image: var(--gradient-brand);
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+}
+
+@utility bg-brand {
+    background-image: var(--gradient-brand);
+}
+
+/*
+ * Hero backdrop: one soft, static wash of colour from the top edge.
+ * No patterns, no moving blobs.
+ */
+.hero-wash {
+    background:
+        radial-gradient(
+            45% 50% at 20% 0%,
+            color-mix(in oklch, var(--color-brand-from) 22%, transparent),
+            transparent 70%
         ),
-        linear-gradient(
-            to bottom,
-            rgba(255, 255, 255, 0.05) 1px,
-            transparent 1px
-        );
+        radial-gradient(
+            45% 50% at 80% 0%,
+            color-mix(in oklch, var(--color-brand-to) 18%, transparent),
+            transparent 70%
+        ),
+        radial-gradient(
+            60% 60% at 50% 0%,
+            color-mix(in oklch, var(--color-brand-via) 30%, transparent),
+            transparent 75%
+        ),
+        linear-gradient(to bottom, var(--color-white), var(--color-canvas));
 }
 
-/* Delicate floating keyframes (Hardware accelerated) */
-@keyframes floatSlow {
-    0%,
-    100% {
-        transform: translate3d(0, 0, 0);
+.dark .hero-wash {
+    background:
+        radial-gradient(
+            60% 55% at 50% 0%,
+            color-mix(in oklch, var(--color-brand-via) 14%, transparent),
+            transparent 70%
+        ),
+        linear-gradient(to bottom, var(--color-zinc-900), var(--color-zinc-950));
+}
+
+/* Card with a gradient border that lights up on hover / focus */
+.card-glow {
+    position: relative;
+    isolation: isolate;
+}
+
+.card-glow::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    padding: 1px;
+    border-radius: inherit;
+    background: var(--gradient-brand);
+    mask:
+        linear-gradient(#000 0 0) content-box,
+        linear-gradient(#000 0 0);
+    mask-composite: exclude;
+    opacity: 0;
+    transition: opacity 300ms ease;
+    pointer-events: none;
+    z-index: 10;
+}
+
+.card-glow:hover::before,
+.card-glow:focus-visible::before,
+.card-glow:focus-within::before {
+    opacity: 1;
+}
+
+/* Cursor-following highlight, position driven by v-spotlight */
+.spotlight::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: radial-gradient(
+        420px circle at var(--x, 50%) var(--y, 50%),
+        color-mix(in oklch, var(--color-brand-via) 10%, transparent),
+        transparent 45%
+    );
+    opacity: 0;
+    transition: opacity 300ms ease;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.spotlight:hover::after {
+    opacity: 1;
+}
+
+/*
+ * Buttons: one solid accent colour, colour-only hover states.
+ * Sizing (padding / text size) stays in the markup.
+ */
+@layer components {
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        border-radius: 9999px;
+        border: 1px solid transparent;
+        font-weight: 600;
+        cursor: pointer;
+        transition:
+            background-color 150ms ease,
+            border-color 150ms ease,
+            color 150ms ease;
+
+        &:focus-visible {
+            outline: 2px solid var(--color-cyan-600);
+            outline-offset: 2px;
+        }
     }
-    50% {
-        transform: translate3d(0, -8px, 0);
+
+    .btn-primary {
+        background-color: var(--color-cyan-700);
+        color: var(--color-white);
+
+        &:hover {
+            background-color: var(--color-cyan-800);
+        }
+    }
+
+    .btn-secondary {
+        border-color: var(--color-zinc-400);
+        background-color: var(--color-white);
+        color: var(--color-zinc-900);
+
+        &:hover {
+            border-color: var(--color-zinc-500);
+            background-color: var(--color-zinc-100);
+        }
+    }
+
+    .btn-ghost {
+        color: var(--color-zinc-600);
+
+        &:hover {
+            background-color: var(--color-zinc-100);
+            color: var(--color-zinc-950);
+        }
+    }
+
+    .dark .btn-primary {
+        background-color: var(--color-cyan-600);
+        color: var(--color-white);
+
+        &:hover {
+            background-color: var(--color-cyan-500);
+        }
+    }
+
+    .dark .btn-secondary {
+        border-color: rgb(255 255 255 / 0.15);
+        background-color: transparent;
+        color: var(--color-zinc-100);
+
+        &:hover {
+            border-color: rgb(255 255 255 / 0.3);
+            background-color: rgb(255 255 255 / 0.05);
+        }
+    }
+
+    .dark .btn-ghost {
+        color: var(--color-zinc-400);
+
+        &:hover {
+            background-color: rgb(255 255 255 / 0.06);
+            color: var(--color-white);
+        }
     }
 }
 
-@keyframes floatReverse {
-    0%,
-    100% {
-        transform: translate3d(0, 0, 0);
-    }
-    50% {
-        transform: translate3d(0, 8px, 0);
+/* Horizontal scroller without a visible scrollbar */
+@utility no-scrollbar {
+    scrollbar-width: none;
+
+    &::-webkit-scrollbar {
+        display: none;
     }
 }
 
-@keyframes pulseGlowSoft {
-    0%,
-    100% {
-        opacity: 0.45;
-        transform: scale3d(1, 1, 1);
-    }
-    50% {
-        opacity: 0.75;
-        transform: scale3d(1.05, 1.05, 1);
-    }
+/* Scroll reveal, toggled by v-reveal */
+.reveal {
+    opacity: 0;
+    transform: translate3d(0, 18px, 0);
+    transition:
+        opacity 700ms cubic-bezier(0.2, 0.7, 0.2, 1),
+        transform 700ms cubic-bezier(0.2, 0.7, 0.2, 1);
+    transition-delay: var(--reveal-delay, 0ms);
 }
 
-@keyframes shimmerGlow {
-    0% {
-        background-position: -200% 0;
-    }
-    100% {
-        background-position: 200% 0;
-    }
+.reveal.is-revealed {
+    opacity: 1;
+    transform: none;
 }
 
-.animate-float-slow {
-    animation: floatSlow 5s ease-in-out infinite;
-    will-change: transform;
+/* Infinite skills marquee */
+.marquee {
+    mask-image: linear-gradient(
+        to right,
+        transparent,
+        black 10%,
+        black 90%,
+        transparent
+    );
 }
 
-.animate-float-reverse {
-    animation: floatReverse 6s ease-in-out infinite;
-    will-change: transform;
+.marquee-track {
+    animation: marquee 40s linear infinite;
 }
 
-.animate-pulse-glow {
-    animation: pulseGlowSoft 6s ease-in-out infinite;
-    will-change: transform, opacity;
+.marquee:hover .marquee-track {
+    animation-play-state: paused;
 }
 
-/* Subtle beam drift */
-@keyframes beamDrift {
-    0% {
-        transform: translate3d(0, -80%, 0);
-        opacity: 0;
+@keyframes marquee {
+    to {
+        transform: translate3d(-50%, 0, 0);
     }
-    30% {
-        opacity: 0.6;
-    }
-    70% {
-        opacity: 0.6;
-    }
-    100% {
-        transform: translate3d(0, 220%, 0);
-        opacity: 0;
-    }
-}
-
-.animate-beam {
-    animation: beamDrift 9s cubic-bezier(0.4, 0, 0.2, 1) infinite;
-    will-change: transform, opacity;
 }
 
 @media (prefers-reduced-motion: reduce) {
-    .animate-float-slow,
-    .animate-float-reverse,
-    .animate-pulse-glow,
-    .animate-beam {
+    html {
+        scroll-behavior: auto;
+    }
+
+    .marquee-track {
         animation: none;
+    }
+
+    .reveal {
+        opacity: 1;
+        transform: none;
+        transition: none;
     }
 }
 
-/* Print Styles */
 @media print {
     body {
         background: white !important;
         color: black !important;
     }
+
     .no-print {
         display: none !important;
     }
-    .print-only {
-        display: block !important;
+
+    .reveal {
+        opacity: 1 !important;
+        transform: none !important;
     }
 }

@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from 'vitest';
 import { mount } from '@vue/test-utils';
 import Navbar from '@/components/Navbar.vue';
-import type { SectionSettings } from '@/types/resume';
+import type { SectionId } from '@/lib/sections';
 
 vi.mock('@inertiajs/vue3', () => ({
     Link: {
@@ -17,78 +17,69 @@ vi.mock('@inertiajs/vue3', () => ({
                     experience: 'Experience',
                     skills: 'Skills',
                     education: 'Education',
-                    projects: 'Projects',
+                    projects: 'Portfolio',
                     contact: 'Contact',
                 },
                 download_cv: 'Download CV',
                 english: 'English',
                 polish: 'Polish',
+                toggle_theme: 'Toggle theme',
+                toggle_menu: 'Toggle menu',
             },
         },
     }),
 }));
 
-describe('Navbar.vue', () => {
-    it('renders the brand name with tracking-tight style', () => {
-        // Arrange & Act
-        const wrapper = mount(Navbar, {
-            props: {
-                name: 'Paulina Dev',
-                isDark: false,
-                cvPdfUrl: 'https://example.com/cv.pdf',
-            },
-        });
-
-        // Assert
-        const brand = wrapper.find('span.tracking-tight');
-        expect(brand.exists()).toBe(true);
-        expect(brand.text()).toBe('Paulina Dev');
+const mountNavbar = (
+    overrides: Partial<{ cvPdfUrl: string; sections: SectionId[] }> = {},
+) =>
+    mount(Navbar, {
+        props: {
+            name: 'Paulina Dev',
+            isDark: false,
+            cvPdfUrl: 'https://example.com/cv.pdf',
+            sections: ['about', 'projects', 'experience'],
+            ...overrides,
+        },
     });
 
-    it('renders navigation links based on visible section settings', () => {
-        // Arrange
-        const settings: SectionSettings = {
-            showAbout: true,
-            showExperience: false,
-            showSkills: true,
-            showEducation: false,
-            showProjects: true,
-            showContact: false,
-        };
+describe('Navbar.vue', () => {
+    it('renders the brand name', () => {
+        // Arrange & Act
+        const wrapper = mountNavbar();
 
-        // Act
-        const wrapper = mount(Navbar, {
-            props: {
-                name: 'Paulina Dev',
-                isDark: false,
-                cvPdfUrl: 'https://example.com/cv.pdf',
-                settings,
-            },
+        // Assert
+        expect(wrapper.find('header').text()).toContain('Paulina Dev');
+    });
+
+    it('renders one navigation link per visible section, in the given order', () => {
+        // Arrange & Act
+        const wrapper = mountNavbar({
+            sections: ['about', 'projects', 'skills'],
         });
 
         // Assert
-        const navText = wrapper.find('nav').text();
-        expect(navText).toContain('About');
-        expect(navText).toContain('Skills');
-        expect(navText).toContain('Projects');
-        expect(navText).not.toContain('Experience');
-        expect(navText).not.toContain('Education');
-        expect(navText).not.toContain('Contact');
+        const links = wrapper.findAll('nav a');
+        expect(links.map((link) => link.text())).toEqual([
+            'About',
+            'Portfolio',
+            'Skills',
+        ]);
+        expect(links.map((link) => link.attributes('href'))).toEqual([
+            '#about',
+            '#projects',
+            '#skills',
+        ]);
     });
 
     it('emits toggle-theme when theme toggle button is clicked', async () => {
         // Arrange
-        const wrapper = mount(Navbar, {
-            props: {
-                name: 'Paulina Dev',
-                isDark: false,
-                cvPdfUrl: 'https://example.com/cv.pdf',
-            },
-        });
+        const wrapper = mountNavbar();
 
         // Act
-        const themeBtn = wrapper.find('button[aria-label="Toggle theme"]');
-        await themeBtn.trigger('click');
+        await wrapper
+            .find('button[aria-label="Toggle theme"]')
+            .trigger('click');
 
         // Assert
         expect(wrapper.emitted('toggle-theme')).toHaveLength(1);
@@ -96,19 +87,11 @@ describe('Navbar.vue', () => {
 
     it('toggles mobile menu open and closed', async () => {
         // Arrange
-        const wrapper = mount(Navbar, {
-            props: {
-                name: 'Paulina Dev',
-                isDark: false,
-                cvPdfUrl: 'https://example.com/cv.pdf',
-            },
-        });
+        const wrapper = mountNavbar();
+        const mobileToggle = wrapper.find('button[aria-label="Toggle menu"]');
+        expect(mobileToggle.attributes('aria-expanded')).toBe('false');
 
         // Act - open
-        const mobileToggle = wrapper.find(
-            'button[aria-label="Toggle mobile menu"]',
-        );
-        expect(mobileToggle.attributes('aria-expanded')).toBe('false');
         await mobileToggle.trigger('click');
 
         // Assert - opened
@@ -117,7 +100,21 @@ describe('Navbar.vue', () => {
 
         // Act - close
         await mobileToggle.trigger('click');
+
+        // Assert - closed
         expect(mobileToggle.attributes('aria-expanded')).toBe('false');
         expect(wrapper.find('#mobile-nav-menu').exists()).toBe(false);
+    });
+
+    it('hides every CV download link when no PDF is uploaded', async () => {
+        // Arrange
+        const wrapper = mountNavbar({ cvPdfUrl: '' });
+
+        // Act
+        await wrapper.find('button[aria-label="Toggle menu"]').trigger('click');
+
+        // Assert
+        expect(wrapper.find('#mobile-nav-menu').exists()).toBe(true);
+        expect(wrapper.text()).not.toContain('Download CV');
     });
 });

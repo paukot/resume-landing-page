@@ -1,4 +1,4 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';
@@ -7,7 +7,7 @@
 
 @theme inline {
     --font-sans:
-        "Instrument Sans", ui-sans-serif, system-ui, Helvetica, Arial,
+        'Instrument Sans', ui-sans-serif, system-ui, Helvetica, Arial,
         sans-serif;
 }
 
@@ -125,7 +125,7 @@ body {
 }
 
 .card-glow::before {
-    content: "";
+    content: '';
     position: absolute;
     inset: 0;
     padding: 1px;
@@ -149,7 +149,7 @@ body {
 
 /* Cursor-following highlight, position driven by v-spotlight */
 .spotlight::after {
-    content: "";
+    content: '';
     position: absolute;
     inset: 0;
     border-radius: inherit;

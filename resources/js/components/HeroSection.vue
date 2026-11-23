@@ -4,6 +4,7 @@ import type { ResumeData } from '@/types/resume';
 import { useTranslations } from '@/composables/useTranslations';
 import { visibleSections } from '@/lib/sections';
 import StatCard from '@/components/ui/StatCard.vue';
+import HeroDots from '@/components/HeroDots.vue';
 import LinkedinIcon from '@/components/icons/LinkedinIcon.vue';
 import GithubIcon from '@/components/icons/GithubIcon.vue';
 import { ArrowRight, ChevronDown, Download, MapPin } from 'lucide-vue-next';
@@ -47,8 +48,10 @@ const handleMessageMe = () => {
         id="hero"
         class="hero-wash relative flex min-h-svh flex-col justify-center border-b border-zinc-300 pt-24 pb-24 sm:pt-28 dark:border-white/5"
     >
+        <HeroDots />
+
         <div
-            class="mx-auto w-full max-w-6xl px-4 text-center sm:px-6 lg:px-8 lg:text-left"
+            class="relative mx-auto w-full max-w-6xl px-4 text-center sm:px-6 lg:px-8 lg:text-left"
         >
             <div
                 v-if="data.contact?.location"

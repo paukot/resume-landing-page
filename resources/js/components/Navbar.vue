@@ -77,10 +77,6 @@ onUnmounted(() => {
                 class="flex items-center gap-2.5 transition-opacity hover:opacity-80"
             >
                 <span
-                    class="h-2.5 w-2.5 rounded-full bg-brand"
-                    aria-hidden="true"
-                />
-                <span
                     class="text-sm font-bold tracking-tight text-zinc-950 dark:text-white"
                 >
                     {{ name }}

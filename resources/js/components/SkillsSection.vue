@@ -36,7 +36,7 @@ const nonEmptyCategories = computed(() =>
                 <div class="relative z-[2]">
                     <div class="mb-4 flex items-center gap-3">
                         <span
-                            class="flex h-10 w-10 items-center justify-center rounded-2xl bg-cyan-700/10 text-cyan-700 dark:bg-cyan-400/10 dark:text-cyan-300"
+                            class="flex h-10 w-10 items-center justify-center rounded-2xl bg-lavender-100 text-lavender-700 dark:bg-lavender-400/10 dark:text-lavender-300"
                         >
                             <Icon :name="category.icon" class="h-5 w-5" />
                         </span>

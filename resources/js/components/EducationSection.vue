@@ -49,7 +49,7 @@ const details = (edu: EducationItem): string =>
                             :href="edu.institutionUrl"
                             target="_blank"
                             rel="noopener noreferrer"
-                            class="inline-flex items-center gap-0.5 transition-colors hover:text-cyan-600 dark:hover:text-cyan-400"
+                            class="inline-flex items-center gap-0.5 transition-colors hover:text-lavender-700 dark:hover:text-lavender-300"
                         >
                             {{ edu.institution }}
                             <ArrowUpRight class="h-4 w-4" />

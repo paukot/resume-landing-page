@@ -209,13 +209,13 @@ const allImages = computed(() => {
             >
                 <div class="flex items-center gap-2 overflow-hidden">
                     <span
-                        class="rounded-full bg-zinc-100 px-2.5 py-0.5 text-[10px] font-bold tracking-wider text-cyan-700 uppercase dark:bg-white/5 dark:text-cyan-300"
+                        class="rounded-full bg-zinc-100 px-2.5 py-0.5 text-[10px] font-bold tracking-wider text-lavender-700 uppercase dark:bg-white/5 dark:text-lavender-300"
                     >
                         {{ project.category }}
                     </span>
                     <span
                         v-if="project.featured"
-                        class="inline-flex items-center gap-1 rounded-full bg-cyan-700 px-2.5 py-0.5 text-[10px] font-bold text-white dark:bg-cyan-600 dark:text-white"
+                        class="inline-flex items-center gap-1 rounded-full bg-lavender-600 px-2.5 py-0.5 text-[10px] font-bold text-white dark:bg-lavender-300 dark:text-lavender-950"
                     >
                         {{ t('featured') }}
                     </span>
@@ -291,7 +291,7 @@ const allImages = computed(() => {
                             openLightbox(activeGalleryIndex)
                         "
                         :title="t('view_full_image')"
-                        class="group relative aspect-video max-h-120 w-full cursor-zoom-in overflow-hidden rounded-xl border border-zinc-300 bg-zinc-100 transition-colors focus:ring-2 focus:ring-cyan-500 focus:outline-hidden dark:border-white/10 dark:bg-zinc-800 dark:focus:ring-cyan-400"
+                        class="group relative aspect-video max-h-120 w-full cursor-zoom-in overflow-hidden rounded-xl border border-zinc-300 bg-zinc-100 transition-colors focus:ring-2 focus:ring-lavender-500 focus:outline-hidden dark:border-white/10 dark:bg-zinc-800 dark:focus:ring-lavender-300"
                     >
                         <img
                             :src="allImages[activeGalleryIndex]"
@@ -548,7 +548,7 @@ const allImages = computed(() => {
 }
 
 .project-prose :deep(blockquote) {
-    border-left: 3px solid var(--color-cyan-500);
+    border-left: 3px solid var(--color-lavender-400);
     padding-left: 1rem;
     font-style: italic;
     margin-top: 1rem;
@@ -574,12 +574,20 @@ const allImages = computed(() => {
 }
 
 .project-prose :deep(a) {
-    color: var(--color-cyan-500);
+    color: var(--color-lavender-700);
     text-decoration: underline;
 }
 
 .project-prose :deep(a:hover) {
-    color: var(--color-cyan-500);
+    color: var(--color-lavender-900);
+}
+
+.dark .project-prose :deep(a) {
+    color: var(--color-lavender-300);
+}
+
+.dark .project-prose :deep(a:hover) {
+    color: var(--color-lavender-200);
 }
 
 .project-prose :deep(table) {

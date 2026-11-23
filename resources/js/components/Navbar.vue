@@ -69,17 +69,13 @@ onUnmounted(() => {
         "
     >
         <div
-            class="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8"
+            class="mx-auto flex h-(--nav-height) max-w-6xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8"
         >
             <a
                 href="#hero"
                 @click.prevent="scrollTo('hero')"
                 class="flex items-center gap-2.5 transition-opacity hover:opacity-80"
             >
-                <span
-                    class="h-2.5 w-2.5 rounded-full bg-brand"
-                    aria-hidden="true"
-                />
                 <span
                     class="text-sm font-bold tracking-tight text-zinc-950 dark:text-white"
                 >

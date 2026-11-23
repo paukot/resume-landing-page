@@ -109,7 +109,7 @@ const MAX_TECH = 5;
 
                     <span
                         v-if="project.featured"
-                        class="absolute top-4 left-4 rounded-full bg-cyan-700 px-2.5 py-1 text-[11px] font-bold text-white shadow-sm dark:bg-cyan-600 dark:text-white"
+                        class="absolute top-4 left-4 rounded-full bg-lavender-600 px-2.5 py-1 text-[11px] font-bold text-white shadow-sm dark:bg-lavender-300 dark:text-lavender-950"
                     >
                         {{ t('featured') }}
                     </span>
@@ -119,7 +119,7 @@ const MAX_TECH = 5;
                 <div class="relative z-[2] flex flex-1 flex-col p-6 sm:p-7">
                     <span
                         v-if="project.category"
-                        class="text-xs font-semibold tracking-wider text-cyan-700 uppercase dark:text-cyan-400"
+                        class="text-xs font-semibold tracking-wider text-lavender-700 uppercase dark:text-lavender-300"
                     >
                         {{ project.category }}
                     </span>
@@ -196,18 +196,17 @@ const MAX_TECH = 5;
                                 />
                             </span>
 
-                            <div class="flex items-center gap-1">
+                            <div class="flex items-center gap-1.5">
                                 <a
                                     v-if="project.liveUrl"
                                     :href="project.liveUrl"
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    :title="t('live_demo')"
-                                    :aria-label="t('live_demo')"
                                     @click.stop
-                                    class="rounded-lg p-2 text-zinc-600 transition-colors hover:bg-zinc-100 hover:text-zinc-950 dark:text-zinc-400 dark:hover:bg-white/5 dark:hover:text-white"
+                                    class="btn btn-primary px-3.5 py-1.5 text-xs"
                                 >
-                                    <ExternalLink class="h-4 w-4" />
+                                    <ExternalLink class="h-3.5 w-3.5" />
+                                    <span>{{ t('live_demo') }}</span>
                                 </a>
                                 <a
                                     v-if="project.githubUrl"

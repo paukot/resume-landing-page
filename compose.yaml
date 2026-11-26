@@ -1,3 +1,8 @@
+# Pinned: Docker prefixes named volumes with the project name. Without this, moving
+# the checkout to another directory would create a new, empty `storage` volume and
+# the SQLite database and uploaded images would appear to vanish.
+name: resume-landing-page
+
 services:
     app:
         build:
@@ -13,9 +18,9 @@ services:
             DB_CONNECTION: sqlite
             DB_DATABASE: /var/www/html/storage/database/database.sqlite
 
-            # --- Domain + automatic HTTPS (Caddy / Let's Encrypt) ---
+            # --- Plain HTTP on 8080: TLS is terminated by the `proxy` service ---
             CADDY_AUTO_HTTPS: 'off'
-            SSL_MODE: 'full'
+            SSL_MODE: 'off'
 
             # --- Laravel automations on every container start ---
             AUTORUN_ENABLED: 'true'
@@ -27,14 +32,45 @@ services:
             # --- PHP ---
             PHP_OPCACHE_ENABLE: '1'
             PHP_UPLOAD_MAX_FILE_SIZE: '100M'
-        ports:
-            - '80:8080'
-            - '443:8443'
-            - '443:8443/udp'
+        # Not published on the host: only the proxy reaches the app, over the compose network.
+        expose:
+            - '8080'
         volumes:
             - storage:/var/www/html/storage
             - caddy_data:/data
             - caddy_config:/config
+        healthcheck:
+            test: ['CMD', 'wget', '-q', '-O', '/dev/null', 'http://127.0.0.1:8080/up']
+            interval: 10s
+            timeout: 5s
+            retries: 6
+            # Migrations run before the server starts; give them time on a cold start.
+            start_period: 60s
+        logging:
+            driver: json-file
+            options:
+                max-size: '10m'
+                max-file: '3'
+
+    # TLS edge for Cloudflare: Origin Certificate from ./certs, listening on PUBLIC_PORT.
+    proxy:
+        image: caddy:2.10-alpine
+        restart: unless-stopped
+        ports:
+            - '${PUBLIC_PORT:-8443}:8443'
+        volumes:
+            - ./docker/caddy/Caddyfile:/etc/caddy/Caddyfile:ro
+            - ./certs:/certs:ro
+        depends_on:
+            app:
+                condition: service_healthy
+        healthcheck:
+            test: ['CMD', 'wget', '-q', '-O', '/dev/null', 'http://127.0.0.1:2019/config/']
+            interval: 10s
+            timeout: 3s
+            retries: 5
+            start_period: 5s
+        mem_limit: 64m
         logging:
             driver: json-file
             options:

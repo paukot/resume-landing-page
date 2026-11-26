@@ -1,21 +1,9 @@
 #!/usr/bin/env bash
-# Consistent SQLite backup (safe while the site is running, also in WAL mode).
-# Restore:  gunzip -c backups/db-XXXX.sql.gz | sqlite3 new.sqlite
+# Consistent SQLite backup plus the uploaded files, safe while the site is running.
+# Run on the server in the install directory (or from your workstation: ./deploy.sh backup).
+# Files land in backups/ (db-*.sql.gz and files-*.tar.gz), the newest KEEP (default 30) are kept.
+# Restore:  ./deploy.sh restore backups/db-XXXX.sql.gz   (or on the server: bash docker/remote-deploy.sh restore ...)
 set -euo pipefail
 
 cd "$(dirname "${BASH_SOURCE[0]}")"
-
-KEEP="${KEEP:-14}"
-mkdir -p backups
-out="backups/db-$(date +%Y%m%d-%H%M%S).sql.gz"
-
-if ! docker compose exec -T app sh -c 'sqlite3 "${DB_DATABASE:-/var/www/html/storage/database/database.sqlite}" .dump' | gzip > "$out"; then
-    rm -f "$out"
-    echo "Backup failed." >&2
-    exit 1
-fi
-gzip -t "$out"
-echo "Backup written: $out"
-
-# Keep only the newest $KEEP backups
-ls -1t backups/db-*.sql.gz | tail -n +"$((KEEP + 1))" | xargs -r rm --
+exec bash docker/remote-deploy.sh backup

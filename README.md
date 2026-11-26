@@ -11,16 +11,16 @@ A modern, high-performance developer portfolio and interactive resume platform b
 The application is built around a lean, cost-efficient, single-server architecture optimized for blazing-fast page loads, minimal memory footprint, and low-maintenance operation.
 
 ```
-[ Visitor / Recruiter ] ──HTTPS──> [ Host Proxy (Nginx / Caddy) ] ──Port 8080──> [ FrankenPHP App Container ]
-                                                                                       └── SQLite Database (Storage Volume)
+[ Visitor / Recruiter ] ──HTTPS──> [ Cloudflare ] ──HTTPS, custom port──> [ Caddy proxy ] ──HTTP──> [ FrankenPHP App Container ]
+                                                                                                  └── SQLite Database (Storage Volume)
 ```
 
 - **FrankenPHP (ServersideUp Alpine):** Instead of running multiple containers for Nginx and PHP-FPM, FrankenPHP embeds the PHP interpreter directly into the Caddy web server. This runs as a single lightweight container, halves memory overhead, enables OPcache pre-compilation, and delivers microsecond response times.
 - **Self-Contained SQLite Architecture:** Unlike traditional web apps requiring external MySQL and Redis daemons, this platform runs entirely on SQLite with database-backed sessions and cache. Everything lives inside a single Docker volume (`storage:` mounted at `/var/www/html/storage/database/database.sqlite`), drastically cutting hosting costs and simplifying backups.
 - **Lean Multi-Stage Docker Builds:** The Docker build pipeline isolates dependency installation, compiles Vue assets with Vite, and caches Filament components into a minimal Alpine production image. Build tools, Node, and `node_modules` are completely stripped from production.
-- **Host Reverse Proxy (Port 8080):** The container publishes port `8080` (and `8443`) rather than binding directly to ports `80`/`443`. A host-level reverse proxy (Nginx or Caddy) terminates SSL and routes requests, allowing multiple web applications to share a single VPS effortlessly.
+- **Caddy TLS proxy behind Cloudflare:** A small Caddy container in the same compose stack terminates HTTPS with a Cloudflare Origin Certificate on a configurable `PUBLIC_PORT`; the app itself only speaks plain HTTP on the internal network. Cloudflare runs in Full (strict) mode and an Origin Rule rewrites the port, so visitors keep using plain `https://`. Several apps can share one server, each on its own port.
 - **Monolith with Inertia.js:** Inertia seamlessly bridges Laravel and Vue 3 without the overhead of building, documenting, and versioning a separate REST/GraphQL API. It delivers a fast, client-rendered Single Page Application experience with server-side routing and authorization.
-- **Automated CI/CD Pipeline:** GitHub Actions runs code style checks (Laravel Pint), static analysis (PHPStan / Larastan), TypeScript validation (`vue-tsc`), and automated tests (Pest) on every push. When tests pass on `master`, it executes an automated deployment over SSH.
+- **Automated CI/CD Pipeline:** GitHub Actions runs code style checks (Laravel Pint), static analysis (PHPStan / Larastan), TypeScript validation (`vue-tsc`), and automated tests (Pest) on every push. When tests pass on `master`, it deploys over SSH (the server pulls the commit and builds the image), taking a database backup first.
 
 ---
 
@@ -108,51 +108,30 @@ composer dev
 
 The production environment runs via Docker Compose with automatic database preparation, migrations, and storage linking on startup.
 
-### 1. Initial Setup on Server
+See [DEPLOY.md](DEPLOY.md) for the full guide (Cloudflare, ports, CI secrets, migrating an existing server).
 
 ```bash
-git clone https://github.com/paukot/resume-landing-page.git /var/www/resume-landing-page
-cd /var/www/resume-landing-page
-
-# Configure production environment
-cp .env.docker.example .env
-# Fill in APP_KEY, APP_DOMAIN, etc. in .env
+cp .deploy.env.example .deploy.env      # DEPLOY_HOST, DEPLOY_SSH_PORT, DEPLOY_PATH, DEPLOY_PUBLIC_PORT ...
+./deploy.sh cert origin.pem origin.key  # Cloudflare Origin Certificate, once
+./deploy.sh                             # pull, back up, build, restart, HTTPS check
 ```
 
-### 2. Deploy
-
-Run the automated deployment script:
-
-```bash
-chmod +x deploy.sh
-./deploy.sh
-```
-
-The script fetches latest changes, rebuilds containers with `--pull`, applies pending migrations, and removes stale images.
+Every deploy takes a database backup first, rebuilds the containers, and the app container runs migrations, `storage:link` and creates the SQLite file on start. The data lives in the `storage` Docker volume, which a deploy never touches.
 
 ---
 
 ## Database Backup & Restore
 
-Because SQLite stores all relational data in a single file inside the persistent `storage` volume, backups are lightweight, fast, and completely safe to run while the application is live:
-
-### Create an Online Backup
-
-Run the backup script (safe during live traffic and WAL mode transactions):
+SQLite lives in the `storage` volume at `storage/database/database.sqlite`, next to the uploaded files (`storage/app/public`). Backups are safe to take while the site is live:
 
 ```bash
-./backup.sh
+./deploy.sh backup                      # on the server: backups/db-*.sql.gz + backups/files-*.tar.gz
+./deploy.sh pull-backups                # copy them to ./backups/ on your machine
+./deploy.sh restore backups/db-<STAMP>-manual.sql.gz     # database (atomic, keeps a safety copy)
+./deploy.sh restore backups/files-<STAMP>-manual.tar.gz  # uploaded files
 ```
 
-- Creates a timestamped, gzip-compressed snapshot in `backups/db-YYYYMMDD-HHMMSS.sql.gz`.
-- Verifies archive integrity with `gzip -t`.
-- Automatically rotates archives, keeping the newest 14 backups (`KEEP=14`).
-
-### Restore from Backup
-
-```bash
-gunzip -c backups/db-<TIMESTAMP>.sql.gz | docker compose exec -T app sh -c 'sqlite3 "$DB_DATABASE"'
-```
+The newest 30 backups of each kind are kept (`KEEP=30`).
 
 ---
 
@@ -185,7 +164,9 @@ npm run build         # Compile production frontend assets with Vite
 │   ├── migrations/         # Database schema migrations
 │   └── seeders/            # DatabaseSeeder with demo fixtures
 ├── docker/
-│   └── entrypoint.d/       # Container startup automations (database init, bootstrap)
+│   ├── caddy/              # Caddyfile of the TLS proxy
+│   ├── entrypoint.d/       # Container startup automations (database init, bootstrap)
+│   └── remote-deploy.sh    # Server side of deploy.sh (backup, build, restart, restore)
 ├── lang/                   # Localization dictionaries (en, pl)
 ├── resources/
 │   ├── css/                # Tailwind CSS v4 theme and styles
@@ -196,10 +177,11 @@ npm run build         # Compile production frontend assets with Vite
 │       └── types/          # TypeScript interfaces (resume.ts)
 ├── tests/
 │   └── Feature/            # Pest test suites for Filament resources and public views
-├── compose.yaml            # Production FrankenPHP Docker Compose configuration
+├── compose.yaml            # Production stack: FrankenPHP app + Caddy TLS proxy
 ├── Dockerfile              # Multi-stage production build (vendor -> assets -> production)
-├── deploy.sh               # Zero-downtime deployment script
-└── backup.sh               # Automated SQLite snapshot and rotation script
+├── deploy.sh               # One-command deploy over SSH (server pulls and builds) from a workstation or CI
+├── backup.sh               # SQLite + uploads backup, run on the server
+└── DEPLOY.md               # Deployment guide
 ```
 
 ---
